@@ -1,21 +1,9 @@
-import { useState, useEffect, useCallback } from 'react'
-import CodeMirror from '@uiw/react-codemirror'
-import { json } from '@codemirror/lang-json'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { Download, RotateCcw } from 'lucide-react'
 import { validateJson } from '../../lib/validateJson.js'
 import { Button } from '../ui/Button.jsx'
 import { toast } from '../ui/Toast.jsx'
 import './json-tab.css'
-
-// Tema CodeMirror minimale coerente con la palette dell'app
-const CM_THEME = {
-  '&': { background: '#0a0e1a', color: '#e8e8e8', height: '100%' },
-  '.cm-content': { fontFamily: "'JetBrains Mono', monospace", fontSize: '13px', padding: '16px 0' },
-  '.cm-gutters': { background: '#0d1224', borderRight: '1px solid rgba(232,232,232,0.08)', color: 'rgba(232,232,232,0.2)' },
-  '.cm-activeLine': { background: 'rgba(0,255,170,0.03)' },
-  '.cm-cursor': { borderLeftColor: '#00ffaa' },
-  '.cm-selectionBackground, ::selection': { background: 'rgba(0,255,170,0.15) !important' },
-}
 
 function serializeCarousel(carousel) {
   return JSON.stringify(
@@ -25,13 +13,35 @@ function serializeCarousel(carousel) {
   )
 }
 
+// Syntax highlighting minimale via regex — produce HTML sicuro (escape prima)
+function highlightJson(text) {
+  const safe = text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+
+  return safe.replace(
+    /("(?:\\.|[^"\\])*")(\s*:)|("(?:\\.|[^"\\])*")|(true|false|null)|(-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?)|([{}[\],:])/g,
+    (_, key, colon, str, bool, num, punct) => {
+      if (key  !== undefined) return `<span class="jh-key">${key}</span>${colon}`
+      if (str  !== undefined) return `<span class="jh-string">${str}</span>`
+      if (bool !== undefined) return `<span class="jh-bool">${bool}</span>`
+      if (num  !== undefined) return `<span class="jh-num">${num}</span>`
+      if (punct !== undefined) return `<span class="jh-punct">${punct}</span>`
+      return _
+    }
+  )
+}
+
 export function JsonTab({ carousel, onLoadCarousel }) {
   const [editorValue, setEditorValue] = useState(() => serializeCarousel(carousel))
   const [errors, setErrors] = useState([])
   const [isDirty, setIsDirty] = useState(false)
+  const textareaRef = useRef(null)
+  const preRef = useRef(null)
 
-  // Sincronizza l'editor quando il carousel cambia dall'esterno (undo/redo, import)
-  // ma solo se l'editor non ha modifiche non applicate
+  // Aggiorna l'editor quando il carousel cambia dall'esterno
+  // (modifica slide, undo/redo, import) ma solo se non ci sono modifiche locali
   useEffect(() => {
     if (!isDirty) {
       setEditorValue(serializeCarousel(carousel))
@@ -39,11 +49,19 @@ export function JsonTab({ carousel, onLoadCarousel }) {
     }
   }, [carousel, isDirty])
 
-  const handleEditorChange = useCallback((value) => {
-    setEditorValue(value)
+  const handleChange = useCallback((e) => {
+    setEditorValue(e.target.value)
     setIsDirty(true)
     setErrors([])
   }, [])
+
+  // Mantiene textarea e pre allineati durante lo scroll
+  function handleScroll(e) {
+    if (preRef.current) {
+      preRef.current.scrollTop  = e.target.scrollTop
+      preRef.current.scrollLeft = e.target.scrollLeft
+    }
+  }
 
   function handleApply() {
     try {
@@ -86,7 +104,7 @@ export function JsonTab({ carousel, onLoadCarousel }) {
           Applica modifiche
         </Button>
         {isDirty && (
-          <Button variant="ghost" size="sm" onClick={handleDiscard} title="Annulla le modifiche nell'editor">
+          <Button variant="ghost" size="sm" onClick={handleDiscard} title="Scarta le modifiche nell'editor">
             <RotateCcw size={13} />
             Scarta
           </Button>
@@ -102,18 +120,24 @@ export function JsonTab({ carousel, onLoadCarousel }) {
       </div>
 
       <div className="json-tab__editor">
-        <CodeMirror
+        {/* Layer statico con i colori — non interattivo */}
+        <pre
+          ref={preRef}
+          className="json-tab__highlight"
+          aria-hidden="true"
+          dangerouslySetInnerHTML={{ __html: highlightJson(editorValue) }}
+        />
+        {/* Textarea trasparente sopra: riceve input, mostra solo il cursore */}
+        <textarea
+          ref={textareaRef}
+          className="json-tab__textarea"
           value={editorValue}
-          extensions={[json()]}
-          theme={CM_THEME}
-          onChange={handleEditorChange}
-          basicSetup={{
-            lineNumbers: true,
-            foldGutter: true,
-            bracketMatching: true,
-            autocompletion: true,
-            indentOnInput: true,
-          }}
+          onChange={handleChange}
+          onScroll={handleScroll}
+          spellCheck={false}
+          autoComplete="off"
+          autoCorrect="off"
+          autoCapitalize="off"
         />
       </div>
 

@@ -26,21 +26,63 @@
   letter-spacing: 0.1em;
 }
 
+/* Contenitore editor: pre e textarea si sovrappongono */
 .json-tab__editor {
   flex: 1;
-  overflow: hidden;
   position: relative;
+  overflow: hidden;
+  background: #0a0e1a;
 }
 
-/* Sovrascrive altezza di CodeMirror per occupare tutto lo spazio */
-.json-tab__editor .cm-editor {
-  height: 100%;
-}
-.json-tab__editor .cm-scroller {
+/* Stili condivisi — devono coincidere al pixel tra pre e textarea */
+.json-tab__highlight,
+.json-tab__textarea {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  padding: 16px 20px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  line-height: 1.65;
+  tab-size: 2;
+  white-space: pre;
   overflow: auto;
-  height: 100%;
+  box-sizing: border-box;
+  word-break: normal;
+  overflow-wrap: normal;
 }
 
+/* Pre: rendering con colori, non interagisce con il mouse */
+.json-tab__highlight {
+  color: #e8e8e8;
+  background: #0a0e1a;
+  border: none;
+  pointer-events: none;
+  user-select: none;
+  z-index: 1;
+}
+
+/* Textarea: sopra il pre, testo e sfondo trasparenti — visibile solo il cursore */
+.json-tab__textarea {
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  background: transparent;
+  caret-color: #00ffaa;
+  border: none;
+  outline: none;
+  resize: none;
+  z-index: 2;
+}
+
+/* ── Colori syntax highlighting ──────────────────────────── */
+.jh-key    { color: #7dd3fc; }                       /* chiavi — blu */
+.jh-string { color: #86efac; }                       /* stringhe — verde */
+.jh-num    { color: #fca5a5; }                       /* numeri — rosa */
+.jh-bool   { color: #f0abfc; }                       /* boolean — viola */
+.jh-null   { color: #94a3b8; }                       /* null — grigio */
+.jh-punct  { color: rgba(232, 232, 232, 0.3); }      /* {} [] , : — tenue */
+
+/* ── Errori di validazione ───────────────────────────────── */
 .json-tab__errors {
   flex-shrink: 0;
   max-height: 160px;
