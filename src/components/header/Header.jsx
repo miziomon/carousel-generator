@@ -34,7 +34,8 @@ export function Header({
   onLoadCarousel,
   onNewProject,
   onAddSlide,
-  onUpdateProjectName,
+  onUpdateTitle,
+  onUpdateAuthor,
   mobileView,
   onToggleMobileView,
 }) {
@@ -111,8 +112,6 @@ export function Header({
     onAddSlide(type)
   }
 
-  const projectName = carousel.theme?.footer?.name || ''
-
   return (
     <>
       <header className="header">
@@ -124,15 +123,26 @@ export function Header({
 
         <div className="header__separator" />
 
-        {/* Nome progetto editabile */}
-        <input
-          className="header__project-name"
-          value={projectName}
-          onChange={(e) => onUpdateProjectName(e.target.value)}
-          placeholder="Nome progetto"
-          title="Nome del progetto (modifica per rinominarlo)"
-          spellCheck={false}
-        />
+        {/* Nome progetto e autore — editabili indipendentemente */}
+        <div className="header__identity">
+          <input
+            className="header__field"
+            value={carousel.title ?? ''}
+            onChange={(e) => onUpdateTitle(e.target.value)}
+            placeholder="Nome progetto"
+            title="Nome del progetto"
+            spellCheck={false}
+          />
+          <span className="header__identity-sep">/</span>
+          <input
+            className="header__field header__field--author"
+            value={carousel.theme?.footer?.name ?? ''}
+            onChange={(e) => onUpdateAuthor(e.target.value)}
+            placeholder="Autore"
+            title="Nome autore (appare nel footer delle slide)"
+            spellCheck={false}
+          />
+        </div>
 
         <div className="header__spacer" />
 

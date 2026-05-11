@@ -85,6 +85,7 @@ const SlideSchema = z.discriminatedUnion('type', [
 export const CarouselSchema = z
   .object({
     _schema: z.object({ version: z.string(), description: z.string().optional() }).optional(),
+    title: z.string().optional(),   // nome del progetto (solo UI, non appare nelle slide)
     theme: ThemeSchema,
     slides: z.array(SlideSchema).min(1, 'Il carosello deve avere almeno 1 slide'),
   })

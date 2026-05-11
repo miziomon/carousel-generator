@@ -71,6 +71,16 @@ function reducer(state, action) {
       }
     }
 
+    case 'UPDATE_TITLE': {
+      const carousel = { ...state.carousel, title: action.payload }
+      return {
+        ...state,
+        carousel,
+        history: pushHistory(state.history, state.carousel),
+        meta: { ...state.meta, isDirty: true },
+      }
+    }
+
     case 'UPDATE_THEME': {
       const carousel = { ...state.carousel, theme: action.payload }
       return {
@@ -207,6 +217,7 @@ export function useCarouselStore() {
 
   // Azioni memoizzate per stabilità delle props (evita re-render inutili su SlideCard)
   const loadCarousel = useCallback((carousel) => dispatch({ type: 'LOAD_CAROUSEL', payload: carousel }), [])
+  const updateTitle = useCallback((title) => dispatch({ type: 'UPDATE_TITLE', payload: title }), [])
   const updateTheme = useCallback((theme) => dispatch({ type: 'UPDATE_THEME', payload: theme }), [])
   const updateSlide = useCallback((slide) => dispatch({ type: 'UPDATE_SLIDE', payload: slide }), [])
   const reorderSlides = useCallback((ids) => dispatch({ type: 'REORDER_SLIDES', payload: ids }), [])
@@ -229,6 +240,7 @@ export function useCarouselStore() {
     canRedo: state.history.future.length > 0,
     // Azioni
     loadCarousel,
+    updateTitle,
     updateTheme,
     updateSlide,
     reorderSlides,

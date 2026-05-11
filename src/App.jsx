@@ -36,7 +36,11 @@ export default function App() {
     toast(`Slide ${type} aggiunta`, 'success')
   }
 
-  function handleUpdateProjectName(name) {
+  function handleUpdateTitle(title) {
+    store.updateTitle(title)
+  }
+
+  function handleUpdateAuthor(name) {
     store.updateTheme({
       ...store.carousel.theme,
       footer: { ...store.carousel.theme.footer, name },
@@ -75,7 +79,8 @@ export default function App() {
         onLoadCarousel={store.loadCarousel}
         onNewProject={handleNewProject}
         onAddSlide={handleAddSlide}
-        onUpdateProjectName={handleUpdateProjectName}
+        onUpdateTitle={handleUpdateTitle}
+        onUpdateAuthor={handleUpdateAuthor}
         mobileView={mobileView}
         onToggleMobileView={() => setMobileView((v) => !v)}
       />

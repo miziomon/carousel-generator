@@ -5,6 +5,7 @@ export const defaultCarousel = {
     version: '1.0',
     description: 'Pensieri in pillole — carosello editoriale',
   },
+  title: 'Pensieri in pillole',
   theme: {
     palette: {
       background: '#0a0e1a',
