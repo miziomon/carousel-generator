@@ -1,0 +1,5 @@
+# Normalizza i line ending a LF nel repo, CRLF nel checkout su Windows
+* text=auto eol=lf
+
+# Font binari — non toccarli
+*.woff2 binary

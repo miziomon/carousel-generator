@@ -1,0 +1,50 @@
+.theme-tab {
+  flex: 1;
+  overflow-y: auto;
+  padding: 28px;
+  display: flex;
+  gap: 32px;
+}
+
+.theme-tab__form {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  max-width: 480px;
+}
+
+.theme-tab__preview {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  position: sticky;
+  top: 0;
+  align-self: flex-start;
+}
+
+.theme-tab__section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.theme-tab__section-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #00ffaa;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(232, 232, 232, 0.08);
+}
+
+.theme-tab__preview-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(232, 232, 232, 0.25);
+}

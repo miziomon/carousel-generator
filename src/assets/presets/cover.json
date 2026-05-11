@@ -1,0 +1,9 @@
+{
+  "type": "cover",
+  "kicker": null,
+  "font": "archivo",
+  "size": "cover",
+  "lines": ["Nuovo titolo"],
+  "show_swipe_arrow": true,
+  "_note_autore": ""
+}

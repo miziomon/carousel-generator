@@ -1,0 +1,228 @@
+.slide-card {
+  background: #141929;
+  border: 1px solid rgba(232, 232, 232, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  position: relative;
+}
+
+.slide-card--overlay {
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.6);
+  border-color: rgba(0, 255, 170, 0.3);
+  transform: rotate(1.5deg);
+  cursor: grabbing;
+}
+
+/* Drag handle */
+.slide-card__drag-handle {
+  position: absolute;
+  top: 8px;
+  left: 6px;
+  z-index: 10;
+  padding: 4px;
+  color: rgba(232, 232, 232, 0.25);
+  cursor: grab;
+  opacity: 0;
+  transition: opacity 0.15s;
+  touch-action: none;
+}
+
+.slide-card:hover .slide-card__drag-handle {
+  opacity: 1;
+}
+
+.slide-card__drag-handle:active {
+  cursor: grabbing;
+  color: rgba(0, 255, 170, 0.6);
+}
+
+.slide-card:hover {
+  border-color: rgba(232, 232, 232, 0.22);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+}
+
+/* Thumbnail: wrapper a dimensione fissa che ospita la slide scalata */
+.slide-card__thumbnail-wrap {
+  width: 280px;
+  height: 280px;
+  overflow: hidden;
+  position: relative;
+  background: #0a0e1a;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.slide-card__thumbnail-wrap:hover::after {
+  content: 'Modifica';
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  letter-spacing: 0.2em;
+  color: #00ffaa;
+  text-transform: uppercase;
+}
+
+.slide-card__thumbnail-inner {
+  transform-origin: top left;
+  /* scale viene impostato inline: 280 / 1080 ≈ 0.259 */
+}
+
+.slide-card__footer {
+  padding: 10px 12px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border-top: 1px solid rgba(232, 232, 232, 0.08);
+}
+
+.slide-card__meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.slide-card__num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  color: rgba(232, 232, 232, 0.5);
+  letter-spacing: 0.15em;
+}
+
+.slide-card__type-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border-radius: 4px;
+  background: rgba(232, 232, 232, 0.08);
+  color: rgba(232, 232, 232, 0.5);
+}
+
+.slide-card__warning {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  padding: 2px 7px;
+  border-radius: 4px;
+  cursor: default;
+}
+
+.slide-card__warning--yellow {
+  background: rgba(234, 179, 8, 0.15);
+  color: #eab308;
+}
+
+.slide-card__warning--red {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+}
+
+.slide-card__actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.slide-card__action {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: none;
+  background: transparent;
+  color: rgba(232, 232, 232, 0.5);
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+}
+
+.slide-card__action:hover {
+  background: rgba(232, 232, 232, 0.08);
+  color: rgba(232, 232, 232, 0.9);
+}
+
+.slide-card__action--danger:hover {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+}
+
+.slide-card__action--loading {
+  opacity: 0.5;
+  cursor: wait;
+}
+
+.slide-card__action--loading:hover {
+  background: transparent;
+  color: rgba(232, 232, 232, 0.5);
+}
+
+/* M9: layout mobile (colonna singola, card più strette) */
+.slide-grid--mobile {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 380px;
+  margin: 0 auto;
+}
+
+.slide-grid--mobile .slide-card__thumbnail-wrap {
+  width: 380px;
+  height: 380px;
+}
+
+/* La scala (≈0.352) viene impostata inline dal componente SlideCard */
+
+/* Menu aggiunta slide */
+.add-slide-btn {
+  position: fixed;
+  bottom: 32px;
+  right: 32px;
+  z-index: 30;
+}
+
+.add-slide-menu {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  right: 0;
+  background: #1e2a3a;
+  border: 1px solid rgba(232, 232, 232, 0.15);
+  border-radius: 8px;
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 140px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+.add-slide-menu__item {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  padding: 7px 12px;
+  border-radius: 5px;
+  border: none;
+  background: transparent;
+  color: rgba(232, 232, 232, 0.75);
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.12s, color 0.12s;
+}
+
+.add-slide-menu__item:hover {
+  background: rgba(0, 255, 170, 0.1);
+  color: #00ffaa;
+}

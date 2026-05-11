@@ -1,0 +1,32 @@
+# Dipendenze
+node_modules/
+
+# Build
+dist/
+
+# Ambiente locale
+.env
+.env.local
+.env.*.local
+*.local
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Cache Vite
+.vite/
+
+# Documenti interni di progettazione
+carousel-generator-prompt.md

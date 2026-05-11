@@ -1,0 +1,75 @@
+.header {
+  height: 56px;
+  background: #0d1224;
+  border-bottom: 1px solid rgba(232, 232, 232, 0.1);
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  gap: 12px;
+  flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+.header__logo {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #00ffaa;
+  white-space: nowrap;
+}
+
+.header__project-name {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: rgba(232, 232, 232, 0.55);
+  background: transparent;
+  border: none;
+  outline: none;
+  border-bottom: 1px solid transparent;
+  padding: 2px 4px;
+  min-width: 120px;
+  max-width: 200px;
+  transition: border-color 0.15s;
+}
+
+.header__project-name:hover,
+.header__project-name:focus {
+  border-bottom-color: rgba(0, 255, 170, 0.4);
+  color: rgba(232, 232, 232, 0.85);
+}
+
+.header__separator {
+  width: 1px;
+  height: 24px;
+  background: rgba(232, 232, 232, 0.12);
+  flex-shrink: 0;
+}
+
+.header__actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.header__saved {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: rgba(232, 232, 232, 0.35);
+  white-space: nowrap;
+  margin-left: 4px;
+}
+
+.header__spacer {
+  flex: 1;
+}
+
+/* Stato attivo per toggle (es. mobile view) */
+.header__btn--active {
+  color: #00ffaa !important;
+  background: rgba(0, 255, 170, 0.1) !important;
+}

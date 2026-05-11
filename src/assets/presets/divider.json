@@ -1,0 +1,10 @@
+{
+  "type": "divider",
+  "kicker": null,
+  "font": "archivo",
+  "size": "lg",
+  "lines": ["Titolo sezione"],
+  "divider_number": "01",
+  "divider_label": null,
+  "_note_autore": ""
+}

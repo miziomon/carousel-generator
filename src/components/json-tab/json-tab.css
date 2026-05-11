@@ -1,0 +1,67 @@
+.json-tab {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.json-tab__toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-bottom: 1px solid rgba(232, 232, 232, 0.08);
+  background: #0d1224;
+  flex-shrink: 0;
+}
+
+.json-tab__toolbar-spacer {
+  flex: 1;
+}
+
+.json-tab__dirty-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: rgba(234, 179, 8, 0.8);
+  letter-spacing: 0.1em;
+}
+
+.json-tab__editor {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Sovrascrive altezza di CodeMirror per occupare tutto lo spazio */
+.json-tab__editor .cm-editor {
+  height: 100%;
+}
+.json-tab__editor .cm-scroller {
+  overflow: auto;
+  height: 100%;
+}
+
+.json-tab__errors {
+  flex-shrink: 0;
+  max-height: 160px;
+  overflow-y: auto;
+  background: rgba(239, 68, 68, 0.06);
+  border-top: 1px solid rgba(239, 68, 68, 0.3);
+  padding: 10px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.json-tab__error-item {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: #fca5a5;
+  display: flex;
+  gap: 8px;
+}
+
+.json-tab__error-path {
+  color: rgba(239, 68, 68, 0.7);
+  flex-shrink: 0;
+}
