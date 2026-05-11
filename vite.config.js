@@ -4,11 +4,19 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   resolve: {
-    // Garantisce che esista una sola istanza di @codemirror/state anche con lazy loading
-    dedupe: ['@codemirror/state', '@codemirror/view'],
+    dedupe: ['@codemirror/state', '@codemirror/view', '@codemirror/language'],
   },
   optimizeDeps: {
-    include: ['@uiw/react-codemirror', '@codemirror/lang-json'],
+    // @codemirror/state deve essere un entry separato: così @uiw/react-codemirror
+    // e @codemirror/lang-json lo importano come modulo esterno condiviso invece
+    // di bundlarlo ognuno per conto proprio (causa del "multiple instances" error)
+    include: [
+      '@codemirror/state',
+      '@codemirror/view',
+      '@codemirror/language',
+      '@uiw/react-codemirror',
+      '@codemirror/lang-json',
+    ],
   },
   test: {
     environment: 'jsdom',
