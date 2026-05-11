@@ -20,6 +20,16 @@
   text-transform: uppercase;
   color: #00ffaa;
   white-space: nowrap;
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+}
+
+.header__version {
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  color: rgba(0, 255, 170, 0.45);
 }
 
 .header__project-name {
@@ -31,15 +41,19 @@
   outline: none;
   border-bottom: 1px solid transparent;
   padding: 2px 4px;
-  min-width: 120px;
-  max-width: 200px;
-  transition: border-color 0.15s;
+  min-width: 100px;
+  max-width: 220px;
+  transition: border-color 0.15s, color 0.15s;
 }
 
 .header__project-name:hover,
 .header__project-name:focus {
   border-bottom-color: rgba(0, 255, 170, 0.4);
   color: rgba(232, 232, 232, 0.85);
+}
+
+.header__project-name::placeholder {
+  color: rgba(232, 232, 232, 0.2);
 }
 
 .header__separator {
@@ -72,4 +86,44 @@
 .header__btn--active {
   color: #00ffaa !important;
   background: rgba(0, 255, 170, 0.1) !important;
+}
+
+/* Dropdown "Aggiungi slide" */
+.header__add-slide {
+  position: relative;
+}
+
+.header__add-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  background: #1e2a3a;
+  border: 1px solid rgba(232, 232, 232, 0.15);
+  border-radius: 8px;
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 150px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  z-index: 50;
+}
+
+.header__add-menu-item {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  padding: 7px 12px;
+  border-radius: 5px;
+  border: none;
+  background: transparent;
+  color: rgba(232, 232, 232, 0.75);
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.12s, color 0.12s;
+}
+
+.header__add-menu-item:hover {
+  background: rgba(0, 255, 170, 0.1);
+  color: #00ffaa;
 }

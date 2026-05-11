@@ -28,5 +28,3 @@ yarn-error.log*
 # Cache Vite
 .vite/
 
-# Documenti interni di progettazione
-carousel-generator-prompt.md

@@ -38,6 +38,13 @@ export default function App() {
     toast(`Slide ${type} aggiunta`, 'success')
   }
 
+  function handleUpdateProjectName(name) {
+    store.updateTheme({
+      ...store.carousel.theme,
+      footer: { ...store.carousel.theme.footer, name },
+    })
+  }
+
   function handleDeleteSlide(id) {
     if (store.carousel.slides.length <= 1) {
       toast("Non puoi eliminare l'unica slide rimasta", 'error')
@@ -69,6 +76,8 @@ export default function App() {
         onRedo={store.redo}
         onLoadCarousel={store.loadCarousel}
         onNewProject={handleNewProject}
+        onAddSlide={handleAddSlide}
+        onUpdateProjectName={handleUpdateProjectName}
         mobileView={mobileView}
         onToggleMobileView={() => setMobileView((v) => !v)}
       />
@@ -83,7 +92,6 @@ export default function App() {
             onEdit={store.openEditModal}
             onDuplicate={handleDuplicateSlide}
             onDelete={handleDeleteSlide}
-            onAddSlide={handleAddSlide}
             onReorder={store.reorderSlides}
             mobileView={mobileView}
           />
