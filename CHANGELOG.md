@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.1.2] — 2026-05-11
+
+### Changed
+- Tab JSON: sostituito CodeMirror con una textarea+overlay nativa con syntax highlighting CSS minimale (chiavi blu, stringhe verdi, numeri rosa, boolean viola). Rimosse le dipendenze `@uiw/react-codemirror` e `@codemirror/lang-json` (-20 pacchetti, -140KB gzip).
+- Il JSON nella tab si aggiorna dinamicamente a ogni modifica dello store (slide, tema, undo/redo, import), mantenendo le modifiche locali non ancora applicate.
+- `vite.config.js` ripulito dai workaround CodeMirror.
+
+---
+
 ## [0.1.1] — 2026-05-11
 
 ### Fixed
