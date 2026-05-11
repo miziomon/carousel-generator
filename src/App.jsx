@@ -1,4 +1,4 @@
-import { lazy, Suspense, useState } from 'react'
+import { useState } from 'react'
 import { useCarouselStore } from './hooks/useCarouselStore.js'
 import { useAutoSave } from './hooks/useAutoSave.js'
 import { useUndoRedo } from './hooks/useUndoRedo.js'
@@ -7,12 +7,10 @@ import { Header } from './components/header/Header.jsx'
 import { TabBar } from './components/tabs/TabBar.jsx'
 import { SlideGrid } from './components/slide-grid/SlideGrid.jsx'
 import { ThemeTab } from './components/theme-tab/ThemeTab.jsx'
+import { JsonTab } from './components/json-tab/JsonTab.jsx'
 import { EditModal } from './components/edit-modal/EditModal.jsx'
 import { Modal } from './components/ui/Modal.jsx'
 import { ToastContainer, toast } from './components/ui/Toast.jsx'
-
-// CodeMirror è pesante (~500KB): lazy load solo quando si apre la tab JSON
-const JsonTab = lazy(() => import('./components/json-tab/JsonTab.jsx').then((m) => ({ default: m.JsonTab })))
 
 export default function App() {
   const store = useCarouselStore()
@@ -102,9 +100,7 @@ export default function App() {
         )}
 
         {store.ui.activeTab === 'json' && (
-          <Suspense fallback={<div className="flex-1 flex items-center justify-center text-slate-500 text-sm font-mono">Caricamento editor...</div>}>
-            <JsonTab carousel={store.carousel} onLoadCarousel={store.loadCarousel} />
-          </Suspense>
+          <JsonTab carousel={store.carousel} onLoadCarousel={store.loadCarousel} />
         )}
       </main>
 
