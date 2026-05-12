@@ -171,6 +171,11 @@ export function ThemeTab({
             onChange={(v) => setNested('header', 'show_dot', v)}
             label="Mostra punto accento (in alto a destra)"
           />
+          <Toggle
+            checked={theme.header.show_meta_number !== false}
+            onChange={(v) => setNested('header', 'show_meta_number', v)}
+            label="Mostra numerazione (es. 03 / 12)"
+          />
         </section>
 
         <section className="theme-tab__section">

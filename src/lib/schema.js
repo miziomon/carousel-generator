@@ -33,9 +33,10 @@ const ThemeSchema = z.object({
   palette_id: z.string().nullable().default(null),
   palette: PaletteColorsSchema,
   header: z.object({
-    kicker_default: z.string(),
-    show_topline:   z.boolean(),
-    show_dot:       z.boolean(),
+    kicker_default:   z.string(),
+    show_topline:     z.boolean(),
+    show_dot:         z.boolean(),
+    show_meta_number: z.boolean().default(true),
   }),
   footer: z.object({
     name:                 z.string(),

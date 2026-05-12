@@ -20,6 +20,7 @@ export const defaultCarousel = {
       kicker_default: 'Pensieri in pillole',
       show_topline: true,
       show_dot: true,
+      show_meta_number: true,
     },
     footer: {
       name: 'Maurizio Pelizzone',

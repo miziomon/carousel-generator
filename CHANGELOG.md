@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.4.0] — 2026-05-12
+
+### Added
+- Toggle **"Mostra numerazione (es. 03 / 12)"** anche nella sezione **Header slide** della ThemeTab (prima esisteva solo nel footer).
+  - Nuovo campo `theme.header.show_meta_number` (boolean), indipendente da `theme.footer.show_meta_number`.
+  - Default `true` per i caroselli esistenti (retrocompatibilità: comportamento attuale preservato).
+  - Quando OFF nasconde l'intero blocco `slide__num` in alto a sinistra.
+
+### Changed
+- `_SlideHeader.jsx` renderizza condizionalmente `slide__num` in base al nuovo toggle (check `!== false` per gestire JSON legacy senza il campo).
+
+---
+
 ## [1.3.0] — 2026-05-12
 
 ### Added
