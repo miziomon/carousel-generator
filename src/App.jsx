@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useCarouselStore } from './hooks/useCarouselStore.js'
 import { useAutoSave } from './hooks/useAutoSave.js'
 import { useUndoRedo } from './hooks/useUndoRedo.js'
+import { usePaletteLibraryPersistence } from './hooks/usePaletteLibraryPersistence.js'
 import { defaultCarousel } from './lib/defaultCarousel.js'
 import { Header } from './components/header/Header.jsx'
 import { TabBar } from './components/tabs/TabBar.jsx'
@@ -9,6 +10,7 @@ import { SlideGrid } from './components/slide-grid/SlideGrid.jsx'
 import { ThemeTab } from './components/theme-tab/ThemeTab.jsx'
 import { JsonTab } from './components/json-tab/JsonTab.jsx'
 import { EditModal } from './components/edit-modal/EditModal.jsx'
+import { PaletteManagerModal } from './components/palette-manager/PaletteManagerModal.jsx'
 import { Modal } from './components/ui/Modal.jsx'
 import { ToastContainer, toast } from './components/ui/Toast.jsx'
 
@@ -19,8 +21,11 @@ export default function App() {
   // Auto-save debounced
   useAutoSave(store.carousel, store.meta.isDirty, store.markSaved)
 
-  // Scorciatoie undo/redo (Ctrl+Z, Ctrl+Shift+Z — ignorate se focus su input/textarea)
+  // Scorciatoie undo/redo (Ctrl+Z, Ctrl+Shift+Z -- ignorate se focus su input/textarea)
   useUndoRedo(store.undo, store.redo)
+
+  // Persiste le palette utente su localStorage con debounce
+  usePaletteLibraryPersistence(store.paletteLibrary)
 
   const editingSlide = store.ui.editingSlideId
     ? store.carousel.slides.find((s) => s.id === store.ui.editingSlideId)
@@ -33,7 +38,7 @@ export default function App() {
 
   function handleAddSlide(type) {
     store.addSlide(type)
-    toast(`Slide ${type} aggiunta`, 'success')
+    toast('Slide ' + type + ' aggiunta', 'success')
   }
 
   function handleUpdateTitle(title) {
@@ -101,7 +106,15 @@ export default function App() {
         )}
 
         {store.ui.activeTab === 'theme' && (
-          <ThemeTab theme={store.carousel.theme} onChange={store.updateTheme} />
+          <ThemeTab
+            theme={store.carousel.theme}
+            onChange={store.updateTheme}
+            paletteLibrary={store.paletteLibrary}
+            applyPalette={store.applyPalette}
+            resyncPalette={store.resyncPalette}
+            updatePaletteInline={store.updatePaletteInline}
+            openPaletteManager={store.openPaletteManager}
+          />
         )}
 
         {store.ui.activeTab === 'json' && (
@@ -113,7 +126,7 @@ export default function App() {
         <Modal
           open={!!editingSlide}
           onClose={store.closeEditModal}
-          title={`Slide #${String(editingSlide.num).padStart(2, '0')} — ${editingSlide.type}`}
+          title={'Slide #' + String(editingSlide.num).padStart(2, '0') + ' — ' + editingSlide.type}
           size="xl"
           className="h-[88vh]"
         >
@@ -128,6 +141,18 @@ export default function App() {
       )}
 
       <ToastContainer />
+
+      <PaletteManagerModal
+        open={store.ui.paletteManagerOpen}
+        onClose={store.closePaletteManager}
+        paletteLibrary={store.paletteLibrary}
+        applyPalette={store.applyPalette}
+        createPalette={store.createPalette}
+        updatePalette={store.updatePalette}
+        duplicatePalette={store.duplicatePalette}
+        deletePalette={store.deletePalette}
+        importPalette={store.importPalette}
+      />
     </div>
   )
 }

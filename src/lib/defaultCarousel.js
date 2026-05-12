@@ -7,12 +7,14 @@ export const defaultCarousel = {
   },
   title: 'Pensieri in pillole',
   theme: {
+    palette_id: 'system-tech-dark',
     palette: {
       background: '#0a0e1a',
+      surface:    '#1a1e2a',
       foreground: '#e8e8e8',
-      accent: '#00ffaa',
-      muted: 'rgba(232,232,232,0.45)',
-      line: 'rgba(232,232,232,0.18)',
+      accent:     '#00ffaa',
+      muted:      'rgba(232,232,232,0.45)',
+      line:       'rgba(232,232,232,0.18)',
     },
     header: {
       kicker_default: 'Pensieri in pillole',

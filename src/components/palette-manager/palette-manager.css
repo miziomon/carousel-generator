@@ -1,0 +1,319 @@
+/* ══════════════════════════════════════════════════════════════════════════
+   PaletteManager — layout principale del modal di gestione palette
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.palette-manager {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Toolbar superiore con pulsanti crea/importa */
+.palette-manager__toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* Messaggio di errore inline per l'import */
+.palette-manager__import-error {
+  font-size: 0.8rem;
+  color: #ff5050;
+  flex: 1;
+}
+
+/* Sezione (system / user) con intestazione */
+.palette-manager__section {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* Header di sezione — stile label uppercase sottile */
+.palette-manager__section-header {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.35);
+  margin: 0 0 8px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+/* Messaggio vuoto nella sezione user */
+.palette-manager__empty {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.35);
+  padding: 12px 0;
+  font-style: italic;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════════
+   PaletteRow — singola riga della lista palette
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.palette-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  transition: background 0.1s;
+}
+.palette-row:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* Area informazioni: nome + badge + descrizione */
+.palette-row__info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.palette-row__name-line {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.palette-row__name {
+  font-size: 0.9rem;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.palette-row__description {
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.4);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Badge origin: system = giallo, user = blu */
+.palette-row__badge {
+  font-size: 0.68rem;
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  flex-shrink: 0;
+}
+.palette-row__badge--system {
+  background: rgba(255, 200, 50, 0.12);
+  color: #ffc832;
+  border: 1px solid rgba(255, 200, 50, 0.25);
+}
+.palette-row__badge--user {
+  background: rgba(80, 180, 255, 0.12);
+  color: #50b4ff;
+  border: 1px solid rgba(80, 180, 255, 0.25);
+}
+
+/* Zona azioni a destra */
+.palette-row__actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+/* Pulsante "Applica" — CTA primaria della riga */
+.palette-row__apply-btn {
+  padding: 5px 10px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.07);
+  color: inherit;
+  cursor: pointer;
+  transition: background 0.1s;
+}
+.palette-row__apply-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+/* Wrapper del menu contestuale — posizionamento relativo per il dropdown */
+.palette-row__menu-wrap {
+  position: relative;
+}
+
+/* Trigger ⋮ — icona pulsante quadrato */
+.palette-row__menu-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
+  border: none;
+  background: none;
+  color: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  transition: background 0.1s, color 0.1s;
+}
+.palette-row__menu-trigger:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* Dropdown del menu contestuale */
+.palette-row__menu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 4px);
+  background: #1e2433;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+  z-index: 60;
+  min-width: 130px;
+  overflow: hidden;
+}
+
+/* Singola voce del menu */
+.palette-row__menu-item {
+  display: block;
+  width: 100%;
+  padding: 8px 14px;
+  font-size: 0.85rem;
+  text-align: left;
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.8);
+  cursor: pointer;
+  transition: background 0.1s;
+}
+.palette-row__menu-item:hover {
+  background: rgba(255, 255, 255, 0.07);
+}
+/* Variante danger per "Elimina" */
+.palette-row__menu-item--danger {
+  color: #ff5050;
+}
+.palette-row__menu-item--danger:hover {
+  background: rgba(255, 80, 80, 0.1);
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════════
+   PaletteEditModal — layout form + anteprima affiancati
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* Contenitore principale: form a sinistra, anteprima a destra */
+.palette-edit-modal {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+/* Colonna form — si espande */
+.palette-edit-modal__form {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+}
+
+/* Colonna anteprima — larghezza fissa 280px */
+.palette-edit-modal__preview {
+  flex-shrink: 0;
+}
+
+/* Singolo campo del form */
+.palette-edit-modal__field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* Label del campo */
+.palette-edit-modal__label {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* Input e textarea condividono lo stesso stile base */
+.palette-edit-modal__input,
+.palette-edit-modal__textarea {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 5px;
+  color: inherit;
+  font-family: inherit;
+  font-size: 0.875rem;
+  padding: 7px 10px;
+  resize: vertical;
+  transition: border-color 0.15s;
+}
+.palette-edit-modal__input:focus,
+.palette-edit-modal__textarea:focus {
+  outline: none;
+  border-color: rgba(255, 255, 255, 0.3);
+}
+/* Stato di errore — bordo rosso */
+.palette-edit-modal__input--error {
+  border-color: #ff5050;
+}
+
+/* Messaggio di errore inline */
+.palette-edit-modal__error {
+  font-size: 0.78rem;
+  color: #ff5050;
+}
+
+/* Griglia dei 6 ColorPicker — colonna singola */
+.palette-edit-modal__colors-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* Footer con i pulsanti Annulla / Salva */
+.palette-edit-modal__footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════════
+   PalettePreview — mini-slide 280×280 con overflow hidden
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.palette-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* Etichetta sopra la preview */
+.palette-preview__label {
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.35);
+  text-align: center;
+}
+
+/* Frame che nasconde la slide 1080×1080 scalata a 280×280 */
+.palette-preview__frame {
+  width: 280px;
+  height: 280px;
+  overflow: hidden;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}

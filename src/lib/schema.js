@@ -1,76 +1,96 @@
 import { z } from 'zod'
 
-// ─── Palette ─────────────────────────────────────────────────────────────────
-const PaletteSchema = z.object({
+// ─── Palette colors (6 slot) ──────────────────────────────────────────────────
+// Usato sia nel theme del carosello che nell'entita Palette della libreria.
+export const PaletteColorsSchema = z.object({
   background: z.string().min(1),
+  surface:    z.string().min(1),
   foreground: z.string().min(1),
-  accent: z.string().min(1),
-  muted: z.string().min(1),
-  line: z.string().min(1),
+  accent:     z.string().min(1),
+  muted:      z.string().min(1),
+  line:       z.string().min(1),
 })
+
+// ─── Palette entity (libreria) ────────────────────────────────────────────────
+// Usato per validare palette nella libreria globale (carosello.palettes.v1).
+// NON usato per il carosello stesso (quello usa PaletteColorsSchema inline).
+export const PaletteSchema = z.object({
+  id:          z.string().min(1),
+  name:        z.string().min(1).max(40),
+  description: z.string().max(200).optional().default(''),
+  origin:      z.enum(['system', 'user']),
+  colors:      PaletteColorsSchema,
+  createdAt:   z.number().optional(),
+  updatedAt:   z.number().optional(),
+})
+
+export const PaletteLibrarySchema = z.array(PaletteSchema)
 
 // ─── Theme ────────────────────────────────────────────────────────────────────
 const ThemeSchema = z.object({
-  palette: PaletteSchema,
+  // Riferimento alla palette di origine. null = palette completamente custom
+  // o importata senza corrispondenza in libreria.
+  palette_id: z.string().nullable().default(null),
+  palette: PaletteColorsSchema,
   header: z.object({
     kicker_default: z.string(),
-    show_topline: z.boolean(),
-    show_dot: z.boolean(),
+    show_topline:   z.boolean(),
+    show_dot:       z.boolean(),
   }),
   footer: z.object({
-    name: z.string(),
-    show_separator_line: z.boolean(),
-    show_meta_number: z.boolean(),
+    name:                 z.string(),
+    show_separator_line:  z.boolean(),
+    show_meta_number:     z.boolean(),
   }),
   fonts: z.object({
-    primary: z.string(),
+    primary:   z.string(),
     secondary: z.string(),
-    mono: z.string(),
+    mono:      z.string(),
   }),
 })
 
 // ─── Base fields comuni a tutti i tipi ───────────────────────────────────────
 const SlideBaseFields = {
-  num: z.number().int().positive(),
-  kicker: z.string().nullable().optional(),
-  font: z.enum(['archivo', 'fraunces']),
+  num:          z.number().int().positive(),
+  kicker:       z.string().nullable().optional(),
+  font:         z.enum(['archivo', 'fraunces']),
   _note_autore: z.string().optional(),
 }
 
 // ─── Schema per tipo (senza superRefine: discriminatedUnion lo richiede) ────
-// I vincoli per-tipo (cover→1 riga, divider→1-2 righe, ecc.) sono applicati
-// nel superRefine del CarouselSchema per mantenere la compatibilità con
+// I vincoli per-tipo (cover→1 riga, divider→1-2 righe) sono applicati
+// nel superRefine del CarouselSchema per mantenere la compatibilita con
 // z.discriminatedUnion (che richiede ZodObject puro, non ZodEffects).
 
 const CoverSlideSchema = z.object({
   ...SlideBaseFields,
-  type: z.literal('cover'),
-  size: z.literal('cover'),
-  lines: z.array(z.string()),
+  type:             z.literal('cover'),
+  size:             z.literal('cover'),
+  lines:            z.array(z.string()),
   show_swipe_arrow: z.boolean().optional(),
 })
 
 const StandardSlideSchema = z.object({
   ...SlideBaseFields,
-  type: z.literal('standard'),
-  size: z.enum(['xl', 'lg', 'md']),
-  lines: z.array(z.string()).min(1, 'Almeno 1 riga in lines è obbligatoria'),
+  type:  z.literal('standard'),
+  size:  z.enum(['xl', 'lg', 'md']),
+  lines: z.array(z.string()).min(1, 'Almeno 1 riga in lines e obbligatoria'),
 })
 
 const DividerSlideSchema = z.object({
   ...SlideBaseFields,
-  type: z.literal('divider'),
-  size: z.enum(['xl', 'lg', 'md']).optional(),
-  lines: z.array(z.string()).min(1).max(2),
-  divider_number: z.string().min(1, 'divider_number è obbligatorio per le slide divider'),
-  divider_label: z.string().nullable().optional(),
+  type:           z.literal('divider'),
+  size:           z.enum(['xl', 'lg', 'md']).optional(),
+  lines:          z.array(z.string()).min(1).max(2),
+  divider_number: z.string().min(1, 'divider_number e obbligatorio per le slide divider'),
+  divider_label:  z.string().nullable().optional(),
 })
 
 const CtaSlideSchema = z.object({
   ...SlideBaseFields,
-  type: z.literal('cta'),
-  size: z.null().optional(),
-  cta_items: z.array(z.string()).min(1, 'Almeno 1 item in cta_items è obbligatorio'),
+  type:      z.literal('cta'),
+  size:      z.null().optional(),
+  cta_items: z.array(z.string()).min(1, 'Almeno 1 item in cta_items e obbligatorio'),
 })
 
 // ─── Unione discriminata ──────────────────────────────────────────────────────
@@ -85,9 +105,9 @@ const SlideSchema = z.discriminatedUnion('type', [
 export const CarouselSchema = z
   .object({
     _schema: z.object({ version: z.string(), description: z.string().optional() }).optional(),
-    title: z.string().optional(),   // nome del progetto (solo UI, non appare nelle slide)
-    theme: ThemeSchema,
-    slides: z.array(SlideSchema).min(1, 'Il carosello deve avere almeno 1 slide'),
+    title:   z.string().optional(),
+    theme:   ThemeSchema,
+    slides:  z.array(SlideSchema).min(1, 'Il carosello deve avere almeno 1 slide'),
   })
   .superRefine((data, ctx) => {
     data.slides.forEach((slide, idx) => {
@@ -106,7 +126,7 @@ export const CarouselSchema = z
       if (slide.type === 'divider' && slide.lines.length > 2) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: 'La slide divider può avere al massimo 2 righe in lines',
+          message: 'La slide divider puo avere al massimo 2 righe in lines',
           path: [...path, 'lines'],
         })
       }
@@ -125,4 +145,5 @@ export const CarouselSchema = z
   })
 
 // ─── Export singoli schema ─────────────────────────────────────────────────
-export { SlideSchema, ThemeSchema, PaletteSchema }
+export { SlideSchema, ThemeSchema }
+// PaletteSchema e gia esportato come named export sopra (retrocompatibilita)

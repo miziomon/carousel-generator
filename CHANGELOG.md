@@ -1,5 +1,78 @@
 # Changelog
 
+## [1.0.0] — 2026-05-11
+
+### Added
+- **Fase 4 completata: sistema palette v1.0 production-ready**
+- Toast notifications per tutte le azioni palette: applica, crea, modifica, duplica, elimina, importa, esporta, ri-sincronizza
+- Hotkeys: Esc chiude dropdown `PaletteSelector` e menu ⋮ `PaletteRow`; Esc chiude i modal (già gestito da `Modal.jsx`)
+- Hotkey Cmd/Ctrl+Enter salva il form in `PaletteEditModal` (tramite `useCallback` per dependency stabile)
+- Animazione badge `PaletteStatusBadge` con `AnimatePresence mode="wait"` — transizione opacity+scale tra stati in-sync/modificata/custom
+- Animazione dropdown `PaletteSelector` con slide-down (`AnimatePresence` + `motion.div`, `y: -6 → 0`)
+- Fade-in del contenuto `PaletteManagerModal` all'apertura (`motion.div opacity: 0 → 1`)
+- Messaggi di errore import palette completamente localizzati in italiano con mapping per codici Zod (`invalid_type`, `too_small`, `too_big`, `invalid_string`)
+- Gestione difensiva `palette_id` dangling verificata (PaletteSelector mostra "— Nessuna palette —")
+- Reset form `PaletteEditModal` verificato: dipendenze `[open, mode, initialData]` già corrette
+
+---
+
+## [0.4.0] — 2026-05-11
+
+### Added
+- Fase 3: modale "Gestisci palette" completo con CRUD palette utente
+- Crea, modifica, duplica, elimina palette con dialog di conferma
+- Import palette da file JSON (formato singolo o wrapper `_type: carosello-palette`)
+- Export palette come file JSON (`palette-{slug}.json`)
+- `PaletteEditModal`: form nome/descrizione + 6 color picker + ContrastChecker + anteprima live mini-slide 280px
+- `PaletteRow` con menu ⋮ contestuale (Duplica/Modifica/Esporta/Elimina)
+- Coerenza referenziale: eliminare una palette user attiva azzera `palette_id` nel carosello senza toccare i colori
+- Nuove azioni store: `CREATE_PALETTE`, `UPDATE_PALETTE`, `DUPLICATE_PALETTE`, `DELETE_PALETTE`, `IMPORT_PALETTE`, `OPEN/CLOSE_EDIT_PALETTE`
+- Palette system non mostrano mai "Modifica" né "Elimina" (assenti, non disabled)
+
+---
+
+## [0.3.0] — 2026-05-11
+
+### Added
+- **Sistema palette — Fase 2**: selettore palette con combobox+thumbnail, badge di stato, verifica contrasto WCAG 2.1, azioni store palette
+- `PaletteSelector`: dropdown custom con anteprima 6 quadratini (`PaletteThumbnail`), sezioni separate per palette system e user
+- `PaletteStatusBadge`: badge visivo con tre stati — `in-sync` (verde), `modificata` (giallo), `custom` (neutro)
+- `ContrastChecker`: verifica live WCAG 2.1 per le coppie Testo/Sfondo, Accento/Sfondo, Testo/Superficie con livelli AAA/AA/AA-large/Fail
+- `PaletteThumbnail`: componente riutilizzabile con 6 swatch colorati (riusato in Fase 3 nel manager)
+- `PaletteManagerModal`: placeholder Fase 2, implementazione completa prevista in Fase 3
+- `usePaletteLibraryPersistence`: hook debounced (800ms) che salva su `carosello.palettes.v1` solo le palette `origin: "user"`
+- `useContrastCheck`: hook memoizzato che calcola i rapporti di contrasto WCAG per le 3 coppie chiave
+- Nuove azioni store: `APPLY_PALETTE`, `RESYNC_PALETTE`, `UPDATE_PALETTE_INLINE`, `OPEN_PALETTE_MANAGER`, `CLOSE_PALETTE_MANAGER`
+- `Button`: aggiunto size `xs` (`px-2 py-1 text-xs`) per i bottoni compatti nella palette header
+- `useCarouselStore`: `paletteLibrary` nello stato globale, costruita da `mergePaletteLibrary` (built-in immutabili in cima + user palette da localStorage)
+
+### Changed
+- **`ThemeTab.jsx`**: riscritto completamente — integra PaletteSelector, PaletteStatusBadge, ContrastChecker; ogni modifica colore via `UPDATE_PALETTE_INLINE` (setta `palette_id: null`); header/footer/font invariati via `UPDATE_THEME`
+- **`App.jsx`**: passa le 5 nuove props palette a `ThemeTab`; registra `usePaletteLibraryPersistence`; monta `PaletteManagerModal`
+- **`useCarouselStore`**: stato iniziale esteso con `paletteLibrary` e nuovi campi `ui` (`paletteManagerOpen`, `editingPaletteId`)
+
+---
+
+## [0.2.0] — 2026-05-11
+
+### Added
+- **Sistema palette — Fase 1**: modello dati, palette built-in, migrazione retrocompatibile
+- `src/lib/palettes/builtinPalettes.js`: palette `system-tech-dark` e `system-warm-neutral` immutabili con 6 slot colore; lookup O(1) via Map interna
+- `src/lib/palettes/colorUtils.js`: wrapper su `color2k` per `parseColor`, `colorsEqual` (tolleranza +-1), `inferSurface`, `contrastRatio` WCAG 2.1
+- `src/lib/palettes/matchBuiltin.js`: matching a 6 colori contro le palette built-in; usato dalla migrazione
+- `src/lib/migrations/migrateCarousel.js`: migrazione pura e idempotente — gestisce 4 casi (5 colori senza palette_id, 6 colori senza palette_id, palette_id valido, palette_id dangling)
+- `src/lib/storage.js`: funzioni `loadPalettes`, `savePalettes`, `clearPalettes` per la libreria palette utente (`carosello.palettes.v1`)
+- Dipendenza `color2k` per parsing e manipolazione colori
+
+### Changed
+- **Schema**: `PaletteColorsSchema` aggiunto slot `surface` (6° colore per blocchi `hl-soft`); `ThemeSchema` aggiunto `palette_id` (nullable, default null); nuovo `PaletteSchema` (entita libreria) e `PaletteLibrarySchema` esportati da `schema.js`
+- **`defaultCarousel.js`**: palette allineata a `system-tech-dark` — aggiunto `surface: '#1a1e2a'` e `palette_id: 'system-tech-dark'`
+- **`validateJson.js`**: `migrateCarousel` applicata prima della validazione Zod — i JSON vecchio formato vengono accettati e aggiornati automaticamente
+- **`useCarouselStore.js`**: `migrateCarousel` applicata in `buildInitialState` (caricamento draft) e in `LOAD_CAROUSEL` (import JSON)
+- **`ThemeTab.jsx`**: aggiunto ColorPicker per `surface` (6° slot); label palette aggiornate (`Spento`, `Linea`); placeholder TODO Fase 2 per `PaletteSelector` e `PaletteStatusBadge`
+
+---
+
 ## [0.1.2] — 2026-05-11
 
 ### Changed

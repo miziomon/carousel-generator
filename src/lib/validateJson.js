@@ -1,4 +1,5 @@
 import { CarouselSchema } from './schema.js'
+import { migrateCarousel } from './migrations/migrateCarousel.js'
 
 // Messaggi di errore zod → italiano
 const ITALIAN_MESSAGES = {
@@ -11,7 +12,7 @@ const ITALIAN_MESSAGES = {
       : `Deve essere almeno ${min}`,
   too_big: (max, type) =>
     type === 'array'
-      ? `Può avere al massimo ${max} elemento${max > 1 ? 'i' : ''}`
+      ? `Puo avere al massimo ${max} elemento${max > 1 ? 'i' : ''}`
       : `Deve essere al massimo ${max}`,
   invalid_enum_value: (options) => `Valore non valido. Opzioni: ${options.join(', ')}`,
   invalid_literal: (expected) => `Deve essere ${JSON.stringify(expected)}`,
@@ -41,6 +42,10 @@ function issueToItalian(issue) {
 
 /**
  * Valida un oggetto JSON raw contro lo schema del carosello.
+ * La migrazione viene applicata PRIMA della validazione Zod,
+ * cosi i JSON in formato vecchio (5 colori, nessun palette_id)
+ * vengono accettati e aggiornati automaticamente.
+ *
  * @returns {{ ok: true, data: object } | { ok: false, errors: Array<{path: string, message: string}> }}
  */
 export function validateJson(raw) {
@@ -48,7 +53,10 @@ export function validateJson(raw) {
     return { ok: false, errors: [{ path: '(root)', message: 'Il JSON deve essere un oggetto' }] }
   }
 
-  const result = CarouselSchema.safeParse(raw)
+  // Migrazione prima di Zod — tollerante all'input malformato
+  const migrated = migrateCarousel(raw)
+
+  const result = CarouselSchema.safeParse(migrated)
 
   if (result.success) {
     return { ok: true, data: result.data }
