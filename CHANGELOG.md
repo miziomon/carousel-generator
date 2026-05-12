@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.4.1] — 2026-05-12
+
+### Changed
+- Modale di modifica slide: aggiunto `padding-right: 16px` all'anteprima per simmetria con il padding sinistro del form — l'anteprima non è più a ridosso del bordo destro della modale.
+- Textarea ridimensionabili verticalmente (`resize: vertical`) in:
+  - `LinesEditor` (righe del testo slide) con `min-h: 2.5rem`
+  - `_note_autore` (note autore) con `min-h: 3rem`
+
+  Permette di leggere/scrivere testi lunghi senza dipendere dallo scroll interno della textarea.
+
+---
+
 ## [1.4.0] — 2026-05-12
 
 ### Added

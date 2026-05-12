@@ -49,7 +49,7 @@ function LineRow({ value, index, isFocused, onFocus, onChange, onDelete, onKeyDo
         onKeyDown={onKeyDown}
         rows={2}
         className={cn(
-          'flex-1 bg-slate-900 border rounded px-3 py-2 text-sm text-slate-100 font-mono resize-none',
+          'flex-1 bg-slate-900 border rounded px-3 py-2 text-sm text-slate-100 font-mono resize-y min-h-[2.5rem]',
           'focus:outline-none transition-colors leading-relaxed',
           isFocused ? 'border-emerald-500/60' : 'border-slate-600 hover:border-slate-500'
         )}

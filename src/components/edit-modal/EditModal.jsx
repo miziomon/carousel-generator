@@ -299,7 +299,7 @@ export function EditModal({ slide, theme, total, onSave, onCancel }) {
               value={draft._note_autore ?? ''}
               onChange={(e) => set('_note_autore', e.target.value)}
               rows={2}
-              className="w-full bg-slate-900 border border-slate-600 rounded px-3 py-2 text-xs text-slate-400 font-mono resize-none focus:outline-none focus:border-slate-500 transition-colors"
+              className="w-full bg-slate-900 border border-slate-600 rounded px-3 py-2 text-xs text-slate-400 font-mono resize-y min-h-[3rem] focus:outline-none focus:border-slate-500 transition-colors"
               placeholder="Appunti privati..."
             />
           </FieldGroup>
