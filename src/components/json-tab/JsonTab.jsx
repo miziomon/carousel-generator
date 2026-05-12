@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { Download, RotateCcw } from 'lucide-react'
 import { validateJson } from '../../lib/validateJson.js'
+import { slugifyTitle } from '../../lib/filename.js'
 import { Button } from '../ui/Button.jsx'
 import { toast } from '../ui/Toast.jsx'
 import './json-tab.css'
@@ -91,7 +92,7 @@ export function JsonTab({ carousel, onLoadCarousel }) {
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
-    a.download = 'carosello.json'
+    a.download = `${slugifyTitle(carousel.title)}.json`
     a.click()
     URL.revokeObjectURL(url)
     toast('JSON esportato', 'success')

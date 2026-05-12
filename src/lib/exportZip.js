@@ -1,6 +1,7 @@
 import JSZip from 'jszip'
 import { saveAs } from 'file-saver'
 import { exportSlideToPng } from './exportPng.jsx'
+import { slugifyTitle } from './filename.js'
 
 /**
  * Esporta tutte le slide come ZIP contenente PNG + JSON.
@@ -26,17 +27,18 @@ export async function exportCarouselZip(carousel, onProgress) {
     zip.file(filename, base64, { base64: true })
   }
 
-  // Aggiunge il JSON pulito (senza id runtime)
+  // Aggiunge il JSON pulito (senza id runtime), nome basato sul titolo del progetto
   const cleanJson = JSON.stringify(
     { ...carousel, slides: carousel.slides.map(({ id: _id, ...rest }) => rest) },
     null,
     2
   )
-  zip.file('carosello.json', cleanJson)
+  zip.file(`${slugifyTitle(carousel.title)}.json`, cleanJson)
 
   onProgress?.({ current: total, total, label: 'Compressione ZIP…' })
 
   const blob = await zip.generateAsync({ type: 'blob' })
-  const zipName = `${theme?.footer?.name?.replace(/\s+/g, '-') || 'carosello'}.zip`
+  // Nome ZIP basato sul titolo del progetto (non sull'autore)
+  const zipName = `${slugifyTitle(carousel.title)}.zip`
   saveAs(blob, zipName)
 }

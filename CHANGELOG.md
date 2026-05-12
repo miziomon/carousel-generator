@@ -1,5 +1,23 @@
 # Changelog
 
+## [1.2.0] — 2026-05-12
+
+### Added
+- **Import JSON minimale**: i JSON esterni possono ora contenere solo i campi essenziali; tutti gli altri vengono completati con default sensati prima della validazione Zod.
+  - Slide `standard`/`cover`/`divider`: unico campo obbligatorio = `lines`.
+  - Slide `cta`: case dedicato — obbligatorio `cta_items` al posto di `lines`.
+  - `theme`, `title`, `num`, `kicker`, `font`, `size`, `palette_id`, `divider_number`, `show_swipe_arrow` ecc. → tutti opzionali, riempiti da `defaultCarousel` o euristiche.
+  - Se `theme.palette_id` punta a una palette built-in ma la `palette` è parziale o assente, vengono usati i colori della built-in come base (override applicati sopra).
+- `src/lib/migrations/normalizeMinimal.js`: nuovo step di normalizzazione (idempotente, tollerante a input malformato), eseguito prima di `migrateCarousel` in `validateJson.js`.
+- `src/lib/filename.js`: helper `slugifyTitle()` per generare nomi file safe dal titolo del progetto.
+
+### Changed
+- **Nome file export**: ZIP, JSON (header), JSON (tab JSON) e JSON interno allo ZIP ora usano il titolo del progetto (`carousel.title`) come base, non più il nome dell'autore (`theme.footer.name`).
+  - Es. progetto "Pensieri in pillole" → `pensieri-in-pillole.zip` / `pensieri-in-pillole.json`.
+  - Fallback su `carosello` se il titolo è vuoto o non slugificabile.
+
+---
+
 ## [1.1.0] — 2026-05-12
 
 ### Added

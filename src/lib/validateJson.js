@@ -1,5 +1,6 @@
 import { CarouselSchema } from './schema.js'
 import { migrateCarousel } from './migrations/migrateCarousel.js'
+import { normalizeMinimalCarousel } from './migrations/normalizeMinimal.js'
 
 // Messaggi di errore zod → italiano
 const ITALIAN_MESSAGES = {
@@ -53,8 +54,13 @@ export function validateJson(raw) {
     return { ok: false, errors: [{ path: '(root)', message: 'Il JSON deve essere un oggetto' }] }
   }
 
-  // Migrazione prima di Zod — tollerante all'input malformato
-  const migrated = migrateCarousel(raw)
+  // 1) Normalizzazione: riempie i default per i campi non essenziali.
+  //    L'utente puo' fornire solo `lines` (o `cta_items` per le slide cta),
+  //    tutto il resto viene completato da defaultCarousel.
+  // 2) Migrazione: gestisce il vecchio formato (5 colori, palette_id mancante, ecc.)
+  // 3) Validazione Zod sul risultato finale.
+  const normalized = normalizeMinimalCarousel(raw)
+  const migrated   = migrateCarousel(normalized)
 
   const result = CarouselSchema.safeParse(migrated)
 

@@ -5,6 +5,7 @@ import { ConfirmDialog } from '../ui/ConfirmDialog.jsx'
 import { ExportPanel } from '../export-panel/ExportPanel.jsx'
 import { toast } from '../ui/Toast.jsx'
 import { validateJson } from '../../lib/validateJson.js'
+import { slugifyTitle } from '../../lib/filename.js'
 import pkg from '../../../package.json'
 import './header.css'
 
@@ -101,7 +102,7 @@ export function Header({
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
-    a.download = 'carosello.json'
+    a.download = `${slugifyTitle(carousel.title)}.json`
     a.click()
     URL.revokeObjectURL(url)
     toast('JSON esportato', 'success')
