@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<title>Anteprima 5 nuove palette — Carousel Generator</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #f5f5f5;
+    padding: 32px;
+    color: #222;
+  }
+  h1 { font-size: 22px; margin-bottom: 6px; }
+  .lead { color: #666; margin-bottom: 32px; font-size: 14px; }
+  .palette-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 28px; }
+  .palette-card { background: #fff; border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+  .palette-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px; }
+  .palette-name { font-size: 17px; font-weight: 700; }
+  .palette-id { font-family: monospace; font-size: 11px; color: #999; }
+  .palette-desc { font-size: 13px; color: #555; margin-bottom: 16px; line-height: 1.45; }
+  .swatches { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; margin-bottom: 16px; }
+  .swatch { aspect-ratio: 1; border-radius: 6px; border: 1px solid rgba(0,0,0,0.08); position: relative; }
+  .swatch-label { position: absolute; bottom: -18px; left: 0; right: 0; text-align: center; font-size: 9px; color: #888; font-family: monospace; }
+  .swatch-row { margin-bottom: 24px; }
+
+  /* Mini-slide preview — riproduce lo stile reale del Carousel Generator */
+  .mini-slide {
+    aspect-ratio: 1;
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+    padding: 22px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    font-family: 'Georgia', serif;
+  }
+  .mini-slide__topline { font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; opacity: 0.7; }
+  .mini-slide__body { font-size: 19px; line-height: 1.25; font-weight: 700; font-family: 'Arial Black', sans-serif; }
+  .mini-slide__hl { padding: 2px 6px; border-radius: 3px; }
+  .mini-slide__soft { padding: 2px 6px; border-radius: 3px; }
+  .mini-slide__footer { display: flex; justify-content: space-between; font-size: 9px; opacity: 0.55; padding-top: 8px; }
+  .mini-slide__footer-line { position: absolute; left: 22px; right: 22px; bottom: 36px; height: 1px; }
+</style>
+</head>
+<body>
+
+<h1>5 nuove palette — proposte</h1>
+<p class="lead">Ogni card mostra: i 6 swatch (background / surface / foreground / accent / muted / line) e un mini-mockup di slide reale con i tag <code>[hl]</code> e <code>[soft]</code> applicati.</p>
+
+<div class="palette-grid">
+
+  <!-- 1. MIDNIGHT INDIGO -->
+  <div class="palette-card">
+    <div class="palette-header">
+      <span class="palette-name">1. Midnight Indigo</span>
+      <span class="palette-id">system-midnight-indigo</span>
+    </div>
+    <p class="palette-desc">Indigo profondo con accento viola elettrico. Premium notturno, alternativa colta al tech-dark verde — bene per contenuti culturali, musica, design.</p>
+    <div class="swatch-row">
+      <div class="swatches">
+        <div class="swatch" style="background:#0E1430"><span class="swatch-label">#0E1430</span></div>
+        <div class="swatch" style="background:#1B2348"><span class="swatch-label">#1B2348</span></div>
+        <div class="swatch" style="background:#EDEAF7"><span class="swatch-label">#EDEAF7</span></div>
+        <div class="swatch" style="background:#9D7BFF"><span class="swatch-label">#9D7BFF</span></div>
+        <div class="swatch" style="background:rgba(237,234,247,0.45)"><span class="swatch-label">muted</span></div>
+        <div class="swatch" style="background:rgba(237,234,247,0.18)"><span class="swatch-label">line</span></div>
+      </div>
+    </div>
+    <div class="mini-slide" style="background:#0E1430; color:#EDEAF7;">
+      <div class="mini-slide__topline" style="color:rgba(237,234,247,0.55);">● PENSIERI IN PILLOLE</div>
+      <div class="mini-slide__body">
+        L'eleganza vive<br>
+        nei <span class="mini-slide__hl" style="background:#9D7BFF; color:#0E1430;">dettagli</span> che<br>
+        <span class="mini-slide__soft" style="background:#1B2348;">nessuno nota</span>
+      </div>
+      <div class="mini-slide__footer-line" style="background:rgba(237,234,247,0.18);"></div>
+      <div class="mini-slide__footer"><span>Maurizio Pelizzone</span><span>02/15</span></div>
+    </div>
+  </div>
+
+  <!-- 2. BONE & CHERRY -->
+  <div class="palette-card">
+    <div class="palette-header">
+      <span class="palette-name">2. Bone & Cherry</span>
+      <span class="palette-id">system-bone-cherry</span>
+    </div>
+    <p class="palette-desc">Bone white tipografico con accento ciliegia scuro e bruno cuoio. Editoriale, sensuale, ad alto contrasto. Pensata per contenuti riflessivi e long-form.</p>
+    <div class="swatch-row">
+      <div class="swatches">
+        <div class="swatch" style="background:#F9F8F3"><span class="swatch-label">#F9F8F3</span></div>
+        <div class="swatch" style="background:#EFEAE0"><span class="swatch-label">#EFEAE0</span></div>
+        <div class="swatch" style="background:#1D1D1D"><span class="swatch-label">#1D1D1D</span></div>
+        <div class="swatch" style="background:#7A1A1F"><span class="swatch-label">#7A1A1F</span></div>
+        <div class="swatch" style="background:#776B63"><span class="swatch-label">#776B63</span></div>
+        <div class="swatch" style="background:#D8CFC2"><span class="swatch-label">#D8CFC2</span></div>
+      </div>
+    </div>
+    <div class="mini-slide" style="background:#F9F8F3; color:#1D1D1D;">
+      <div class="mini-slide__topline" style="color:#776B63;">● PENSIERI IN PILLOLE</div>
+      <div class="mini-slide__body">
+        Scrivere bene è<br>
+        <span class="mini-slide__hl" style="background:#7A1A1F; color:#F9F8F3;">togliere</span>, non<br>
+        <span class="mini-slide__soft" style="background:#EFEAE0;">aggiungere</span>
+      </div>
+      <div class="mini-slide__footer-line" style="background:#D8CFC2;"></div>
+      <div class="mini-slide__footer" style="color:#776B63;"><span>Maurizio Pelizzone</span><span>02/15</span></div>
+    </div>
+  </div>
+
+  <!-- 3. SAGE ATELIER -->
+  <div class="palette-card">
+    <div class="palette-header">
+      <span class="palette-name">3. Sage Atelier</span>
+      <span class="palette-id">system-sage-atelier</span>
+    </div>
+    <p class="palette-desc">Salvia tenue su crema, accento terracotta caldo. Naturale, calmo, premium. Pensata per wellness, slow living, contenuti riflessivi diurni.</p>
+    <div class="swatch-row">
+      <div class="swatches">
+        <div class="swatch" style="background:#EFEDE4"><span class="swatch-label">#EFEDE4</span></div>
+        <div class="swatch" style="background:#DDE3D5"><span class="swatch-label">#DDE3D5</span></div>
+        <div class="swatch" style="background:#3A4035"><span class="swatch-label">#3A4035</span></div>
+        <div class="swatch" style="background:#A85A3C"><span class="swatch-label">#A85A3C</span></div>
+        <div class="swatch" style="background:#7A8270"><span class="swatch-label">#7A8270</span></div>
+        <div class="swatch" style="background:#C5CCB8"><span class="swatch-label">#C5CCB8</span></div>
+      </div>
+    </div>
+    <div class="mini-slide" style="background:#EFEDE4; color:#3A4035;">
+      <div class="mini-slide__topline" style="color:#7A8270;">● PENSIERI IN PILLOLE</div>
+      <div class="mini-slide__body">
+        La <span class="mini-slide__hl" style="background:#A85A3C; color:#EFEDE4;">lentezza</span> è<br>
+        una forma di<br>
+        <span class="mini-slide__soft" style="background:#DDE3D5;">resistenza</span>
+      </div>
+      <div class="mini-slide__footer-line" style="background:#C5CCB8;"></div>
+      <div class="mini-slide__footer" style="color:#7A8270;"><span>Maurizio Pelizzone</span><span>02/15</span></div>
+    </div>
+  </div>
+
+  <!-- 4. MOCHA GOLD -->
+  <div class="palette-card">
+    <div class="palette-header">
+      <span class="palette-name">4. Mocha Gold</span>
+      <span class="palette-id">system-mocha-gold</span>
+    </div>
+    <p class="palette-desc">Marrone scuro caldo con accento ocra-oro. Dark-mode alternativo, caldo e ricco. Pensata per food, lifestyle premium, contenuti serali.</p>
+    <div class="swatch-row">
+      <div class="swatches">
+        <div class="swatch" style="background:#1F1611"><span class="swatch-label">#1F1611</span></div>
+        <div class="swatch" style="background:#2E241D"><span class="swatch-label">#2E241D</span></div>
+        <div class="swatch" style="background:#F4EBD9"><span class="swatch-label">#F4EBD9</span></div>
+        <div class="swatch" style="background:#D4A85C"><span class="swatch-label">#D4A85C</span></div>
+        <div class="swatch" style="background:rgba(244,235,217,0.45)"><span class="swatch-label">muted</span></div>
+        <div class="swatch" style="background:rgba(244,235,217,0.18)"><span class="swatch-label">line</span></div>
+      </div>
+    </div>
+    <div class="mini-slide" style="background:#1F1611; color:#F4EBD9;">
+      <div class="mini-slide__topline" style="color:rgba(244,235,217,0.55);">● PENSIERI IN PILLOLE</div>
+      <div class="mini-slide__body">
+        Le idee migliori<br>
+        nascono di <span class="mini-slide__hl" style="background:#D4A85C; color:#1F1611;">notte</span>,<br>
+        a <span class="mini-slide__soft" style="background:#2E241D;">voce bassa</span>
+      </div>
+      <div class="mini-slide__footer-line" style="background:rgba(244,235,217,0.18);"></div>
+      <div class="mini-slide__footer"><span>Maurizio Pelizzone</span><span>02/15</span></div>
+    </div>
+  </div>
+
+  <!-- 5. CLOUD COBALT -->
+  <div class="palette-card">
+    <div class="palette-header">
+      <span class="palette-name">5. Cloud Cobalt</span>
+      <span class="palette-id">system-cloud-cobalt</span>
+    </div>
+    <p class="palette-desc">Cloud Dancer (Pantone 2026) crema pulito con accento cobalto saturo. Tipografico, professionale, pop pulito. Pensata per B2B, fintech, editoria tech.</p>
+    <div class="swatch-row">
+      <div class="swatches">
+        <div class="swatch" style="background:#F4F0E8"><span class="swatch-label">#F4F0E8</span></div>
+        <div class="swatch" style="background:#E5DFD2"><span class="swatch-label">#E5DFD2</span></div>
+        <div class="swatch" style="background:#0F172A"><span class="swatch-label">#0F172A</span></div>
+        <div class="swatch" style="background:#2547D0"><span class="swatch-label">#2547D0</span></div>
+        <div class="swatch" style="background:#6A6F7A"><span class="swatch-label">#6A6F7A</span></div>
+        <div class="swatch" style="background:#CCC6B7"><span class="swatch-label">#CCC6B7</span></div>
+      </div>
+    </div>
+    <div class="mini-slide" style="background:#F4F0E8; color:#0F172A;">
+      <div class="mini-slide__topline" style="color:#6A6F7A;">● PENSIERI IN PILLOLE</div>
+      <div class="mini-slide__body">
+        Il <span class="mini-slide__hl" style="background:#2547D0; color:#F4F0E8;">vincolo</span><br>
+        rende possibile<br>
+        la <span class="mini-slide__soft" style="background:#E5DFD2;">creatività</span>
+      </div>
+      <div class="mini-slide__footer-line" style="background:#CCC6B7;"></div>
+      <div class="mini-slide__footer" style="color:#6A6F7A;"><span>Maurizio Pelizzone</span><span>02/15</span></div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

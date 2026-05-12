@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.1.0] — 2026-05-12
+
+### Added
+- 3 nuove palette di sistema in `builtinPalettes.js`:
+  - **Midnight Indigo** (`system-midnight-indigo`) — indigo notturno con accento viola elettrico
+  - **Mocha Gold** (`system-mocha-gold`) — marrone scuro caldo con accento ocra-oro
+  - **Cloud Cobalt** (`system-cloud-cobalt`) — crema Pantone 2026 con accento cobalto
+- `docs/palette-preview.html`: pagina di anteprima visuale delle palette candidate (5 proposte iniziali, 3 selezionate)
+
+---
+
 ## [1.0.0] — 2026-05-11
 
 ### Added
