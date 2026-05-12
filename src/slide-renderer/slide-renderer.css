@@ -139,6 +139,52 @@
   pointer-events: none;
 }
 
+/* === QUOTE === */
+/* Riusa .slide__body--archivo/fraunces e --xl/lg/md per font e size.
+   Il modifier --quote attiva la struttura "testo + attribuzione". */
+.slide__body--quote {
+  display: flex;
+  flex-direction: column;
+}
+.slide__quote-text {
+  /* Eredita font, size, letter-spacing e line-height dal parent .slide__body--archivo/fraunces */
+}
+.slide__qmark {
+  font-family: 'Fraunces', serif;
+  font-weight: 900;
+  font-style: normal;
+  font-variation-settings: "opsz" 144;
+  color: var(--slide-accent);
+  display: inline-block;
+  line-height: 0;
+  vertical-align: -0.08em;
+}
+.slide__qmark--open  { margin-right: 0.04em; }
+.slide__qmark--close { margin-left:  0.04em; }
+
+.slide__quote-attr {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 30px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  color: var(--slide-muted);
+  margin-top: 56px;
+  line-height: 1.5;
+  text-transform: none; /* override eventuali letter-spacing del body */
+}
+.slide__quote-attr-author {
+  /* il "— " è gia nel JSX */
+}
+.slide__quote-attr-source {
+  font-family: 'Fraunces', serif;
+  font-style: italic;
+  font-weight: 400;
+  font-size: 26px;
+  color: var(--slide-muted);
+  opacity: 0.75;
+  letter-spacing: 0;
+}
+
 /* === CTA === */
 .slide__cta-row {
   display: flex; flex-direction: column;

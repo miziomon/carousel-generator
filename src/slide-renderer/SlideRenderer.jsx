@@ -3,12 +3,14 @@ import { CoverSlide } from './slideTypes/CoverSlide.jsx'
 import { StandardSlide } from './slideTypes/StandardSlide.jsx'
 import { DividerSlide } from './slideTypes/DividerSlide.jsx'
 import { CtaSlide } from './slideTypes/CtaSlide.jsx'
+import { QuoteSlide } from './slideTypes/QuoteSlide.jsx'
 
 const SLIDE_COMPONENTS = {
   cover: CoverSlide,
   standard: StandardSlide,
   divider: DividerSlide,
   cta: CtaSlide,
+  quote: QuoteSlide,
 }
 
 /**

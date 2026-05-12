@@ -1,5 +1,25 @@
 # Changelog
 
+## [1.3.0] — 2026-05-12
+
+### Added
+- **Nuovo tipo slide `quote`** — citazioni/aforismi con layout "Inline Editorial":
+  - Testo in font primario (Archivo Black / Fraunces selezionabile) con virgolette tipografiche `“ ”` in accent color come delimitatori inline.
+  - Tag inline `[hl]`, `[soft]`, `[c]`, `[u]`, `[em]` supportati come per le slide standard.
+  - Dimensioni `xl` / `lg` / `md` selezionabili (stesso registro delle slide standard).
+  - Attribuzione opzionale: campo `author` (max 80 char) preceduto da em-dash `—`, e campo `source` (max 120 char) in corsivo Fraunces sotto l'autore. Se entrambi assenti, l'intero blocco di attribuzione non viene renderizzato.
+  - Smart quotes: i caratteri `"` e `'` in `author` / `source` vengono convertiti automaticamente nei corrispettivi tipografici curvi (`“ ” ‘ ’`).
+- Voce "Citazione" nel menu "Aggiungi slide" dell'header e nel selettore tipo dell'EditModal.
+- Preset `src/assets/presets/quote.json` per i nuovi slide quote.
+- `migrateToType` in EditModal gestisce la conversione da/verso `quote` con backup dei campi incompatibili in `_note_autore`.
+- `normalizeMinimalCarousel` riempie i default per slide quote (author/source → null se assenti, size → "lg").
+- `docs/quote-slide-preview.html`: pagina di anteprima visuale dei 3 layout candidati (Classic, Inline, Asymmetric); è stato implementato Inline Editorial.
+
+### Changed
+- M10 (warning leggibilità) si applica automaticamente anche alle slide quote: usa gli stessi `CHAR_LIMITS` (xl: 80, lg: 120, md: 200).
+
+---
+
 ## [1.2.0] — 2026-05-12
 
 ### Added

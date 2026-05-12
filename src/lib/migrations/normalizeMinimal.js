@@ -102,6 +102,15 @@ function normalizeSlide(slide, index) {
     return out
   }
 
+  if (type === 'quote') {
+    return {
+      ...base,
+      size:   slide.size ?? 'lg',
+      author: slide.author ?? null,
+      source: slide.source ?? null,
+    }
+  }
+
   // standard
   return { ...base, size: slide.size ?? 'lg' }
 }

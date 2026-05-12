@@ -13,6 +13,7 @@ const SLIDE_TYPES = [
   { id: 'cover',    label: 'Cover' },
   { id: 'standard', label: 'Standard' },
   { id: 'divider',  label: 'Divisore' },
+  { id: 'quote',    label: 'Citazione' },
   { id: 'cta',      label: 'Call to action' },
 ]
 

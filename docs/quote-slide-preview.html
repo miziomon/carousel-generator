@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<title>Anteprima slide "quote" — 3 layout proposti</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #f5f5f5;
+    padding: 32px;
+    color: #222;
+  }
+  h1 { font-size: 22px; margin-bottom: 6px; }
+  .lead { color: #666; margin-bottom: 32px; font-size: 14px; max-width: 680px; line-height: 1.5; }
+  .layout-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+    gap: 28px;
+  }
+  .layout-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  .layout-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 6px;
+  }
+  .layout-name { font-size: 17px; font-weight: 700; }
+  .layout-id { font-family: monospace; font-size: 11px; color: #999; }
+  .layout-desc {
+    font-size: 13px;
+    color: #555;
+    margin-bottom: 20px;
+    line-height: 1.5;
+  }
+  .layout-pros {
+    background: #f8f8f5;
+    padding: 10px 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    color: #555;
+    margin-top: 16px;
+    line-height: 1.5;
+  }
+  .layout-pros strong { color: #333; }
+
+  /* ─── Mini-slide base (riproduce palette system-tech-dark) ─────────────── */
+  .slide {
+    aspect-ratio: 1;
+    background: #0a0e1a;
+    color: #e8e8e8;
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+    padding: 36px 32px;
+    display: flex;
+    flex-direction: column;
+  }
+  .slide__topline {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(232,232,232,0.45);
+    margin-bottom: 4px;
+  }
+  .slide__footer {
+    position: absolute;
+    bottom: 22px;
+    left: 32px;
+    right: 32px;
+    display: flex;
+    justify-content: space-between;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    color: rgba(232,232,232,0.45);
+  }
+  .slide__footer-line {
+    position: absolute;
+    left: 32px;
+    right: 32px;
+    bottom: 38px;
+    height: 1px;
+    background: rgba(232,232,232,0.18);
+  }
+
+  /* ─── Layout 1: CLASSIC PULL-QUOTE ─────────────────────────────────────── */
+  .slide--classic .quote-mark {
+    font-family: 'Georgia', serif;
+    font-size: 120px;
+    line-height: 0.6;
+    color: #00ffaa;
+    margin-top: 18px;
+    margin-bottom: -8px;
+    user-select: none;
+  }
+  .slide--classic .quote-text {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Georgia', serif;
+    font-style: italic;
+    font-size: 28px;
+    line-height: 1.35;
+    text-align: center;
+    padding: 0 16px;
+    margin-top: -12px;
+  }
+  .slide--classic .quote-attr {
+    text-align: right;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: rgba(232,232,232,0.6);
+    letter-spacing: 0.04em;
+    margin-bottom: 24px;
+  }
+  .slide--classic .quote-attr-sep {
+    width: 40px;
+    height: 1px;
+    background: #00ffaa;
+    margin: 0 0 8px auto;
+  }
+
+  /* ─── Layout 2: INLINE EDITORIAL ───────────────────────────────────────── */
+  .slide--inline .quote-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-top: 8px;
+  }
+  .slide--inline .quote-text {
+    font-family: 'Arial Black', sans-serif;
+    font-size: 32px;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+  }
+  .slide--inline .quote-text .qmark {
+    color: #00ffaa;
+    font-family: 'Georgia', serif;
+    font-style: normal;
+    font-size: 0.9em;
+    line-height: 1;
+    vertical-align: -0.05em;
+  }
+  .slide--inline .quote-attr {
+    margin-top: 24px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: rgba(232,232,232,0.55);
+    letter-spacing: 0.04em;
+  }
+  .slide--inline .quote-attr-source {
+    color: rgba(232,232,232,0.4);
+    font-style: italic;
+  }
+
+  /* ─── Layout 3: ASYMMETRIC MODERN ──────────────────────────────────────── */
+  .slide--asym .watermark {
+    position: absolute;
+    top: 20px;
+    right: 28px;
+    font-family: 'Georgia', serif;
+    font-size: 220px;
+    line-height: 0.7;
+    color: #00ffaa;
+    opacity: 0.12;
+    user-select: none;
+    pointer-events: none;
+  }
+  .slide--asym .accent-bar {
+    position: absolute;
+    top: 36%;
+    left: 0;
+    width: 4px;
+    height: 28%;
+    background: #00ffaa;
+  }
+  .slide--asym .quote-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-end;
+    text-align: right;
+    margin-top: 8px;
+    margin-right: 4px;
+    z-index: 1;
+  }
+  .slide--asym .quote-text {
+    font-family: 'Georgia', serif;
+    font-style: italic;
+    font-size: 30px;
+    line-height: 1.3;
+    max-width: 90%;
+  }
+  .slide--asym .quote-attr {
+    align-self: flex-start;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: rgba(232,232,232,0.55);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    z-index: 1;
+  }
+</style>
+</head>
+<body>
+
+<h1>3 layout proposti per il nuovo tipo slide <code style="font-size:0.85em;background:#eee;padding:2px 8px;border-radius:4px;">quote</code></h1>
+<p class="lead">
+  Mini-slide rese con la palette <strong>Tech Dark</strong>. La stessa citazione è renderizzata nei 3 layout per facilitare il confronto. Sotto ogni anteprima trovi i punti di forza e dove ciascuna proposta funziona meglio.
+</p>
+
+<div class="layout-grid">
+
+  <!-- ════════════════════ 1. CLASSIC PULL-QUOTE ════════════════════════ -->
+  <div class="layout-card">
+    <div class="layout-header">
+      <span class="layout-name">1. Classic Pull-Quote</span>
+      <span class="layout-id">variant: classic</span>
+    </div>
+    <p class="layout-desc">
+      Grande virgoletta tipografica nell'angolo, citazione centrata in serif corsivo, attribuzione a destra con piccola riga di separazione in accent. Sensazione editoriale tradizionale ma raffinata — la struttura più riconoscibile per una citazione.
+    </p>
+    <div class="slide slide--classic">
+      <div class="slide__topline">● Pensieri in pillole</div>
+      <div class="quote-mark">"</div>
+      <div class="quote-text">
+        L'eleganza è l'unica bellezza che non sfiorisce mai.
+      </div>
+      <div class="quote-attr">
+        <div class="quote-attr-sep"></div>
+        Audrey Hepburn
+      </div>
+      <div class="slide__footer-line"></div>
+      <div class="slide__footer"><span>Maurizio Pelizzone</span><span>04/15</span></div>
+    </div>
+    <div class="layout-pros">
+      <strong>Quando usarlo:</strong> citazioni brevi (1-2 righe), aforismi netti. <br>
+      <strong>Forza:</strong> il segno tipografico (") funziona come icona visiva forte ed è universalmente leggibile come "citazione".
+    </div>
+  </div>
+
+  <!-- ════════════════════ 2. INLINE EDITORIAL ══════════════════════════ -->
+  <div class="layout-card">
+    <div class="layout-header">
+      <span class="layout-name">2. Inline Editorial</span>
+      <span class="layout-id">variant: inline</span>
+    </div>
+    <p class="layout-desc">
+      Citazione in font primario (Archivo Black, come le standard) con virgolette inline più piccole che fanno da delimitatori del testo. Attribuzione con em-dash e fonte opzionale in corsivo. Coerente visivamente con le altre slide del carosello.
+    </p>
+    <div class="slide slide--inline">
+      <div class="slide__topline">● Pensieri in pillole</div>
+      <div class="quote-body">
+        <div class="quote-text">
+          <span class="qmark">"</span>L'eleganza è<br>
+          l'unica bellezza che<br>
+          non sfiorisce mai.<span class="qmark">"</span>
+        </div>
+        <div class="quote-attr">
+          — Audrey Hepburn<br>
+          <span class="quote-attr-source">da un'intervista, 1953</span>
+        </div>
+      </div>
+      <div class="slide__footer-line"></div>
+      <div class="slide__footer"><span>Maurizio Pelizzone</span><span>04/15</span></div>
+    </div>
+    <div class="layout-pros">
+      <strong>Quando usarlo:</strong> citazioni di 2-4 righe, contenuto autorale forte. <br>
+      <strong>Forza:</strong> massima coerenza con le slide "standard" — la citazione si integra nel flow senza rompere il ritmo visivo del carosello.
+    </div>
+  </div>
+
+  <!-- ════════════════════ 3. ASYMMETRIC MODERN ═════════════════════════ -->
+  <div class="layout-card">
+    <div class="layout-header">
+      <span class="layout-name">3. Asymmetric Modern</span>
+      <span class="layout-id">variant: asymmetric</span>
+    </div>
+    <p class="layout-desc">
+      Virgoletta gigante in trasparenza come watermark, citazione allineata a destra in serif corsivo, barra verticale accent a sinistra, attribuzione in basso a sinistra in monospace small-caps. Composizione asimmetrica e contemporanea.
+    </p>
+    <div class="slide slide--asym">
+      <div class="slide__topline">● Pensieri in pillole</div>
+      <div class="watermark">"</div>
+      <div class="accent-bar"></div>
+      <div class="quote-body">
+        <div class="quote-text">
+          L'eleganza è<br>
+          l'unica bellezza<br>
+          che non sfiorisce<br>
+          mai.
+        </div>
+      </div>
+      <div class="quote-attr">— Audrey Hepburn</div>
+      <div class="slide__footer-line"></div>
+      <div class="slide__footer"><span>Maurizio Pelizzone</span><span>04/15</span></div>
+    </div>
+    <div class="layout-pros">
+      <strong>Quando usarlo:</strong> citazioni d'effetto, copertine di sezione, momenti di pausa nel carosello. <br>
+      <strong>Forza:</strong> visivamente memorabile e moderno, spezza il ritmo delle altre slide — perfetto per fare da "respiro" visivo tra due sezioni dense.
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

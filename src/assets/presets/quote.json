@@ -1,0 +1,12 @@
+{
+  "type": "quote",
+  "kicker": null,
+  "font": "archivo",
+  "size": "lg",
+  "lines": [
+    "La tua citazione qui."
+  ],
+  "author": "Autore",
+  "source": null,
+  "_note_autore": ""
+}

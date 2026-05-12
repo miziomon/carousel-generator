@@ -14,6 +14,7 @@ const TYPE_OPTIONS = [
   { value: 'cover',    label: 'Cover' },
   { value: 'standard', label: 'Standard' },
   { value: 'divider',  label: 'Divisore' },
+  { value: 'quote',    label: 'Citazione' },
   { value: 'cta',      label: 'Call to action' },
 ]
 
@@ -79,6 +80,20 @@ function migrateToType(current, newType) {
         updated.lines = lines.slice(0, 2)
       }
     }
+  } else if (newType === 'quote') {
+    updated.size = current.size === 'cover' ? 'lg' : (current.size ?? 'lg')
+    if (current.type === 'cta') {
+      if (current.cta_items?.length) note = `[cta backup] ${current.cta_items.join(' | ')}\n${note}`
+      updated.lines = ['La tua citazione qui.']
+      delete updated.cta_items
+    } else {
+      updated.lines = current.lines ?? ['']
+    }
+    if (updated.author === undefined) updated.author = current.author ?? null
+    if (updated.source === undefined) updated.source = current.source ?? null
+    delete updated.divider_number
+    delete updated.divider_label
+    delete updated.show_swipe_arrow
   } else if (newType === 'cta') {
     updated.size = null
     if (current.lines?.join('').trim()) {
@@ -89,6 +104,14 @@ function migrateToType(current, newType) {
     delete updated.divider_number
     delete updated.divider_label
     delete updated.size
+    delete updated.author
+    delete updated.source
+  }
+
+  // Pulizia author/source quando il nuovo tipo non e' quote
+  if (newType !== 'quote') {
+    delete updated.author
+    delete updated.source
   }
 
   updated._note_autore = note.trim()
@@ -130,6 +153,7 @@ export function EditModal({ slide, theme, total, onSave, onCancel }) {
   const isCover = draft.type === 'cover'
   const isDivider = draft.type === 'divider'
   const isCta = draft.type === 'cta'
+  const isQuote = draft.type === 'quote'
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', gap: 16 }}>
@@ -213,6 +237,28 @@ export function EditModal({ slide, theme, total, onSave, onCancel }) {
                   value={draft.divider_label ?? ''}
                   onChange={(v) => set('divider_label', v || null)}
                   placeholder="es. Introduzione"
+                />
+              </FieldGroup>
+            </>
+          )}
+
+          {/* Campi quote */}
+          {isQuote && (
+            <>
+              <FieldGroup label="Autore (opzionale)" help="Verra' mostrato sotto la citazione preceduto da em-dash (—). Max 80 caratteri.">
+                <TextInput
+                  value={draft.author ?? ''}
+                  onChange={(v) => set('author', v || null)}
+                  placeholder="es. Audrey Hepburn"
+                  maxLength={80}
+                />
+              </FieldGroup>
+              <FieldGroup label="Fonte (opzionale)" help="Contesto della citazione (es. libro, intervista). Mostrata in corsivo. Max 120 caratteri.">
+                <TextInput
+                  value={draft.source ?? ''}
+                  onChange={(v) => set('source', v || null)}
+                  placeholder="es. da un'intervista, 1953"
+                  maxLength={120}
                 />
               </FieldGroup>
             </>

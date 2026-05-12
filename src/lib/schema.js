@@ -93,12 +93,22 @@ const CtaSlideSchema = z.object({
   cta_items: z.array(z.string()).min(1, 'Almeno 1 item in cta_items e obbligatorio'),
 })
 
+const QuoteSlideSchema = z.object({
+  ...SlideBaseFields,
+  type:   z.literal('quote'),
+  size:   z.enum(['xl', 'lg', 'md']),
+  lines:  z.array(z.string()).min(1, 'Almeno 1 riga in lines e obbligatoria'),
+  author: z.string().max(80, 'author: max 80 caratteri').nullable().optional(),
+  source: z.string().max(120, 'source: max 120 caratteri').nullable().optional(),
+})
+
 // ─── Unione discriminata ──────────────────────────────────────────────────────
 const SlideSchema = z.discriminatedUnion('type', [
   CoverSlideSchema,
   StandardSlideSchema,
   DividerSlideSchema,
   CtaSlideSchema,
+  QuoteSlideSchema,
 ])
 
 // ─── Carousel completo ────────────────────────────────────────────────────────

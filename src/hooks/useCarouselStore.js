@@ -10,8 +10,15 @@ import presetCover from '../assets/presets/cover.json'
 import presetStandard from '../assets/presets/standard.json'
 import presetDivider from '../assets/presets/divider.json'
 import presetCta from '../assets/presets/cta.json'
+import presetQuote from '../assets/presets/quote.json'
 
-const PRESETS = { cover: presetCover, standard: presetStandard, divider: presetDivider, cta: presetCta }
+const PRESETS = {
+  cover: presetCover,
+  standard: presetStandard,
+  divider: presetDivider,
+  cta: presetCta,
+  quote: presetQuote,
+}
 const HISTORY_LIMIT = 50
 
 // ── Helpers generici ──────────────────────────────────────────────────────────
