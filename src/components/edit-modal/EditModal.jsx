@@ -7,7 +7,7 @@ import { Button } from '../ui/Button.jsx'
 import './edit-modal.css'
 
 // Dimensioni dell'anteprima live (slide 1080×1080 scalata)
-const PREVIEW_SCALE = 0.38
+const PREVIEW_SCALE = 0.36
 const PREVIEW_SIZE = Math.round(1080 * PREVIEW_SCALE) // 410px
 
 const TYPE_OPTIONS = [

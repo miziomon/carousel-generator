@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { CarouselSchema } from '../lib/schema.js'
+import { CarouselSchema, ThemeSchema } from '../lib/schema.js'
 import { defaultCarousel } from '../lib/defaultCarousel.js'
 
 describe('CarouselSchema', () => {
@@ -88,5 +88,45 @@ describe('CarouselSchema', () => {
       ],
     }
     expect(CarouselSchema.safeParse(good).success).toBe(true)
+  })
+})
+
+describe('ThemeSchema — template_id', () => {
+  const baseTheme = {
+    palette_id: 'system-tech-dark',
+    palette: {
+      background: '#0a0e1a',
+      surface:    '#1a1e2a',
+      foreground: '#e8e8e8',
+      accent:     '#00ffaa',
+      muted:      'rgba(232,232,232,0.45)',
+      line:       'rgba(232,232,232,0.18)',
+    },
+    header: { kicker_default: '', show_topline: true, show_dot: true, show_meta_number: true },
+    footer: { name: '', show_separator_line: true, show_meta_number: true },
+    fonts:  { primary: 'Archivo Black', secondary: 'Fraunces', mono: 'JetBrains Mono' },
+  }
+
+  it('accetta template_id esplicito', () => {
+    const result = ThemeSchema.safeParse({ ...baseTheme, template_id: 'system-editorial-mark' })
+    expect(result.success).toBe(true)
+    expect(result.data.template_id).toBe('system-editorial-mark')
+  })
+
+  it('applica default template_id quando assente', () => {
+    const result = ThemeSchema.safeParse(baseTheme)
+    expect(result.success).toBe(true)
+    expect(result.data.template_id).toBe('system-editorial-mark')
+  })
+
+  it('rifiuta template_id stringa vuota', () => {
+    const result = ThemeSchema.safeParse({ ...baseTheme, template_id: '' })
+    expect(result.success).toBe(false)
+  })
+
+  it('il defaultCarousel ha template_id valido', () => {
+    const result = ThemeSchema.safeParse(defaultCarousel.theme)
+    expect(result.success).toBe(true)
+    expect(result.data.template_id).toBe('system-editorial-mark')
   })
 })

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { parseInlineTags, parseLines } from '../slide-renderer/inlineTags.jsx'
+import { parseInlineTags, parseLines, DEFAULT_CLASS_MAP } from '../slide-renderer/inlineTags.jsx'
 
 describe('parseInlineTags', () => {
   it('restituisce testo puro senza tag', () => {
@@ -59,6 +59,37 @@ describe('parseInlineTags', () => {
     expect(result).toHaveLength(2)
     expect(result[0].props.className).toBe('hl-block')
     expect(result[1].props.className).toBe('hl-color')
+  })
+})
+
+describe('parseInlineTags — classMap personalizzato', () => {
+  const CUSTOM_MAP = {
+    hl:   'editorial__hl-block',
+    soft: 'editorial__hl-soft',
+    c:    'editorial__hl-color',
+    u:    'editorial__hl-under',
+  }
+
+  it('usa classMap custom per le classi degli span', () => {
+    const result = parseInlineTags('[hl]verde[/hl]', '', CUSTOM_MAP)
+    expect(result[0].props.className).toBe('editorial__hl-block')
+  })
+
+  it('usa classMap custom per tutti i tag supportati', () => {
+    const result = parseInlineTags('[soft]a[/soft][c]b[/c][u]c[/u]', '', CUSTOM_MAP)
+    expect(result[0].props.className).toBe('editorial__hl-soft')
+    expect(result[1].props.className).toBe('editorial__hl-color')
+    expect(result[2].props.className).toBe('editorial__hl-under')
+  })
+
+  it('[em] usa sempre <em> indipendentemente dal classMap', () => {
+    const result = parseInlineTags('[em]corsivo[/em]', '', CUSTOM_MAP)
+    expect(result[0].type).toBe('em')
+  })
+
+  it('senza classMap usa DEFAULT_CLASS_MAP (retrocompatibilità)', () => {
+    const result = parseInlineTags('[hl]default[/hl]')
+    expect(result[0].props.className).toBe(DEFAULT_CLASS_MAP.hl)
   })
 })
 

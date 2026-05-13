@@ -28,6 +28,8 @@ export const PaletteLibrarySchema = z.array(PaletteSchema)
 
 // ─── Theme ────────────────────────────────────────────────────────────────────
 const ThemeSchema = z.object({
+  // ID del template visivo. Sempre presente: la migrazione garantisce il valore.
+  template_id: z.string().min(1).default('system-editorial-mark'),
   // Riferimento alla palette di origine. null = palette completamente custom
   // o importata senza corrispondenza in libreria.
   palette_id: z.string().nullable().default(null),

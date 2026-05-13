@@ -7,6 +7,7 @@ export const defaultCarousel = {
   },
   title: 'Pensieri in pillole',
   theme: {
+    template_id: 'system-editorial-mark',
     palette_id: 'system-tech-dark',
     palette: {
       background: '#0a0e1a',
