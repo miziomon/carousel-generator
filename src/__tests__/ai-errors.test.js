@@ -32,7 +32,7 @@ describe('mapHttpErrorToApiError', () => {
   it('401 → UNAUTHORIZED', () => {
     const err = mapHttpErrorToApiError(401, null)
     expect(err.code).toBe('UNAUTHORIZED')
-    expect(err.message).toContain('VITE_AI_API_TOKEN')
+    expect(err.message).toContain('VITE_API_AUTH_TOKEN')
   })
 
   it('413 → PAYLOAD_TOO_LARGE', () => {

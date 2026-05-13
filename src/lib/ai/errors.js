@@ -18,7 +18,7 @@ export function mapHttpErrorToApiError(status, body) {
       )
     case 401:
       return new ApiError(
-        'Token di autenticazione non valido. Verifica VITE_AI_API_TOKEN nel file .env',
+        'Token di autenticazione non valido. Verifica VITE_API_AUTH_TOKEN nel file .env',
         'UNAUTHORIZED',
         body
       )
