@@ -83,12 +83,28 @@ const CLOUD_COBALT = Object.freeze({
   }),
 })
 
+const BOLD_YELLOW = Object.freeze({
+  id: 'system-bold-yellow',
+  name: 'Bold Yellow',
+  description: 'Giallo + nero con accento bianco. Manifesto, massima visibilità, scroll-stopper. Accoppiamento naturale con Bold Corner.',
+  origin: 'system',
+  colors: Object.freeze({
+    background: '#f5e544',
+    surface:    '#ede037',
+    foreground: '#0a0a0a',
+    accent:     '#ffffff',
+    muted:      'rgba(10,10,10,0.5)',
+    line:       'rgba(10,10,10,0.25)',
+  }),
+})
+
 export const BUILTIN_PALETTES = Object.freeze([
   TECH_DARK,
   WARM_NEUTRAL,
   MIDNIGHT_INDIGO,
   MOCHA_GOLD,
   CLOUD_COBALT,
+  BOLD_YELLOW,
 ])
 
 // Map interna per lookup O(1) — non esposta direttamente
