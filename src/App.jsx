@@ -179,6 +179,9 @@ function AuthenticatedApp({ auth }) {
           open={true}
           onClose={() => setAiGeneratorOpen(false)}
           paletteLibrary={store.paletteLibrary}
+          carousel={store.carousel}
+          userId={auth.user?.userId}
+          onReplaceFromAi={store.replaceCarouselFromAi}
         />
       )}
 

@@ -1,5 +1,37 @@
 # Changelog
 
+## [1.10.0] — 2026-05-13
+
+### Added
+- **Integrazione API generazione AI** — il bottone "Genera carosello" diventa funzionante
+  - Chiamata `POST /chat/completions` (sincrona, stateless) con `force_json_response: true`
+  - URL derivato da `VITE_API_BASE_URL` + `'chat/completions'`; token via nuova variabile `VITE_AI_API_TOKEN`
+  - Se le variabili d'ambiente mancano, il bottone resta disabilitato con tooltip dedicato (app funziona comunque per editing manuale)
+  - **Few-shot dinamico**: il carosello corrente viene iniettato nel system prompt come esempio di stile (soglia minima 3 slide); strip automatico di `_note_autore`, `_ai_generation`, `id` prima della serializzazione
+  - `user_id` dell'utente loggato incluso nel payload per logging/billing lato backend
+  - Payload completo: `message`, `system_prompt`, `force_json_response`, `user_id`, `metadata` (`source`, `slide_count_requested`, `has_extra_instructions`, `input_chars`, `generation_id`)
+  - **Loading state**: spinner nel bottone + 5 messaggi rotanti ogni 3.5s con framer-motion `AnimatePresence`; tutti i campi del form disabilitati durante la generazione; la X del modale resta cliccabile
+  - **Validazione zod** della risposta: `GeneratedCarouselSchema` con `SlideSchema` esistente + vincoli cross-campo replicati (cover→1 riga, divider→≤2 righe, `num` unici)
+  - **Modale di conferma** "Sostituire il carosello attuale?" con metadati (numero slide, modello, token usati, JSON repair) + tasto Enter per confermare / Esc per annullare
+  - **Sostituzione con undo**: azione `REPLACE_CAROUSEL_FROM_AI` in `useCarouselStore` — preserva il theme corrente (palette, template, header, footer, font), rinumera le slide con `renumber` + `injectIds`, salva in history (Ctrl+Z funzionante)
+  - **Metadati `_ai_generation`** salvati nel carosello: `model`, `timestamp`, `input_chars`, `input_summary`, `usage`, `json_repaired`, `generation_id` — sopravvivono a export JSON e undo/redo
+  - **Blocco errore** con classificazione UX per tutti i codici HTTP (400/401/413/422/429/500) + errore rete + validazione schema fallita; `<details>` espandibili con dati tecnici; bottone Riprova per errori retentabili
+  - Toast di conferma "Carosello generato. Ctrl+Z per annullare." dopo sostituzione
+  - `AiGenerationSchema` opzionale aggiunto a `CarouselSchema` in `schema.js` per import/export backward-compatible
+
+### New files
+- `src/lib/ai/config.js` — `getAiConfig()`, `isAiConfigured()`
+- `src/lib/ai/errors.js` — `ApiError`, `mapHttpErrorToApiError`, `RETRYABLE_CODES`
+- `src/lib/ai/buildSystemPrompt.js` — iniezione few-shot nel template
+- `src/lib/ai/generateCarousel.js` — chiamata HTTP + parsing risposta
+- `src/lib/ai/validateGenerated.js` — validazione zod del carosello generato
+- `src/components/ai-generator/AiLoadingStatus.jsx` — messaggi rotanti durante la generazione
+- `src/components/ai-generator/AiErrorDisplay.jsx` — blocco errore con dettagli espandibili e Riprova
+- `src/components/ai-generator/AiConfirmReplaceModal.jsx` — modale di conferma con metadati
+- `src/__tests__/ai-errors.test.js` (14 test), `ai-buildSystemPrompt.test.js` (7 test), `ai-generateCarousel.test.js` (9 test), `ai-validateGenerated.test.js` (7 test)
+
+---
+
 ## [1.9.0] — 2026-05-13
 
 ### Added

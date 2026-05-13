@@ -418,6 +418,30 @@ function reducer(state, action) {
     case 'CLOSE_EDIT_PALETTE':
       return { ...state, ui: { ...state.ui, editingPaletteId: null } }
 
+    case 'REPLACE_CAROUSEL_FROM_AI': {
+      const { generated, meta } = action.payload
+      const newCarousel = {
+        ...state.carousel,
+        theme: state.carousel.theme,
+        _ai_generation: {
+          model: meta.model ?? null,
+          timestamp: Date.now(),
+          input_chars: meta.inputChars ?? null,
+          input_summary: generated._ai_generation?.input_summary ?? null,
+          usage: meta.usage ?? null,
+          json_repaired: meta.jsonRepaired ?? null,
+          generation_id: meta.generationId ?? null,
+        },
+        slides: renumber(injectIds(generated.slides)),
+      }
+      return {
+        ...state,
+        carousel: newCarousel,
+        history: pushHistory(state.history, state.carousel),
+        meta: { ...state.meta, isDirty: true },
+      }
+    }
+
     default:
       return state
   }
@@ -462,8 +486,11 @@ export function useCarouselStore() {
   const duplicatePalette = useCallback((paletteId, newName) => dispatch({ type: 'DUPLICATE_PALETTE', payload: { paletteId, newName } }), [])
   const deletePalette    = useCallback((paletteId)          => dispatch({ type: 'DELETE_PALETTE',    payload: { paletteId } }),          [])
   const importPalette    = useCallback((palette)            => dispatch({ type: 'IMPORT_PALETTE',    payload: { palette } }),            [])
-  const openEditPalette  = useCallback((paletteId)          => dispatch({ type: 'OPEN_EDIT_PALETTE', payload: { paletteId } }),          [])
-  const closeEditPalette = useCallback(()                   => dispatch({ type: 'CLOSE_EDIT_PALETTE' }),                                [])
+  const openEditPalette       = useCallback((paletteId)          => dispatch({ type: 'OPEN_EDIT_PALETTE', payload: { paletteId } }),          [])
+  const closeEditPalette      = useCallback(()                   => dispatch({ type: 'CLOSE_EDIT_PALETTE' }),                                [])
+
+  // ── Azione AI ────────────────────────────────────────────────────────────────
+  const replaceCarouselFromAi = useCallback((generated, meta)   => dispatch({ type: 'REPLACE_CAROUSEL_FROM_AI', payload: { generated, meta } }), [])
 
   return {
     // Stato
@@ -485,6 +512,8 @@ export function useCarouselStore() {
     importPalette, openEditPalette, closeEditPalette,
     // Azioni template
     applyTemplate, openTemplateManager, closeTemplateManager,
+    // Azione AI
+    replaceCarouselFromAi,
   }
 }
  

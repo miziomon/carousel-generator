@@ -114,13 +114,25 @@ const SlideSchema = z.discriminatedUnion('type', [
   QuoteSlideSchema,
 ])
 
+// ─── AI generation metadata ───────────────────────────────────────────────────
+export const AiGenerationSchema = z.object({
+  model:          z.string().optional(),
+  timestamp:      z.number().optional(),
+  input_chars:    z.number().nullable().optional(),
+  input_summary:  z.string().nullable().optional(),
+  usage:          z.any().nullable().optional(),
+  json_repaired:  z.enum(['none', 'local', 'llm']).nullable().optional(),
+  generation_id:  z.string().optional(),
+}).optional()
+
 // ─── Carousel completo ────────────────────────────────────────────────────────
 export const CarouselSchema = z
   .object({
-    _schema: z.object({ version: z.string(), description: z.string().optional() }).optional(),
-    title:   z.string().optional(),
-    theme:   ThemeSchema,
-    slides:  z.array(SlideSchema).min(1, 'Il carosello deve avere almeno 1 slide'),
+    _schema:        z.object({ version: z.string(), description: z.string().optional() }).optional(),
+    _ai_generation: AiGenerationSchema,
+    title:          z.string().optional(),
+    theme:          ThemeSchema,
+    slides:         z.array(SlideSchema).min(1, 'Il carosello deve avere almeno 1 slide'),
   })
   .superRefine((data, ctx) => {
     data.slides.forEach((slide, idx) => {

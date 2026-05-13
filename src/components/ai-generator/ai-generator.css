@@ -93,6 +93,241 @@
   cursor: not-allowed;
 }
 
+.ai-modal__btn-generate--loading {
+  cursor: wait;
+  opacity: 0.8;
+}
+
+/* ── Spinner inline nel bottone ──────────────────────────────────────────── */
+
+.ai-modal__spinner {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border: 2px solid rgba(10, 15, 30, 0.35);
+  border-top-color: #0a0f1e;
+  border-radius: 50%;
+  animation: ai-spin 0.7s linear infinite;
+  vertical-align: middle;
+  margin-right: 4px;
+}
+
+@keyframes ai-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Loading status sotto il footer ──────────────────────────────────────── */
+
+.ai-modal__loading-status {
+  display: flex;
+  justify-content: flex-end;
+  padding: 6px 0 0;
+  min-height: 20px;
+}
+
+.ai-modal__loading-message {
+  font-size: 0.78rem;
+  color: rgba(232, 232, 232, 0.4);
+  font-style: italic;
+}
+
+/* ── Blocco errore ────────────────────────────────────────────────────────── */
+
+.ai-modal__error {
+  margin: 12px 0 0;
+  padding: 12px 14px;
+  background: rgba(255, 80, 80, 0.07);
+  border: 1px solid rgba(255, 80, 80, 0.25);
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ai-modal__error-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.ai-modal__error-icon {
+  font-size: 0.95rem;
+  color: #ff8080;
+  flex-shrink: 0;
+  line-height: 1.5;
+}
+
+.ai-modal__error-message {
+  flex: 1;
+  font-size: 0.875rem;
+  color: rgba(232, 232, 232, 0.85);
+  line-height: 1.5;
+}
+
+.ai-modal__error-dismiss {
+  background: none;
+  border: none;
+  color: rgba(232, 232, 232, 0.35);
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 0 2px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+.ai-modal__error-dismiss:hover {
+  color: rgba(232, 232, 232, 0.7);
+}
+
+.ai-modal__error-details {
+  font-size: 0.8rem;
+}
+
+.ai-modal__error-summary {
+  color: rgba(232, 232, 232, 0.45);
+  cursor: pointer;
+  user-select: none;
+}
+.ai-modal__error-summary:hover {
+  color: rgba(232, 232, 232, 0.7);
+}
+
+.ai-modal__error-body {
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ai-modal__error-code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  color: rgba(232, 232, 232, 0.4);
+}
+
+.ai-modal__error-raw {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 4px;
+  padding: 8px 10px;
+  overflow: auto;
+  max-height: 160px;
+  color: rgba(232, 232, 232, 0.7);
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.ai-modal__error-zod-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ai-modal__error-zod-item {
+  font-size: 0.78rem;
+  color: rgba(232, 232, 232, 0.65);
+}
+
+.ai-modal__error-cause {
+  font-size: 0.78rem;
+  color: rgba(232, 232, 232, 0.5);
+}
+
+.ai-modal__error-retry {
+  align-self: flex-start;
+  background: none;
+  border: 1px solid rgba(255, 80, 80, 0.35);
+  border-radius: 5px;
+  padding: 5px 12px;
+  font-size: 0.8rem;
+  color: rgba(232, 232, 232, 0.7);
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+.ai-modal__error-retry:hover {
+  border-color: rgba(255, 80, 80, 0.6);
+  color: rgba(232, 232, 232, 0.9);
+}
+
+/* ── Modale conferma sostituzione ────────────────────────────────────────── */
+
+.ai-confirm {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 4px 0;
+}
+
+.ai-confirm__text {
+  margin: 0;
+  font-size: 0.9rem;
+  color: rgba(232, 232, 232, 0.8);
+  line-height: 1.6;
+}
+
+.ai-confirm__text kbd {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+  padding: 1px 5px;
+}
+
+.ai-confirm__meta {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  padding: 10px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.8rem;
+  color: rgba(232, 232, 232, 0.6);
+}
+
+.ai-confirm__meta span {
+  font-weight: 600;
+  color: rgba(232, 232, 232, 0.45);
+}
+
+.ai-confirm__footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding-top: 4px;
+}
+
+.ai-confirm__btn-cancel {
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 6px;
+  padding: 7px 16px;
+  font-size: 0.875rem;
+  color: rgba(232, 232, 232, 0.7);
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+.ai-confirm__btn-cancel:hover {
+  border-color: rgba(255, 255, 255, 0.3);
+  color: rgba(232, 232, 232, 0.95);
+}
+
+.ai-confirm__btn-confirm {
+  background: #00ffaa;
+  border: none;
+  border-radius: 6px;
+  padding: 7px 18px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #0a0f1e;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+.ai-confirm__btn-confirm:hover {
+  opacity: 0.9;
+}
+
 /* ── Form campi ───────────────────────────────────────────────────────────── */
 
 .ai-form {

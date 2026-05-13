@@ -37,6 +37,7 @@ export function AiGeneratorForm({
   extraInstructions,
   onExtraChange,
   paletteCount,
+  disabled,
 }) {
   const textareaRef = useRef(null)
   const MAX_ROWS_HEIGHT = 20 * 24 // 20 righe * line-height ~24px
@@ -66,8 +67,8 @@ export function AiGeneratorForm({
           placeholder="Incolla qui il tuo testo..."
           value={postText}
           onChange={handlePostTextChange}
+          disabled={disabled}
           onKeyDown={(e) => {
-            // Cmd+Enter riservato alla futura integrazione — nessun comportamento per ora
             if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') e.preventDefault()
           }}
         />
@@ -82,7 +83,7 @@ export function AiGeneratorForm({
           Numero di slide
         </label>
         <p className="ai-form__help">Quante slide vuoi nel carosello finale</p>
-        <AiNumberSlider value={slideCount} onChange={onSlideCountChange} />
+        <AiNumberSlider value={slideCount} onChange={onSlideCountChange} disabled={disabled} />
       </div>
 
       {/* Campo 3: Istruzioni extra */}
@@ -100,6 +101,7 @@ export function AiGeneratorForm({
           placeholder="Es. 'Mantieni tono ironico nella chiusura', 'Evita riferimenti tecnici', 'La slide 1 deve essere una domanda'..."
           value={extraInstructions}
           onChange={(e) => onExtraChange(e.target.value)}
+          disabled={disabled}
         />
       </div>
 
