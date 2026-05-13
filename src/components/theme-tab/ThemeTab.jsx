@@ -1,6 +1,7 @@
 import { useState, useCallback, useMemo } from 'react'
 import { ColorPicker } from './ColorPicker.jsx'
 import { PaletteSelector } from './PaletteSelector.jsx'
+import { TemplateSelector } from './TemplateSelector.jsx'
 import { PaletteStatusBadge } from './PaletteStatusBadge.jsx'
 import { ContrastChecker } from './ContrastChecker.jsx'
 import { FieldGroup, TextInput, Toggle } from '../edit-modal/FieldGroup.jsx'
@@ -10,6 +11,7 @@ import { toast } from '../ui/Toast.jsx'
 import { SlideRenderer } from '../../slide-renderer/SlideRenderer.jsx'
 import { defaultCarousel } from '../../lib/defaultCarousel.js'
 import { colorsEqual } from '../../lib/palettes/colorUtils.js'
+import { TEMPLATES } from '../../slide-renderer/templates/registry.js'
 import './theme-tab.css'
 
 // Slide di esempio per l'anteprima del tema -- fissa, non modificabile
@@ -50,6 +52,8 @@ export function ThemeTab({
   resyncPalette,
   updatePaletteInline,
   openPaletteManager,
+  applyTemplate,
+  openTemplateManager,
 }) {
   const [showResetConfirm, setShowResetConfirm] = useState(false)
 
@@ -72,18 +76,53 @@ export function ThemeTab({
 
   const canResync = paletteStatus === 'modificata'
 
-  /**
-   * Wrapper di resyncPalette che emette un toast di conferma.
-   * Separato per non inquinare il JSX con logica extra inline.
-   */
   function handleResync() {
     resyncPalette()
     toast('Palette ri-sincronizzata')
   }
 
+  function handleApplyTemplate(templateId) {
+    applyTemplate(templateId)
+    const template = TEMPLATES.find((t) => t.id === templateId)
+    if (!template) return
+
+    const defaultPaletteId = template.default_palette_id
+    const suggestionNeeded = defaultPaletteId && defaultPaletteId !== theme.palette_id
+    const defaultPalette = suggestionNeeded
+      ? paletteLibrary.find((p) => p.id === defaultPaletteId)
+      : null
+
+    if (defaultPalette) {
+      toast(
+        `Template "${template.name}" applicato`,
+        'success',
+        { label: `Applica palette consigliata: ${defaultPalette.name}`, onClick: () => applyPalette(defaultPaletteId) }
+      )
+    } else {
+      toast(`Template "${template.name}" applicato`)
+    }
+  }
+
   return (
     <div className="theme-tab">
       <div className="theme-tab__form">
+
+        <section className="theme-tab__section">
+          <h3 className="theme-tab__section-title">Template</h3>
+          <div className="theme-tab__palette-header">
+            <TemplateSelector
+              currentId={theme.template_id}
+              onSelect={handleApplyTemplate}
+            />
+            <div className="theme-tab__palette-meta">
+              <div className="theme-tab__palette-actions" style={{ marginLeft: 0 }}>
+                <Button size="xs" variant="ghost" onClick={openTemplateManager}>
+                  Gestisci template...
+                </Button>
+              </div>
+            </div>
+          </div>
+        </section>
 
         <section className="theme-tab__section">
           <h3 className="theme-tab__section-title">Palette colori</h3>

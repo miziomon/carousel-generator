@@ -81,6 +81,7 @@ function buildInitialState() {
       selectedSlideIds: [],
       paletteManagerOpen: false,
       editingPaletteId: null,
+      templateManagerOpen: false,
     },
     history: {
       past: [],
@@ -310,6 +311,25 @@ function reducer(state, action) {
     case 'CLOSE_PALETTE_MANAGER':
       return { ...state, ui: { ...state.ui, paletteManagerOpen: false, editingPaletteId: null } }
 
+    // ── Azioni template ──────────────────────────────────────────────────────
+
+    case 'APPLY_TEMPLATE': {
+      const newTheme = { ...state.carousel.theme, template_id: action.payload.templateId }
+      const carousel = { ...state.carousel, theme: newTheme }
+      return {
+        ...state,
+        carousel,
+        history: pushHistory(state.history, state.carousel),
+        meta: { ...state.meta, isDirty: true },
+      }
+    }
+
+    case 'OPEN_TEMPLATE_MANAGER':
+      return { ...state, ui: { ...state.ui, templateManagerOpen: true } }
+
+    case 'CLOSE_TEMPLATE_MANAGER':
+      return { ...state, ui: { ...state.ui, templateManagerOpen: false } }
+
     // ── Azioni libreria palette (Fase 3) ─────────────────────────────────────
 
     case 'CREATE_PALETTE': {
@@ -431,6 +451,11 @@ export function useCarouselStore() {
   const openPaletteManager  = useCallback(()          => dispatch({ type: 'OPEN_PALETTE_MANAGER' }),                         [])
   const closePaletteManager = useCallback(()          => dispatch({ type: 'CLOSE_PALETTE_MANAGER' }),                        [])
 
+  // ── Azioni template (Fase 3) ──────────────────────────────────────────────
+  const applyTemplate        = useCallback((templateId) => dispatch({ type: 'APPLY_TEMPLATE',        payload: { templateId } }), [])
+  const openTemplateManager  = useCallback(()            => dispatch({ type: 'OPEN_TEMPLATE_MANAGER' }),                         [])
+  const closeTemplateManager = useCallback(()            => dispatch({ type: 'CLOSE_TEMPLATE_MANAGER' }),                        [])
+
   // ── Azioni libreria palette (Fase 3) ──────────────────────────────────────
   const createPalette    = useCallback((palette)            => dispatch({ type: 'CREATE_PALETTE',    payload: palette }),               [])
   const updatePalette    = useCallback((paletteId, patch)   => dispatch({ type: 'UPDATE_PALETTE',    payload: { paletteId, patch } }),   [])
@@ -458,6 +483,8 @@ export function useCarouselStore() {
     // Azioni libreria palette
     createPalette, updatePalette, duplicatePalette, deletePalette,
     importPalette, openEditPalette, closeEditPalette,
+    // Azioni template
+    applyTemplate, openTemplateManager, closeTemplateManager,
   }
 }
  

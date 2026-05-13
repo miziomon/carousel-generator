@@ -226,6 +226,28 @@
   border: 1px solid rgba(255, 255, 255, 0.12);
 }
 
+/* ── TemplateSelector ─────────────────────────────────────────────── */
+.template-selector__option {
+  flex-direction: column;
+  align-items: flex-start;
+  height: auto;
+  padding: 10px;
+}
+
+.template-selector__option-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 100%;
+}
+
+.template-selector__option-desc {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.4);
+  line-height: 1.4;
+  white-space: normal;
+}
+
 /* ── ContrastChecker ──────────────────────────────────────────────── */
 .contrast-checker {
   margin-top: 8px;

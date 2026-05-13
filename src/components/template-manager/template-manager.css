@@ -1,0 +1,81 @@
+.tmpl-manager {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 4px 0;
+}
+
+.tmpl-manager__intro {
+  font-size: 0.875rem;
+  color: rgba(232, 232, 232, 0.55);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.tmpl-manager__list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.tmpl-manager__row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  transition: border-color 0.15s;
+}
+
+.tmpl-manager__row--active {
+  border-color: rgba(0, 255, 170, 0.25);
+  background: rgba(0, 255, 170, 0.04);
+}
+
+.tmpl-manager__row-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.tmpl-manager__row-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.tmpl-manager__row-name {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: rgba(232, 232, 232, 0.95);
+}
+
+.tmpl-manager__row-desc {
+  font-size: 0.8rem;
+  color: rgba(232, 232, 232, 0.45);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.tmpl-manager__badge {
+  font-size: 0.7rem;
+  padding: 1px 6px;
+  border-radius: 3px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  flex-shrink: 0;
+  background: rgba(0, 255, 170, 0.15);
+  color: #00ffaa;
+  border: 1px solid rgba(0, 255, 170, 0.3);
+}
+
+.tmpl-manager__badge--system {
+  background: rgba(255, 200, 50, 0.15);
+  color: #ffc832;
+  border: 1px solid rgba(255, 200, 50, 0.3);
+}
