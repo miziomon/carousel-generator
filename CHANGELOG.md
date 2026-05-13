@@ -1,5 +1,95 @@
 # Changelog
 
+## [1.9.0] — 2026-05-13
+
+### Added
+- **Sistema di autenticazione OTP** — login wall completo (passwordless, senza JWT né cookie)
+  - Flusso: email → codice a 6 cifre inviato via backend → verifica → accesso
+  - `LoginScreen` full-screen sostituisce l'intera app per gli utenti non autenticati (gate a livello di root)
+  - `EmailStep`: input email con validazione regex client-side + chiamata `POST /otp-request`
+  - `OtpStep`: 6 input separati con auto-focus campo successivo, incolla da clipboard, reinvia codice
+  - Sessione persistita in `localStorage` alla chiave `carosello:user_session` (JSON `{ email, userId, role, plan }`)
+  - Profile fetch in background (non bloccante): `GET /profile/{userId}` aggiorna `role` e `plan`; fallisce silenziosamente
+  - Logout conserva la bozza del carosello (`carosello.draft.v1`) — rimuove solo la chiave di sessione
+  - `useAuth()` hook con `useReducer` indipendente dallo store carousel
+  - `AuthenticatedApp` estratto come componente separato per rispettare le regole dei hook React con il gate di autenticazione
+  - Bottone logout + email utente troncata nell'header (icona `LogOut` da lucide-react)
+  - `.env.example` con i placeholder per `VITE_API_BASE_URL` e `VITE_API_AUTH_TOKEN`
+  - Test: `auth-storage.test.js` (8 test) e `useAuth.test.js` (8 test) con mock localStorage via `vi.stubGlobal`
+- `docs/auth-system.md`: specifica tecnica del sistema OTP portato da Wandly
+
+---
+
+## [1.8.0] — 2026-05-13
+
+### Added
+- **Generatore AI** — UI completa (scaffolding senza chiamate API attive)
+  - Bottone "Genera con AI" nell'header con icona Sparkles e stile verde accento (`.btn-generate-ai`)
+  - `AiGeneratorModal`: modale `size="lg"` con due tab — "Genera" e "Avanzate"
+  - Tab **Genera**:
+    - Textarea testo sorgente con auto-grow (min 12 righe, max ~20) e contatore caratteri con soglie cromatiche (< 800 muted, 800-3000 normale, > 3000 giallo warning)
+    - Slider numero slide 8-18 + toggle "Auto" (valore `'auto'`)
+    - Textarea istruzioni aggiuntive (opzionale)
+    - Info banner few-shot con conteggio caroselli di esempio nella libreria
+  - Tab **Avanzate**: system prompt letto come asset raw (`?raw`) e reso con `react-markdown`; bottone "Copia negli appunti"
+  - Stato del form resettato a ogni apertura (componente smontato al close — render condizionale)
+  - Bottone "Genera carosello" sempre disabilitato (integrazione backend prevista in fase successiva)
+- `src/lib/ai/system-prompt.md`: copia del system prompt in `src/` per risoluzione affidabile con Vite `?raw`
+- `docs/ai-ui-scaffolding-prompt.md`: brief di design dell'interfaccia AI
+- Dipendenza: `react-markdown`
+
+---
+
+## [1.7.0] — 2026-05-13
+
+### Added
+- **UI selettore template** nella ThemeTab, sopra la sezione palette
+  - `TemplateSelector`: dropdown con nome e descrizione di ogni template disponibile
+  - `TemplateManagerModal`: modale con lista template di sistema, badge "Attivo", bottone Applica (disabilitato se già attivo)
+  - Al cambio template: se la palette predefinita del template differisce da quella corrente, appare un toast con action button "Applica" per cambiare palette in un click
+  - Il cambio template è incluso nello stack undo/redo
+- **Toast con action button**: `toast(msg, type, { label, onClick })` — quando è presente una action il toast ha durata 6000ms (vs 3500ms standard) e mostra un bottone inline che esegue il callback e chiude il toast
+
+### Changed
+- `ThemeTab.jsx`: aggiunta sezione "Template" con `TemplateSelector` + link "Gestisci template…"
+- `useCarouselStore.js`: nuove azioni `APPLY_TEMPLATE`, `OPEN_TEMPLATE_MANAGER`, `CLOSE_TEMPLATE_MANAGER`; stato UI esteso con `templateManagerOpen`
+
+---
+
+## [1.6.0] — 2026-05-13
+
+### Added
+- **Nuovo template `system-bold-corner`** — layout manifesto con mood diretto e impattante
+  - Namespace CSS `.bold__*`
+  - Angolo decorativo top-right con `clip-path: polygon(100% 0, 0 0, 100% 100%)` in `var(--slide-bg)` su `var(--slide-accent)`
+  - Tipografia Archivo Black uppercase dominante; trattino obliquo (`/`) in accent color come separatore visivo
+  - Box numero slide a sfondo accent; attribuzione quote con prefisso `—` in accent
+  - Tutti i 5 tipi slide supportati: cover, standard, divider, cta, quote
+- **Nuova palette `system-bold-yellow`** (`builtinPalettes.js`) — giallo acceso `#FFE135` su nero `#0A0A0A`; palette predefinita del template Bold Corner
+
+---
+
+## [1.5.0] — 2026-05-13
+
+### Added
+- **Architettura template** — refactor strutturale del renderer slide (app pixel-identica alla v1.4.1)
+  - `src/slide-renderer/templates/registry.js`: registry centralizzato con `getTemplate(id)`, `DEFAULT_TEMPLATE_ID`, fallback a `system-editorial-mark` per id sconosciuti (warn in console)
+  - `src/slide-renderer/templates/editorial-mark/`: manifest, router `EditorialMark.jsx`, 5 componenti slide, header/footer, CSS con namespace `.editorial__*`
+  - `inlineTags.jsx` parametrizzato: `parseInlineTags(text, classMap, keyPrefix)` con `DEFAULT_CLASS_MAP` come default retrocompatibile
+  - `SlideRenderer.jsx`: risolve il template via registry, inietta `--slide-surface` nelle CSS vars, aggiunge `data-template` sul root `.slide`
+  - `slide-renderer.css` ridotto a: container `.slide`, `@font-face`, selettori `[data-mode]`, variabili CSS base; tutto il resto è nel CSS del template
+  - Schema: `ThemeSchema` aggiunge `template_id: z.string().min(1).default('system-editorial-mark')`
+  - Migration: step idempotente che aggiunge `template_id: 'system-editorial-mark'` ai caroselli legacy; fallback per id sconosciuti
+  - `defaultCarousel.js`: aggiunto `theme.template_id: 'system-editorial-mark'`
+  - Glow `.editorial__dot` usa `color-mix(in srgb, var(--slide-accent) 50%, transparent)` invece del valore hardcoded `rgba(0,255,170,0.5)`
+- **Nuovi test**: `migrateCarousel.test.js` (7 test); aggiornati `schema.test.js` e `inlineTags.test.js` per le nuove API
+
+### Changed
+- `src/slide-renderer/slideTypes/` **eliminata**: componenti spostati nel template Editorial Mark (nessun cambiamento visivo)
+- `src/components/edit-modal/EditModal.jsx`: `PREVIEW_SCALE` da 0.38 a 0.36 per migliore adattamento al layout modale
+
+---
+
 ## [1.4.1] — 2026-05-12
 
 ### Changed

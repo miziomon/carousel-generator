@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef } from 'react'
-import { Upload, Undo2, Redo2, FilePlus, Monitor, Smartphone, Plus, ChevronDown } from 'lucide-react'
+import { Upload, Undo2, Redo2, FilePlus, Monitor, Smartphone, Plus, ChevronDown, Sparkles, LogOut } from 'lucide-react'
 import { Button } from '../ui/Button.jsx'
 import { ConfirmDialog } from '../ui/ConfirmDialog.jsx'
 import { ExportPanel } from '../export-panel/ExportPanel.jsx'
+import '../ai-generator/ai-generator.css'
 import { toast } from '../ui/Toast.jsx'
 import { validateJson } from '../../lib/validateJson.js'
 import { slugifyTitle } from '../../lib/filename.js'
@@ -40,6 +41,8 @@ export function Header({
   onUpdateAuthor,
   mobileView,
   onToggleMobileView,
+  onOpenAiGenerator,
+  auth,
 }) {
   const [savedLabel, setSavedLabel] = useState(null)
   const [showNewConfirm, setShowNewConfirm] = useState(false)
@@ -177,6 +180,17 @@ export function Header({
             Nuovo
           </Button>
 
+          {/* Genera con AI — azione secondaria rispetto ad Aggiungi slide */}
+          <button
+            type="button"
+            className="btn-generate-ai"
+            onClick={onOpenAiGenerator}
+            title="Genera un carosello a partire da un testo con l'AI"
+          >
+            <Sparkles size={14} className="btn-generate-ai__icon" aria-hidden="true" />
+            <span className="btn-generate-ai__label">Genera con AI</span>
+          </button>
+
           {/* Aggiungi slide — dropdown */}
           <div className="header__add-slide" ref={addMenuRef}>
             {addMenuOpen && (
@@ -212,6 +226,26 @@ export function Header({
           {savedLabel && <span className="header__saved">{savedLabel}</span>}
           {meta.isDirty && !meta.lastSavedAt && (
             <span className="header__saved" style={{ color: 'rgba(0,255,170,0.4)' }}>Non salvato</span>
+          )}
+
+          {auth && (
+            <>
+              <div className="header__separator" />
+              <span
+                className="header__user-email"
+                title={auth.user?.email}
+              >
+                {auth.user?.email}
+              </span>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => { auth.logout(); toast('Logout effettuato', 'success') }}
+                title="Logout"
+              >
+                <LogOut size={15} />
+              </Button>
+            </>
           )}
         </div>
       </header>

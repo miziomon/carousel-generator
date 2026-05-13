@@ -147,3 +147,13 @@
   background: rgba(0, 255, 170, 0.1);
   color: #00ffaa;
 }
+
+.header__user-email {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: rgba(232, 232, 232, 0.35);
+  white-space: nowrap;
+  max-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
