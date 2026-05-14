@@ -72,4 +72,4 @@ Le variabili CSS della palette (`--slide-bg`, `--slide-fg`, `--slide-accent`, `-
 | Chiave | Contenuto |
 |--------|-----------|
 | `carosello.draft.v1` | Carousel completo senza `id` — bump la versione se cambia lo schema |
-| `carosello.preferences.v1` | Preferenze UI (non ancora usato) |
+| `carosello.ui-preferences` | Stato sidebar (aperta/chiusa, sezioni espanse) — gestito da `useUiPreferences.js` |

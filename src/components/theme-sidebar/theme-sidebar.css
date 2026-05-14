@@ -1,0 +1,227 @@
+/* ─── Sidebar container ───────────────────────────────────────────────────── */
+
+.theme-sidebar {
+  position: relative;
+  flex-shrink: 0;
+  height: 100%;
+  background: #0d1224;
+  border-right: 1px solid rgba(232, 232, 232, 0.1);
+  overflow: hidden;
+  z-index: 10;
+}
+
+/* inner wrapper per animazione opacity apertura/chiusura */
+.theme-sidebar__inner {
+  width: 300px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ─── Header sticky ───────────────────────────────────────────────────────── */
+
+.theme-sidebar__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px 14px 20px;
+  border-bottom: 1px solid rgba(232, 232, 232, 0.08);
+  flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  background: #0d1224;
+  z-index: 1;
+}
+
+.theme-sidebar__title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #00ffaa;
+}
+
+.theme-sidebar__toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border: none;
+  background: transparent;
+  color: rgba(232, 232, 232, 0.45);
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  flex-shrink: 0;
+}
+
+.theme-sidebar__toggle:hover {
+  background: rgba(232, 232, 232, 0.08);
+  color: rgba(232, 232, 232, 0.85);
+}
+
+/* ─── Contenuto scrollabile ───────────────────────────────────────────────── */
+
+.theme-sidebar__content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 16px 0 32px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(232, 232, 232, 0.15) transparent;
+}
+
+.theme-sidebar__content::-webkit-scrollbar {
+  width: 4px;
+}
+
+.theme-sidebar__content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.theme-sidebar__content::-webkit-scrollbar-thumb {
+  background: rgba(232, 232, 232, 0.15);
+  border-radius: 2px;
+}
+
+/* ─── Linguetta laterale (sidebar chiusa) ─────────────────────────────────── */
+
+.theme-sidebar__rail {
+  width: 28px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s;
+  user-select: none;
+}
+
+.theme-sidebar__rail:hover {
+  background: rgba(232, 232, 232, 0.05);
+}
+
+.theme-sidebar__rail:hover .theme-sidebar__rail-icon {
+  color: rgba(232, 232, 232, 0.7);
+}
+
+.theme-sidebar__rail-icon {
+  color: rgba(232, 232, 232, 0.3);
+  transition: color 0.15s;
+}
+
+/* ─── Sezione collassabile ────────────────────────────────────────────────── */
+
+.theme-section {
+  border-bottom: 1px solid rgba(232, 232, 232, 0.06);
+}
+
+.theme-section__header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 20px;
+  cursor: pointer;
+  transition: background 0.12s;
+  user-select: none;
+}
+
+.theme-section__header:hover {
+  background: rgba(232, 232, 232, 0.04);
+}
+
+.theme-section__icon {
+  color: rgba(232, 232, 232, 0.35);
+  flex-shrink: 0;
+}
+
+.theme-section--expanded .theme-section__icon {
+  color: rgba(0, 255, 170, 0.7);
+}
+
+.theme-section__title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(232, 232, 232, 0.5);
+  flex: 1;
+}
+
+.theme-section--expanded .theme-section__title {
+  color: rgba(232, 232, 232, 0.8);
+}
+
+.theme-section__chevron {
+  color: rgba(232, 232, 232, 0.25);
+  flex-shrink: 0;
+  transition: transform 0.18s ease;
+}
+
+.theme-section--expanded .theme-section__chevron {
+  transform: rotate(0deg);
+  color: rgba(232, 232, 232, 0.4);
+}
+
+.theme-section__body {
+  overflow: hidden;
+  padding: 0 20px;
+}
+
+.theme-section__body-inner {
+  padding-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* ─── Drawer mobile ──────────────────────────────────────────────────────── */
+
+.theme-sidebar--drawer {
+  position: fixed;
+  top: 56px; /* altezza header globale */
+  left: 0;
+  height: calc(100vh - 56px);
+  z-index: 40;
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.5);
+}
+
+.theme-sidebar__backdrop {
+  position: fixed;
+  inset: 0;
+  top: 56px;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 39;
+  cursor: pointer;
+}
+
+/* ─── Bottone "Tema" nell'header globale ──────────────────────────────────── */
+
+.header__sidebar-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: none;
+  background: transparent;
+  color: rgba(232, 232, 232, 0.45);
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  flex-shrink: 0;
+}
+
+.header__sidebar-toggle:hover {
+  background: rgba(232, 232, 232, 0.08);
+  color: rgba(232, 232, 232, 0.85);
+}
+
+.header__sidebar-toggle--active {
+  color: #00ffaa;
+  background: rgba(0, 255, 170, 0.1);
+}

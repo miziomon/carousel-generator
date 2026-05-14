@@ -3,7 +3,6 @@ import './tab-bar.css'
 
 const TABS = [
   { id: 'slides', label: 'Slide' },
-  { id: 'theme',  label: 'Tema' },
   { id: 'json',   label: 'JSON' },
 ]
 

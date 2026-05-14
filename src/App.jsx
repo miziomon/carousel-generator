@@ -3,13 +3,16 @@ import { useCarouselStore } from './hooks/useCarouselStore.js'
 import { useAuth } from './hooks/useAuth.js'
 import { useAutoSave } from './hooks/useAutoSave.js'
 import { useUndoRedo } from './hooks/useUndoRedo.js'
+import { useHotkeys } from './hooks/useHotkeys.js'
 import { usePaletteLibraryPersistence } from './hooks/usePaletteLibraryPersistence.js'
+import { useUiPreferences } from './hooks/useUiPreferences.js'
+import { useMediaQuery } from './hooks/useMediaQuery.js'
 import { defaultCarousel } from './lib/defaultCarousel.js'
 import { LoginScreen } from './components/auth/LoginScreen.jsx'
 import { Header } from './components/header/Header.jsx'
 import { TabBar } from './components/tabs/TabBar.jsx'
 import { SlideGrid } from './components/slide-grid/SlideGrid.jsx'
-import { ThemeTab } from './components/theme-tab/ThemeTab.jsx'
+import { ThemeSidebar } from './components/theme-sidebar/ThemeSidebar.jsx'
 import { JsonTab } from './components/json-tab/JsonTab.jsx'
 import { EditModal } from './components/edit-modal/EditModal.jsx'
 import { PaletteManagerModal } from './components/palette-manager/PaletteManagerModal.jsx'
@@ -37,12 +40,15 @@ function AuthenticatedApp({ auth }) {
   const store = useCarouselStore()
   const [mobileView, setMobileView] = useState(false)
   const [aiGeneratorOpen, setAiGeneratorOpen] = useState(false)
+  const { uiPrefs, toggleSidebar, setSectionOpen } = useUiPreferences()
+  const isDesktop = useMediaQuery('(min-width: 1024px)')
 
   // Auto-save debounced
   useAutoSave(store.carousel, store.meta.isDirty, store.markSaved)
 
-  // Scorciatoie undo/redo (Ctrl+Z, Ctrl+Shift+Z -- ignorate se focus su input/textarea)
+  // Scorciatoie: undo/redo + toggle sidebar
   useUndoRedo(store.undo, store.redo)
+  useHotkeys({ 'ctrl+b': toggleSidebar })
 
   // Persiste le palette utente su localStorage con debounce
   usePaletteLibraryPersistence(store.paletteLibrary)
@@ -109,42 +115,51 @@ function AuthenticatedApp({ auth }) {
         mobileView={mobileView}
         onToggleMobileView={() => setMobileView((v) => !v)}
         onOpenAiGenerator={() => setAiGeneratorOpen(true)}
+        sidebarOpen={uiPrefs.sidebarOpen}
+        onToggleSidebar={toggleSidebar}
         auth={auth}
       />
 
-      <TabBar activeTab={store.ui.activeTab} onTabChange={store.setActiveTab} />
+      <div className="flex flex-1 overflow-hidden">
+        <ThemeSidebar
+          isOpen={uiPrefs.sidebarOpen}
+          onToggle={toggleSidebar}
+          isDesktop={isDesktop}
+          theme={store.carousel.theme}
+          onChange={store.updateTheme}
+          paletteLibrary={store.paletteLibrary}
+          applyPalette={store.applyPalette}
+          resyncPalette={store.resyncPalette}
+          updatePaletteInline={store.updatePaletteInline}
+          openPaletteManager={store.openPaletteManager}
+          applyTemplate={store.applyTemplate}
+          openTemplateManager={store.openTemplateManager}
+          uiPrefs={uiPrefs}
+          setSectionOpen={setSectionOpen}
+        />
 
-      <main className="flex-1 overflow-hidden flex flex-col">
-        {store.ui.activeTab === 'slides' && (
-          <SlideGrid
-            slides={store.carousel.slides}
-            theme={store.carousel.theme}
-            onEdit={store.openEditModal}
-            onDuplicate={handleDuplicateSlide}
-            onDelete={handleDeleteSlide}
-            onReorder={store.reorderSlides}
-            mobileView={mobileView}
-          />
-        )}
+        <div className="flex flex-col flex-1 overflow-hidden">
+          <TabBar activeTab={store.ui.activeTab} onTabChange={store.setActiveTab} />
 
-        {store.ui.activeTab === 'theme' && (
-          <ThemeTab
-            theme={store.carousel.theme}
-            onChange={store.updateTheme}
-            paletteLibrary={store.paletteLibrary}
-            applyPalette={store.applyPalette}
-            resyncPalette={store.resyncPalette}
-            updatePaletteInline={store.updatePaletteInline}
-            openPaletteManager={store.openPaletteManager}
-            applyTemplate={store.applyTemplate}
-            openTemplateManager={store.openTemplateManager}
-          />
-        )}
+          <main className="flex-1 overflow-hidden flex flex-col">
+            {store.ui.activeTab === 'slides' && (
+              <SlideGrid
+                slides={store.carousel.slides}
+                theme={store.carousel.theme}
+                onEdit={store.openEditModal}
+                onDuplicate={handleDuplicateSlide}
+                onDelete={handleDeleteSlide}
+                onReorder={store.reorderSlides}
+                mobileView={mobileView}
+              />
+            )}
 
-        {store.ui.activeTab === 'json' && (
-          <JsonTab carousel={store.carousel} onLoadCarousel={store.loadCarousel} />
-        )}
-      </main>
+            {store.ui.activeTab === 'json' && (
+              <JsonTab carousel={store.carousel} onLoadCarousel={store.loadCarousel} />
+            )}
+          </main>
+        </div>
+      </div>
 
       {editingSlide && (
         <Modal
@@ -173,7 +188,6 @@ function AuthenticatedApp({ auth }) {
         onApply={store.applyTemplate}
       />
 
-      {/* Render condizionale: lo stato del form viene scartato a ogni chiusura */}
       {aiGeneratorOpen && (
         <AiGeneratorModal
           open={true}

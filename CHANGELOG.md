@@ -1,5 +1,27 @@
 # Changelog
 
+## [1.11.0] — 2026-05-14
+
+### Added
+- **ThemeSidebar** — il pannello Tema diventa una sidebar collassabile a sinistra
+  - 6 sezioni espandibili in modo indipendente: Template, Palette, Header, Footer, Font, Reset
+  - Rail verticale sempre visibile con icone delle sezioni, cliccabili anche da sidebar chiusa
+  - `ThemeSidebarHeader` con pulsante collapse + indicatore sezione aperta
+  - Toggle dalla sidebar stessa, dal bottone `PanelLeft` nell'header e da shortcut `Ctrl+B`
+  - Preferenze UI (stato open/closed + sezioni espanse) persistite in `localStorage` alla chiave `carosello.ui-preferences`
+  - Comportamento responsive: su schermi `< 1024px` la sidebar si sovrappone al contenuto (overlay)
+  - `useUiPreferences()` hook per load/save preferenze con debounce
+  - `useMediaQuery()` hook per breakpoint reattivo
+  - `useDebouncedCallback()` hook utility
+
+### Changed
+- Tab "Tema" rimossa dalla `TabBar` — il tema si gestisce ora esclusivamente dalla sidebar
+- `Header` riceve `sidebarOpen` + `onToggleSidebar` per sincronizzare il bottone toggle
+- `App.jsx` ristrutturato con layout a due colonne (`flex flex-1 overflow-hidden`): sidebar a sinistra, contenuto principale a destra
+- `ThemeTab` rimosso (sostituito integralmente da `ThemeSidebar` con le sue sezioni)
+
+---
+
 ## [1.10.0] — 2026-05-13
 
 ### Added

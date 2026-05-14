@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
-import { Upload, Undo2, Redo2, FilePlus, Monitor, Smartphone, Plus, ChevronDown, Sparkles, LogOut } from 'lucide-react'
+import { Upload, Undo2, Redo2, FilePlus, Monitor, Smartphone, Plus, ChevronDown, Sparkles, LogOut, PanelLeft } from 'lucide-react'
+import '../theme-sidebar/theme-sidebar.css'
 import { Button } from '../ui/Button.jsx'
 import { ConfirmDialog } from '../ui/ConfirmDialog.jsx'
 import { ExportPanel } from '../export-panel/ExportPanel.jsx'
@@ -42,6 +43,8 @@ export function Header({
   mobileView,
   onToggleMobileView,
   onOpenAiGenerator,
+  sidebarOpen,
+  onToggleSidebar,
   auth,
 }) {
   const [savedLabel, setSavedLabel] = useState(null)
@@ -125,6 +128,17 @@ export function Header({
           Carousel Generator
           <span className="header__version">v{pkg.version}</span>
         </span>
+
+        {/* Toggle sidebar Tema */}
+        <button
+          type="button"
+          className={`header__sidebar-toggle${sidebarOpen ? ' header__sidebar-toggle--active' : ''}`}
+          onClick={onToggleSidebar}
+          title={sidebarOpen ? 'Chiudi pannello Tema (Ctrl+B)' : 'Apri pannello Tema (Ctrl+B)'}
+          aria-label="Toggle pannello Tema"
+        >
+          <PanelLeft size={15} />
+        </button>
 
         <div className="header__separator" />
 
