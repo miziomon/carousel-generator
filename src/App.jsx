@@ -8,7 +8,6 @@ import { usePaletteLibraryPersistence } from './hooks/usePaletteLibraryPersisten
 import { useUiPreferences } from './hooks/useUiPreferences.js'
 import { useMediaQuery } from './hooks/useMediaQuery.js'
 import { defaultCarousel } from './lib/defaultCarousel.js'
-import { TEMPLATES } from './slide-renderer/templates/registry.js'
 import { LoginScreen } from './components/auth/LoginScreen.jsx'
 import { Header } from './components/header/Header.jsx'
 import { TabBar } from './components/tabs/TabBar.jsx'
@@ -93,9 +92,8 @@ function AuthenticatedApp({ auth }) {
     toast('Slide duplicata', 'success')
   }
 
-  function handleApplyTemplate(templateId) {
+  function handleApplyTemplate(templateId, template) {
     store.applyTemplate(templateId)
-    const template = TEMPLATES.find((t) => t.id === templateId)
     if (!template) return
     const defaultPaletteId = template.default_palette_id
     const suggestionNeeded = defaultPaletteId && defaultPaletteId !== store.carousel.theme.palette_id

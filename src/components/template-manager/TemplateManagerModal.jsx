@@ -14,7 +14,8 @@ import './template-manager.css'
  */
 export function TemplateManagerModal({ open, onClose, currentId, onApply }) {
   function handleApply(templateId) {
-    onApply(templateId)
+    const template = TEMPLATES.find((t) => t.id === templateId)
+    onApply(templateId, template)
     onClose()
   }
 

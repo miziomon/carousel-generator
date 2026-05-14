@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.12.1] — 2026-05-14
+
+### Fixed
+- **Padding e layout slide ripristinati** — rimosso `import { TEMPLATES }` da `App.jsx` che invertiva l'ordine del bundle CSS causando la regola `.slide * { padding: 0 }` di `slide-renderer.css` a sovrascrivere `.editorial { padding: 90px 80px 70px }` dei template (stessa specificità, wins l'ultima dichiarata)
+- `TemplateManagerModal` ora passa l'oggetto template completo al callback `onApply(templateId, template)` eliminando la necessità dell'import in `App.jsx`
+
+---
+
 ## [1.12.0] — 2026-05-14
 
 ### Changed
