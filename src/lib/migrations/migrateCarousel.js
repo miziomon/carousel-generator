@@ -1,12 +1,13 @@
 /**
  * Migrazione retrocompatibile per il formato del carosello.
  *
- * Gestisce i casi palette (A-D) e il caso template:
+ * Gestisce i casi palette (A-D), template e format:
  *   A: palette 5 colori, nessun palette_id → inferisce surface, tenta match built-in
  *   B: palette 6 colori, nessun palette_id → tenta match built-in
  *   C: palette_id presente e valido → no-op
  *   D: palette_id presente ma non trovato → lascia invariato (la UI mostrerà stato custom)
  *   T: template_id assente → inietta 'system-editorial-mark' (unico template storico)
+ *   F: format assente o non valido → inietta 'square' (unico formato storico)
  *
  * IMPORTANTE:
  * - Pura: non ha side effect, non accede a localStorage
@@ -19,6 +20,8 @@ import { matchBuiltin } from '../palettes/matchBuiltin.js'
 import { getBuiltinPalette } from '../palettes/builtinPalettes.js'
 
 const DEFAULT_TEMPLATE_ID = 'system-editorial-mark'
+const DEFAULT_FORMAT_ID   = 'square'
+const VALID_FORMATS       = new Set(['square', 'portrait', 'landscape'])
 
 /**
  * Migra l'oggetto theme al formato corrente.
@@ -39,21 +42,25 @@ function migrateTheme(theme) {
   const hasSurface    = 'surface' in palette && palette.surface != null
 
   // ── Caso T: template_id assente → era un carosello pre-templates ──────────
-  // Tutti i caroselli storici usavano il solo template Editorial Mark.
   const withTemplateId = hasTemplateId ? theme : { ...theme, template_id: DEFAULT_TEMPLATE_ID }
+
+  // ── Caso F: format assente o non valido → square (formato storico) ─────────
+  const hasFormat     = 'format' in withTemplateId
+  const validFormat   = hasFormat && VALID_FORMATS.has(withTemplateId.format)
+  const withFormat    = validFormat ? withTemplateId : { ...withTemplateId, format: DEFAULT_FORMAT_ID }
 
   // ── Caso A: 5 colori, nessun palette_id ──────────────────────────────────
   if (!hasSurface && !hasPaletteId) {
     const surface    = inferSurface(palette.background)
     const newPalette = { ...palette, surface }
     const matched    = matchBuiltin(newPalette)
-    return { ...withTemplateId, palette: newPalette, palette_id: matched }
+    return { ...withFormat, palette: newPalette, palette_id: matched }
   }
 
   // ── Caso B: 6 colori, nessun palette_id ──────────────────────────────────
   if (hasSurface && !hasPaletteId) {
     const matched = matchBuiltin(palette)
-    return { ...withTemplateId, palette_id: matched }
+    return { ...withFormat, palette_id: matched }
   }
 
   // ── Casi C e D: palette_id presente ──────────────────────────────────────
@@ -62,13 +69,13 @@ function migrateTheme(theme) {
   if (hasPaletteId && theme.palette_id && !hasSurface) {
     const builtin = getBuiltinPalette(theme.palette_id)
     if (builtin) {
-      return { ...withTemplateId, palette: { ...builtin.colors }, palette_id: theme.palette_id }
+      return { ...withFormat, palette: { ...builtin.colors }, palette_id: theme.palette_id }
     }
   }
 
-  // Caso C (palette_id valido, palette completa) → solo template_id se mancante
+  // Caso C (palette_id valido, palette completa) → template_id e format se mancanti
   // Caso D (palette_id sconosciuto, palette completa) → idem, la UI gestisce il dangling
-  return withTemplateId
+  return withFormat
 }
 
 /**

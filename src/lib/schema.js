@@ -28,6 +28,8 @@ export const PaletteLibrarySchema = z.array(PaletteSchema)
 
 // ─── Theme ────────────────────────────────────────────────────────────────────
 const ThemeSchema = z.object({
+  // Formato del carosello. Sempre presente: la migrazione garantisce il valore.
+  format: z.enum(['square', 'portrait', 'landscape']).default('square'),
   // ID del template visivo. Sempre presente: la migrazione garantisce il valore.
   template_id: z.string().min(1).default('system-editorial-mark'),
   // Riferimento alla palette di origine. null = palette completamente custom

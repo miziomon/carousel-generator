@@ -324,6 +324,17 @@ function reducer(state, action) {
       }
     }
 
+    case 'APPLY_FORMAT': {
+      const newTheme = { ...state.carousel.theme, format: action.payload.formatId }
+      const carousel = { ...state.carousel, theme: newTheme }
+      return {
+        ...state,
+        carousel,
+        history: pushHistory(state.history, state.carousel),
+        meta: { ...state.meta, isDirty: true },
+      }
+    }
+
     case 'OPEN_TEMPLATE_MANAGER':
       return { ...state, ui: { ...state.ui, templateManagerOpen: true } }
 
@@ -475,6 +486,9 @@ export function useCarouselStore() {
   const openPaletteManager  = useCallback(()          => dispatch({ type: 'OPEN_PALETTE_MANAGER' }),                         [])
   const closePaletteManager = useCallback(()          => dispatch({ type: 'CLOSE_PALETTE_MANAGER' }),                        [])
 
+  // ── Azione formato ────────────────────────────────────────────────────────
+  const applyFormat          = useCallback((formatId)   => dispatch({ type: 'APPLY_FORMAT',          payload: { formatId } }),   [])
+
   // ── Azioni template (Fase 3) ──────────────────────────────────────────────
   const applyTemplate        = useCallback((templateId) => dispatch({ type: 'APPLY_TEMPLATE',        payload: { templateId } }), [])
   const openTemplateManager  = useCallback(()            => dispatch({ type: 'OPEN_TEMPLATE_MANAGER' }),                         [])
@@ -510,6 +524,8 @@ export function useCarouselStore() {
     // Azioni libreria palette
     createPalette, updatePalette, duplicatePalette, deletePalette,
     importPalette, openEditPalette, closeEditPalette,
+    // Azione formato
+    applyFormat,
     // Azioni template
     applyTemplate, openTemplateManager, closeTemplateManager,
     // Azione AI
