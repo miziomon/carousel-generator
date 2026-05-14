@@ -8,20 +8,20 @@
 .bold {
   width: 100%;
   height: 100%;
-  padding: 80px 80px 70px;
+  padding: var(--bold-padding);
   display: flex;
   flex-direction: column;
   position: relative;
 }
 
 /* === DECORAZIONE ANGOLO ===
- * Triangolo rettangolo top-right: clip-path taglia un rettangolo di 200×200px
+ * Triangolo rettangolo top-right: clip-path taglia un rettangolo di var(--bold-corner-size)
  * lasciando solo il triangolo superiore-destro. Colore: slide-fg (tipicamente nero).
  * NOTA: html-to-image può avere bug con clip-path — testare in Fase 4. */
 .bold__corner {
   position: absolute;
   top: 0; right: 0;
-  width: 200px; height: 200px;
+  width: var(--bold-corner-size); height: var(--bold-corner-size);
   background: var(--slide-fg);
   clip-path: polygon(100% 0, 0 0, 100% 100%);
   pointer-events: none;
@@ -30,9 +30,9 @@
 /* "// //" sovrapposto all'angolo, contrasto invertito rispetto al triangolo */
 .bold__slash {
   position: absolute;
-  top: 22px; right: 28px;
+  top: var(--bold-slash-top); right: 28px;
   font-family: 'JetBrains Mono', monospace;
-  font-size: 14px;
+  font-size: var(--bold-slash-size);
   font-weight: 700;
   letter-spacing: 0.1em;
   color: var(--slide-bg);
@@ -44,18 +44,18 @@
 .bold__num-box {
   display: inline-block;
   font-family: 'JetBrains Mono', monospace;
-  font-size: 16px;
+  font-size: var(--bold-num-size);
   font-weight: 700;
   letter-spacing: 0.18em;
   color: var(--slide-bg);
   background: var(--slide-accent);
-  padding: 4px 12px;
+  padding: var(--bold-num-padding);
   align-self: flex-start;
 }
 
 .bold__kicker {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 16px;
+  font-size: var(--bold-kicker-size);
   font-weight: 700;
   letter-spacing: 0.3em;
   text-transform: uppercase;
@@ -66,7 +66,7 @@
 /* === FOOTER === */
 .bold__foot {
   margin-top: auto;
-  padding-top: 24px;
+  padding-top: var(--bold-foot-padding-top);
   border-top: 2px solid var(--slide-fg);
   display: flex;
   justify-content: space-between;
@@ -75,7 +75,7 @@
 
 .bold__foot-name {
   font-family: 'Archivo Black', sans-serif;
-  font-size: 18px;
+  font-size: var(--bold-foot-name-size);
   letter-spacing: 0.1em;
   color: var(--slide-fg);
   text-transform: uppercase;
@@ -83,7 +83,7 @@
 
 .bold__foot-meta {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 16px;
+  font-size: var(--bold-foot-meta-size);
   letter-spacing: 0.2em;
   color: var(--slide-accent);
   text-transform: uppercase;
@@ -92,30 +92,25 @@
 /* === BODY ARCHIVO === */
 .bold__body--archivo {
   font-family: 'Archivo Black', sans-serif;
+  font-size: var(--bold-body-size);
+  line-height: var(--bold-body-line-height);
   letter-spacing: -0.02em;
   text-transform: uppercase;
   margin-top: auto;
   margin-bottom: auto;
 }
 
-.bold__body--archivo.bold__body--cover { font-size: 110px; line-height: 0.95; }
-.bold__body--archivo.bold__body--xl    { font-size:  90px; line-height: 0.98; }
-.bold__body--archivo.bold__body--lg    { font-size:  76px; line-height: 1.02; }
-.bold__body--archivo.bold__body--md    { font-size:  62px; line-height: 1.08; }
-
 /* === BODY FRAUNCES === */
 .bold__body--fraunces {
   font-family: 'Fraunces', serif;
   font-weight: 900;
   font-variation-settings: "opsz" 144;
+  font-size: var(--bold-body-size);
+  line-height: var(--bold-body-line-height);
   letter-spacing: -0.02em;
   margin-top: auto;
   margin-bottom: auto;
-  line-height: 1.04;
 }
-
-.bold__body--fraunces.bold__body--xl { font-size: 88px; }
-.bold__body--fraunces.bold__body--lg { font-size: 74px; }
 
 /* === HIGHLIGHT INLINE === */
 .bold__hl-block { background: var(--slide-accent); color: var(--slide-bg); padding: 0 10px; display: inline-block; margin: 0 -2px; }
@@ -143,11 +138,11 @@
 
 .bold__quote-attr {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 20px;
+  font-size: var(--bold-quote-attr-size);
   font-weight: 700;
   letter-spacing: 0.08em;
   color: var(--slide-muted);
-  margin-top: 48px;
+  margin-top: var(--bold-quote-attr-margin-top);
   line-height: 1.6;
   text-transform: none;
 }
@@ -159,7 +154,7 @@
 .bold__quote-attr-source {
   font-family: 'JetBrains Mono', monospace;
   font-weight: 400;
-  font-size: 17px;
+  font-size: var(--bold-quote-attr-source-size);
   color: var(--slide-muted);
   opacity: 0.75;
   letter-spacing: 0.05em;
@@ -169,15 +164,15 @@
 .bold__cta-row {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--bold-cta-gap);
   margin-top: auto;
   margin-bottom: 24px;
 }
 
 .bold__cta-item {
   font-family: 'Archivo Black', sans-serif;
-  font-size: 78px;
-  line-height: 1.0;
+  font-size: var(--bold-cta-size);
+  line-height: var(--bold-cta-line-height);
   letter-spacing: -0.02em;
   text-transform: uppercase;
 }
@@ -185,12 +180,12 @@
 /* === DIVIDER === */
 .bold__divider-num {
   font-family: 'Archivo Black', sans-serif;
-  font-size: 340px;
+  font-size: var(--bold-divider-num-size);
   line-height: 0.85;
   letter-spacing: -0.04em;
   color: var(--slide-accent);
   position: absolute;
-  top: 280px; right: 60px;
+  top: var(--bold-divider-num-top); right: 60px;
   opacity: 0.15;
   pointer-events: none;
 }
@@ -198,7 +193,7 @@
 /* === SWIPE CTA (cover) === */
 .bold__swipe-mini {
   position: absolute;
-  bottom: 120px; right: 80px;
+  bottom: var(--bold-swipe-bottom); right: 80px;
   font-family: 'JetBrains Mono', monospace;
   font-size: 14px;
   letter-spacing: 0.3em;

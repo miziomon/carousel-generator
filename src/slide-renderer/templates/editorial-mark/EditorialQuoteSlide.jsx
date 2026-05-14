@@ -14,10 +14,21 @@ function smartQuotes(text) {
     .replace(/'/g, '’')
 }
 
-export function EditorialQuoteSlide({ slide, theme, total }) {
-  const fontClass = slide.font === 'fraunces' ? 'editorial__body--fraunces' : 'editorial__body--archivo'
-  const sizeClass = slide.size ? `editorial__body--${slide.size}` : ''
-  const bodyClass = `${fontClass} ${sizeClass} editorial__body--quote`.trim()
+export function EditorialQuoteSlide({ slide, theme, total, calib }) {
+  const isFraunces = slide.font === 'fraunces'
+  const fontClass  = isFraunces ? 'editorial__body--fraunces' : 'editorial__body--archivo'
+  const sizeKey    = slide.size || 'xl'
+  const sizeClass  = sizeKey ? `editorial__body--${sizeKey}` : ''
+  const bodyClass  = `${fontClass} ${sizeClass} editorial__body--quote`.trim()
+
+  const bodyCalib = isFraunces
+    ? (calib.body_fraunces[sizeKey] ?? calib.body_fraunces.xl)
+    : (calib.body_archivo[sizeKey]  ?? calib.body_archivo.xl)
+
+  const bodyStyle = {
+    '--editorial-body-size':        `${bodyCalib.size}px`,
+    '--editorial-body-line-height': bodyCalib.line_height,
+  }
 
   const author = slide.author ? smartQuotes(slide.author) : null
   const source = slide.source ? smartQuotes(slide.source) : null
@@ -26,7 +37,7 @@ export function EditorialQuoteSlide({ slide, theme, total }) {
   return (
     <>
       <EditorialHeader theme={theme} slide={slide} total={total} />
-      <div className={bodyClass}>
+      <div className={bodyClass} style={bodyStyle}>
         <div className="editorial__quote-text">
           <span className="editorial__qmark editorial__qmark--open" aria-hidden="true">{'“'}</span>
           {parseLines(slide.lines, `q-${slide.num}`, EDITORIAL_CLASS_MAP)}

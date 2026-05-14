@@ -13,10 +13,21 @@ function smartQuotes(text) {
     .replace(/'/g, '’')
 }
 
-export function BoldQuoteSlide({ slide, theme, total }) {
-  const fontClass = slide.font === 'fraunces' ? 'bold__body--fraunces' : 'bold__body--archivo'
-  const sizeClass = slide.size ? `bold__body--${slide.size}` : ''
-  const bodyClass = `${fontClass} ${sizeClass} bold__body--quote`.trim()
+export function BoldQuoteSlide({ slide, theme, total, calib }) {
+  const isFraunces = slide.font === 'fraunces'
+  const fontClass  = isFraunces ? 'bold__body--fraunces' : 'bold__body--archivo'
+  const sizeKey    = slide.size || 'xl'
+  const sizeClass  = sizeKey ? `bold__body--${sizeKey}` : ''
+  const bodyClass  = `${fontClass} ${sizeClass} bold__body--quote`.trim()
+
+  const bodyCalib = isFraunces
+    ? (calib.body_fraunces[sizeKey] ?? calib.body_fraunces.xl)
+    : (calib.body_archivo[sizeKey]  ?? calib.body_archivo.xl)
+
+  const bodyStyle = {
+    '--bold-body-size':        `${bodyCalib.size}px`,
+    '--bold-body-line-height': bodyCalib.line_height,
+  }
 
   const author = slide.author ? smartQuotes(slide.author) : null
   const source = slide.source ? smartQuotes(slide.source) : null
@@ -25,7 +36,7 @@ export function BoldQuoteSlide({ slide, theme, total }) {
   return (
     <>
       <BoldHeader theme={theme} slide={slide} total={total} />
-      <div className={bodyClass}>
+      <div className={bodyClass} style={bodyStyle}>
         <div className="bold__quote-text">
           {parseLines(slide.lines, `bc-q-${slide.num}`, BOLD_CLASS_MAP)}
         </div>

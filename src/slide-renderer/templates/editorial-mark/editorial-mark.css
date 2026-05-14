@@ -1,14 +1,14 @@
 /* === EDITORIAL MARK TEMPLATE ===
  * Namespace: .editorial__*
  * Tutte le classi sono scoped a questo namespace per evitare collisioni
- * con altri template. Il container .editorial è il radice del template
- * e occupa l'intera area 1080×1080 della slide. */
+ * con altri template. Il container .editorial è la radice del template
+ * e occupa l'intera area della slide. */
 
 /* Container template: occupa l'intera slide con padding e layout flex colonna */
 .editorial {
   width: 100%;
   height: 100%;
-  padding: 90px 80px 70px;
+  padding: var(--editorial-padding);
   display: flex;
   flex-direction: column;
   position: relative;
@@ -17,13 +17,13 @@
 /* === HEADER === */
 .editorial__topline {
   position: absolute;
-  top: 60px; left: 80px; right: 80px;
+  top: var(--editorial-topline-top); left: 80px; right: 80px;
   height: 1px;
   background: var(--slide-line);
 }
 .editorial__dot {
   position: absolute;
-  top: 54px; right: 80px;
+  top: var(--editorial-dot-top); right: 80px;
   width: 14px; height: 14px;
   background: var(--slide-accent);
   /* Glow adattivo alla palette corrente — non più hardcoded su rgba(0,255,170) */
@@ -31,14 +31,14 @@
 }
 .editorial__num {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 20px;
+  font-size: var(--editorial-num-size);
   letter-spacing: 0.2em;
   color: var(--slide-muted);
-  padding-top: 18px;
+  padding-top: var(--editorial-num-padding-top);
 }
 .editorial__kicker {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 18px;
+  font-size: var(--editorial-kicker-size);
   letter-spacing: 0.3em;
   text-transform: uppercase;
   color: var(--slide-accent);
@@ -48,7 +48,7 @@
 /* === FOOTER === */
 .editorial__foot {
   margin-top: auto;
-  padding-top: 30px;
+  padding-top: var(--editorial-foot-padding-top);
   border-top: 1px solid var(--slide-line);
   display: flex;
   justify-content: space-between;
@@ -57,14 +57,14 @@
 .editorial__foot-name {
   font-family: 'JetBrains Mono', monospace;
   font-weight: 600;
-  font-size: 22px;
+  font-size: var(--editorial-foot-name-size);
   letter-spacing: 0.18em;
   color: var(--slide-fg);
   text-transform: uppercase;
 }
 .editorial__foot-meta {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 16px;
+  font-size: var(--editorial-foot-meta-size);
   letter-spacing: 0.2em;
   color: var(--slide-accent);
   text-transform: uppercase;
@@ -73,27 +73,24 @@
 /* === BODY ARCHIVO === */
 .editorial__body--archivo {
   font-family: 'Archivo Black', sans-serif;
+  font-size: var(--editorial-body-size);
+  line-height: var(--editorial-body-line-height);
   letter-spacing: -0.03em;
   margin-top: auto;
   margin-bottom: auto;
 }
-.editorial__body--archivo.editorial__body--cover { font-size: 118px; line-height: 0.98; }
-.editorial__body--archivo.editorial__body--xl    { font-size: 96px;  line-height: 1.00; }
-.editorial__body--archivo.editorial__body--lg    { font-size: 82px;  line-height: 1.05; }
-.editorial__body--archivo.editorial__body--md    { font-size: 68px;  line-height: 1.10; }
 
 /* === BODY FRAUNCES === */
 .editorial__body--fraunces {
   font-family: 'Fraunces', serif;
   font-weight: 900;
   font-variation-settings: "opsz" 144;
+  font-size: var(--editorial-body-size);
+  line-height: var(--editorial-body-line-height);
   letter-spacing: -0.025em;
   margin-top: auto;
   margin-bottom: auto;
-  line-height: 1.05;
 }
-.editorial__body--fraunces.editorial__body--xl { font-size: 92px; }
-.editorial__body--fraunces.editorial__body--lg { font-size: 78px; }
 
 /* === HIGHLIGHT INLINE === */
 .editorial__hl-block { background: var(--slide-accent); color: var(--slide-bg); padding: 0 14px; display: inline-block; margin: 0 -2px; }
@@ -111,7 +108,7 @@
 /* === ELEMENTI SPECIALI === */
 .editorial__swipe-mini {
   position: absolute;
-  bottom: 130px; right: 80px;
+  bottom: var(--editorial-swipe-bottom); right: 80px;
   font-family: 'JetBrains Mono', monospace;
   font-size: 14px;
   color: var(--slide-accent);
@@ -120,12 +117,12 @@
 }
 .editorial__divider-num {
   font-family: 'Archivo Black', sans-serif;
-  font-size: 340px;
+  font-size: var(--editorial-divider-num-size);
   line-height: 0.85;
   letter-spacing: -0.04em;
   color: var(--slide-accent);
   position: absolute;
-  top: 160px; right: 60px;
+  top: var(--editorial-divider-num-top); right: 60px;
   opacity: 0.12;
   pointer-events: none;
 }
@@ -153,22 +150,19 @@
 
 .editorial__quote-attr {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 30px;
+  font-size: var(--editorial-quote-attr-size);
   font-weight: 500;
   letter-spacing: 0.05em;
   color: var(--slide-muted);
-  margin-top: 56px;
+  margin-top: var(--editorial-quote-attr-margin-top);
   line-height: 1.5;
   text-transform: none;
-}
-.editorial__quote-attr-author {
-  /* il "— " è già nel JSX */
 }
 .editorial__quote-attr-source {
   font-family: 'Fraunces', serif;
   font-style: italic;
   font-weight: 400;
-  font-size: 26px;
+  font-size: var(--editorial-quote-attr-source-size);
   color: var(--slide-muted);
   opacity: 0.75;
   letter-spacing: 0;
@@ -178,14 +172,14 @@
 .editorial__cta-row {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: var(--editorial-cta-gap);
   margin-top: auto;
   margin-bottom: 30px;
 }
 .editorial__cta-item {
   font-family: 'Archivo Black', sans-serif;
-  font-size: 88px;
-  line-height: 1.05;
+  font-size: var(--editorial-cta-size);
+  line-height: var(--editorial-cta-line-height);
   letter-spacing: -0.03em;
 }
 .editorial__cta-item-arrow {
