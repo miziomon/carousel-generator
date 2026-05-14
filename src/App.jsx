@@ -8,6 +8,7 @@ import { usePaletteLibraryPersistence } from './hooks/usePaletteLibraryPersisten
 import { useUiPreferences } from './hooks/useUiPreferences.js'
 import { useMediaQuery } from './hooks/useMediaQuery.js'
 import { defaultCarousel } from './lib/defaultCarousel.js'
+import { TEMPLATES } from './slide-renderer/templates/registry.js'
 import { LoginScreen } from './components/auth/LoginScreen.jsx'
 import { Header } from './components/header/Header.jsx'
 import { TabBar } from './components/tabs/TabBar.jsx'
@@ -90,6 +91,26 @@ function AuthenticatedApp({ auth }) {
   function handleDuplicateSlide(id) {
     store.duplicateSlide(id)
     toast('Slide duplicata', 'success')
+  }
+
+  function handleApplyTemplate(templateId) {
+    store.applyTemplate(templateId)
+    const template = TEMPLATES.find((t) => t.id === templateId)
+    if (!template) return
+    const defaultPaletteId = template.default_palette_id
+    const suggestionNeeded = defaultPaletteId && defaultPaletteId !== store.carousel.theme.palette_id
+    const defaultPalette = suggestionNeeded
+      ? store.paletteLibrary.find((p) => p.id === defaultPaletteId)
+      : null
+    if (defaultPalette) {
+      toast(
+        `Template "${template.name}" applicato`,
+        'success',
+        { label: `Applica palette consigliata: ${defaultPalette.name}`, onClick: () => store.applyPalette(defaultPaletteId) }
+      )
+    } else {
+      toast(`Template "${template.name}" applicato`)
+    }
   }
 
   function handleSaveSlide(updatedSlide) {
@@ -185,7 +206,7 @@ function AuthenticatedApp({ auth }) {
         open={store.ui.templateManagerOpen}
         onClose={store.closeTemplateManager}
         currentId={store.carousel.theme.template_id}
-        onApply={store.applyTemplate}
+        onApply={handleApplyTemplate}
       />
 
       {aiGeneratorOpen && (

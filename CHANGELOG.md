@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.12.0] — 2026-05-14
+
+### Changed
+- **Template selector** (Scenario 3 — hybrid): il trigger nella sidebar apre direttamente la `TemplateManagerModal` invece di un dropdown inline
+  - Rimosso dropdown `position: absolute` che veniva ritagliato dal `overflow: hidden` della sidebar
+  - Rimosso chevron `ChevronDown` e logica `AnimatePresence` dal `TemplateSelector`
+  - Rimosso bottone ridondante "Gestisci template..." da `TemplateSection`
+  - Il toast con la palette consigliata viene ora emesso dalla `TemplateManagerModal` (logica spostata in `App.jsx`)
+
+---
+
 ## [1.11.0] — 2026-05-14
 
 ### Added
