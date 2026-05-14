@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.13.0] — 2026-05-14
+
+### Added
+- **Supporto formati multipli** — tre formati Instagram built-in: Quadrato (1:1, 1080×1080), Portrait (4:5, 1080×1350, consigliato), Landscape (1.91:1, 1080×566)
+- **Sezione Formato nella sidebar** — prima sezione (aperta di default), con selettore radio e badge "consigliato" / warning; Cmd+Z per annullare il cambio
+- **Calibrazioni tipografiche per formato** — tutti i template (Editorial Mark, Bold Corner) applicano padding, font-size, gap e altri parametri specifici per formato tramite CSS variables inline
+- **Thumbnail griglia dinamiche** — le card in `SlideGrid` ridimensionano la miniatura in base al formato reale (280×280 square, 280×350 portrait, 280×147 landscape)
+- **readabilityWarning format-aware** — limiti caratteri per formato verbatim da §11.1; landscape attiva warning più frequentemente per sua natura
+- **Migrazione retrocompatibile** — JSON storici senza `theme.format` migrano automaticamente a `square`
+
+### Changed
+- `theme.format` è ora campo obbligatorio nello schema Zod (default `'square'`)
+- `SlideRenderer` inietta `--slide-width` e `--slide-height` come CSS variables inline
+- Export PNG usa le dimensioni del formato scelto (non più hardcoded 1080×1080)
+
+---
+
 ## [1.12.1] — 2026-05-14
 
 ### Fixed

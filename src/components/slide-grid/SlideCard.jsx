@@ -2,25 +2,28 @@ import { memo, useState } from 'react'
 import { Pencil, Copy, Trash2, Download, GripVertical } from 'lucide-react'
 import { SlideRenderer } from '../../slide-renderer/SlideRenderer.jsx'
 import { exportSlideToPng } from '../../lib/exportPng.jsx'
+import { getFormat } from '../../lib/formats/registry.js'
 import { toast } from '../ui/Toast.jsx'
 import './slide-grid.css'
 
-// ─── M10: calcolo rischio leggibilità ────────────────────────────────────────
-const CHAR_LIMITS = { cover: 60, xl: 80, lg: 120, md: 200 }
+// ─── M10: calcolo rischio leggibilità con limiti per formato ──────────────────
+const CHAR_LIMITS_BY_FORMAT = {
+  square:    { cover: 60,  xl: 80,  lg: 120, md: 200 },
+  portrait:  { cover: 70,  xl: 95,  lg: 145, md: 240 },
+  landscape: { cover: 35,  xl: 50,  lg:  75, md: 120 },
+}
 
-function readabilityWarning(slide) {
+function readabilityWarning(slide, format) {
   if (!slide.lines || slide.type === 'cta') return null
   const sizeKey = slide.size === 'cover' ? 'cover' : slide.size
-  const limit = CHAR_LIMITS[sizeKey]
+  const limits = CHAR_LIMITS_BY_FORMAT[format?.id] ?? CHAR_LIMITS_BY_FORMAT.square
+  const limit = limits[sizeKey]
   if (!limit) return null
   const total = slide.lines.join('').length
   if (total > limit * 1.5) return 'red'
   if (total > limit) return 'yellow'
   return null
 }
-
-const SCALE_DESKTOP = 280 / 1080  // ≈ 0.259
-const SCALE_MOBILE  = 380 / 1080  // ≈ 0.352
 
 export const SlideCard = memo(function SlideCard({
   slide,
@@ -34,7 +37,13 @@ export const SlideCard = memo(function SlideCard({
   isDragOverlay,    // true quando è renderizzato nel DragOverlay
   mobileView = false,
 }) {
-  const warning = readabilityWarning(slide)
+  const format = getFormat(theme?.format)
+  const targetWidth = mobileView ? 380 : 280
+  const scale = targetWidth / format.width
+  const thumbWidth = targetWidth
+  const thumbHeight = Math.round(format.height * scale)
+
+  const warning = readabilityWarning(slide, format)
   const [confirmDelete, setConfirmDelete] = useState(false)
   const [exportingPng, setExportingPng] = useState(false)
 
@@ -66,9 +75,6 @@ export const SlideCard = memo(function SlideCard({
     }
   }
 
-  const scale = mobileView ? SCALE_MOBILE : SCALE_DESKTOP
-  const thumbSize = mobileView ? 380 : 280
-
   return (
     <div className={`slide-card ${isDragOverlay ? 'slide-card--overlay' : ''}`}>
       {/* Drag handle — si appoggia sui listeners del sortable */}
@@ -83,12 +89,12 @@ export const SlideCard = memo(function SlideCard({
       {/* Thumbnail */}
       <div
         className="slide-card__thumbnail-wrap"
-        style={{ width: thumbSize, height: thumbSize }}
+        style={{ width: thumbWidth, height: thumbHeight }}
         onClick={() => !isDragOverlay && onEdit?.(slide.id)}
       >
         <div
           className="slide-card__thumbnail-inner"
-          style={{ transform: `scale(${scale})`, width: 1080, height: 1080 }}
+          style={{ transform: `scale(${scale})`, width: format.width, height: format.height }}
         >
           <SlideRenderer slide={slide} theme={theme} total={total} mode="preview" />
         </div>
@@ -123,7 +129,7 @@ export const SlideCard = memo(function SlideCard({
               className={`slide-card__action ${exportingPng ? 'slide-card__action--loading' : ''}`}
               onClick={handleExportPng}
               disabled={exportingPng}
-              title="Esporta come PNG 2160×2160"
+              title={`Esporta come PNG ${format.width * 2}×${format.height * 2}`}
             >
               <Download size={12} />
               {exportingPng ? '…' : 'PNG'}
