@@ -5,7 +5,8 @@ const UI_PREFS_KEY = 'carosello.ui-preferences'
 const DEFAULT_PREFS = {
   sidebarOpen: true,
   sidebarSections: {
-    template: true,
+    formato:  true,
+    template: false,
     palette:  true,
     header:   false,
     footer:   false,

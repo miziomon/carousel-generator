@@ -153,6 +153,7 @@ function AuthenticatedApp({ auth }) {
           openPaletteManager={store.openPaletteManager}
           applyTemplate={store.applyTemplate}
           openTemplateManager={store.openTemplateManager}
+          applyFormat={store.applyFormat}
           uiPrefs={uiPrefs}
           setSectionOpen={setSectionOpen}
         />

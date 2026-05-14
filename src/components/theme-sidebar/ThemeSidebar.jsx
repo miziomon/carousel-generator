@@ -2,12 +2,13 @@ import { useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ThemeSidebarHeader } from './ThemeSidebarHeader.jsx'
 import { ThemeSidebarRail } from './ThemeSidebarRail.jsx'
+import { FormatSection }   from './sections/FormatSection.jsx'
 import { TemplateSection } from './sections/TemplateSection.jsx'
-import { PaletteSection } from './sections/PaletteSection.jsx'
-import { HeaderSection } from './sections/HeaderSection.jsx'
-import { FooterSection } from './sections/FooterSection.jsx'
-import { FontsSection } from './sections/FontsSection.jsx'
-import { ResetSection } from './sections/ResetSection.jsx'
+import { PaletteSection }  from './sections/PaletteSection.jsx'
+import { HeaderSection }   from './sections/HeaderSection.jsx'
+import { FooterSection }   from './sections/FooterSection.jsx'
+import { FontsSection }    from './sections/FontsSection.jsx'
+import { ResetSection }    from './sections/ResetSection.jsx'
 import './theme-sidebar.css'
 import '../theme-tab/theme-tab.css'
 
@@ -32,6 +33,7 @@ export function ThemeSidebar({
   openPaletteManager,
   applyTemplate,
   openTemplateManager,
+  applyFormat,
   uiPrefs,
   setSectionOpen,
 }) {
@@ -55,6 +57,12 @@ export function ThemeSidebar({
     <>
       <ThemeSidebarHeader onToggle={onToggle} />
       <div className="theme-sidebar__content">
+        <FormatSection
+          isOpen={sections.formato ?? true}
+          onToggle={handleToggleSection}
+          theme={theme}
+          applyFormat={applyFormat}
+        />
         <TemplateSection
           isOpen={sections.template ?? true}
           onToggle={handleToggleSection}
