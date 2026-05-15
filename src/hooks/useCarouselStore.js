@@ -11,6 +11,7 @@ import presetStandard from '../assets/presets/standard.json'
 import presetDivider from '../assets/presets/divider.json'
 import presetCta from '../assets/presets/cta.json'
 import presetQuote from '../assets/presets/quote.json'
+import presetBlank from '../assets/presets/blank.json'
 
 const PRESETS = {
   cover: presetCover,
@@ -18,6 +19,7 @@ const PRESETS = {
   divider: presetDivider,
   cta: presetCta,
   quote: presetQuote,
+  blank: presetBlank,
 }
 const HISTORY_LIMIT = 50
 

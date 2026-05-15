@@ -1,0 +1,40 @@
+const MAX_DIMENSION = 1080
+const QUALITY = 0.85
+const MAX_FILE_SIZE = 10 * 1024 * 1024 // 10MB
+
+/**
+ * Processa un File caricato dall'utente: resize a max 1080px lato lungo,
+ * compressione JPEG quality 0.85, output base64 data URL.
+ *
+ * @param {File} file
+ * @returns {Promise<string>} Data URL JPEG
+ * @throws {Error} se MIME non supportato o file troppo grande
+ */
+export async function processImageFile(file) {
+  if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+    throw new Error('Formato non supportato. Usa JPG, PNG o WebP.')
+  }
+  if (file.size > MAX_FILE_SIZE) {
+    throw new Error('File troppo grande. Massimo 10MB.')
+  }
+
+  const bitmap = await createImageBitmap(file)
+  const { width: srcW, height: srcH } = bitmap
+
+  let targetW = srcW
+  let targetH = srcH
+  if (Math.max(srcW, srcH) > MAX_DIMENSION) {
+    const ratio = MAX_DIMENSION / Math.max(srcW, srcH)
+    targetW = Math.round(srcW * ratio)
+    targetH = Math.round(srcH * ratio)
+  }
+
+  const canvas = document.createElement('canvas')
+  canvas.width = targetW
+  canvas.height = targetH
+  const ctx = canvas.getContext('2d')
+  ctx.drawImage(bitmap, 0, 0, targetW, targetH)
+  bitmap.close()
+
+  return canvas.toDataURL('image/jpeg', QUALITY)
+}

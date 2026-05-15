@@ -75,6 +75,7 @@ function normalizeSlide(slide, index) {
       cta_items: slide.cta_items,
     }
     if (slide._note_autore !== undefined) out._note_autore = slide._note_autore
+    if (slide.background_image !== undefined) out.background_image = slide.background_image
     return out
   }
 
@@ -89,6 +90,7 @@ function normalizeSlide(slide, index) {
     lines:  slide.lines,
   }
   if (slide._note_autore !== undefined) base._note_autore = slide._note_autore
+  if (slide.background_image !== undefined) base.background_image = slide.background_image
 
   if (type === 'cover') {
     return {
@@ -115,6 +117,20 @@ function normalizeSlide(slide, index) {
       author: slide.author ?? null,
       source: slide.source ?? null,
     }
+  }
+
+  if (type === 'blank') {
+    const out = {
+      num:              slide.num ?? index + 1,
+      type:             'blank',
+      kicker:           null,
+      font:             slide.font ?? 'archivo',
+      caption:          slide.caption ?? null,
+      caption_position: slide.caption_position ?? 'center',
+    }
+    if (slide.background_image !== undefined) out.background_image = slide.background_image
+    if (slide._note_autore !== undefined) out._note_autore = slide._note_autore
+    return out
   }
 
   // standard

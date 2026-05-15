@@ -54,12 +54,30 @@ const ThemeSchema = z.object({
   }),
 })
 
+// ─── Background image ─────────────────────────────────────────────────────────
+export const BackgroundImageSchema = z.object({
+  data:     z.string().startsWith('data:image/'),
+  opacity:  z.number().min(0).max(1).default(1),
+  blur:     z.number().min(0).max(20).default(0),
+  position: z.enum([
+    'top-left', 'top', 'top-right',
+    'left', 'center', 'right',
+    'bottom-left', 'bottom', 'bottom-right',
+  ]).default('center'),
+  overlay: z.object({
+    enabled:   z.boolean().default(false),
+    type:      z.enum(['dark', 'light', 'palette']).default('palette'),
+    intensity: z.number().min(0).max(1).default(0.5),
+  }).default({ enabled: false, type: 'palette', intensity: 0.5 }),
+})
+
 // ─── Base fields comuni a tutti i tipi ───────────────────────────────────────
 const SlideBaseFields = {
-  num:          z.number().int().positive(),
-  kicker:       z.string().nullable().optional(),
-  font:         z.enum(['archivo', 'fraunces']),
-  _note_autore: z.string().optional(),
+  num:              z.number().int().positive(),
+  kicker:           z.string().nullable().optional(),
+  font:             z.enum(['archivo', 'fraunces']),
+  _note_autore:     z.string().optional(),
+  background_image: BackgroundImageSchema.optional(),
 }
 
 // ─── Schema per tipo (senza superRefine: discriminatedUnion lo richiede) ────
@@ -107,6 +125,13 @@ const QuoteSlideSchema = z.object({
   source: z.string().max(120, 'source: max 120 caratteri').nullable().optional(),
 })
 
+const BlankSlideSchema = z.object({
+  ...SlideBaseFields,
+  type:             z.literal('blank'),
+  caption:          z.string().max(200).optional(),
+  caption_position: z.enum(['top', 'center', 'bottom']).optional(),
+})
+
 // ─── Unione discriminata ──────────────────────────────────────────────────────
 const SlideSchema = z.discriminatedUnion('type', [
   CoverSlideSchema,
@@ -114,6 +139,7 @@ const SlideSchema = z.discriminatedUnion('type', [
   DividerSlideSchema,
   CtaSlideSchema,
   QuoteSlideSchema,
+  BlankSlideSchema,
 ])
 
 // ─── AI generation metadata ───────────────────────────────────────────────────

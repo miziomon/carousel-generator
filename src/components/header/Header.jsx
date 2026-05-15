@@ -19,6 +19,7 @@ const SLIDE_TYPES = [
   { id: 'divider',  label: 'Divisore' },
   { id: 'quote',    label: 'Citazione' },
   { id: 'cta',      label: 'Call to action' },
+  { id: 'blank',    label: 'Blank (solo immagine)' },
 ]
 
 

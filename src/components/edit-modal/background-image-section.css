@@ -1,0 +1,257 @@
+/* ── Upload (stato vuoto) ─────────────────────────────────────────────────── */
+
+.bg-image-upload {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 28px 20px;
+  margin: 12px;
+  border: 1.5px dashed rgba(100, 116, 139, 0.35);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+  color: rgba(148, 163, 184, 0.7);
+}
+
+.bg-image-upload:hover,
+.bg-image-upload--drag-over {
+  border-color: rgba(99, 102, 241, 0.6);
+  background: rgba(99, 102, 241, 0.05);
+  color: rgba(148, 163, 184, 0.9);
+}
+
+.bg-image-upload__icon {
+  flex-shrink: 0;
+  opacity: 0.6;
+}
+
+.bg-image-upload__primary-text {
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(203, 213, 225, 0.9);
+}
+
+.bg-image-upload__secondary-text {
+  font-size: 11px;
+  color: rgba(148, 163, 184, 0.6);
+}
+
+.bg-image-upload__error {
+  font-size: 11px;
+  color: rgba(239, 68, 68, 0.9);
+  margin: 4px 12px 8px;
+}
+
+.bg-image-upload__spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(99, 102, 241, 0.3);
+  border-top-color: rgb(99, 102, 241);
+  border-radius: 50%;
+  animation: bg-spin 0.7s linear infinite;
+}
+
+@keyframes bg-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Editor (stato con immagine) ─────────────────────────────────────────── */
+
+.bg-image-editor {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.bg-image-editor__preview-row {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.bg-image-editor__preview-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.bg-image-editor__replace-btn,
+.bg-image-editor__remove-btn {
+  font-size: 11px;
+  padding: 5px 10px;
+  border-radius: 5px;
+  border: 1px solid rgba(100, 116, 139, 0.3);
+  background: rgba(100, 116, 139, 0.1);
+  color: rgba(203, 213, 225, 0.85);
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+  width: fit-content;
+}
+
+.bg-image-editor__replace-btn:hover {
+  background: rgba(100, 116, 139, 0.2);
+  border-color: rgba(100, 116, 139, 0.5);
+}
+
+.bg-image-editor__remove-btn {
+  color: rgba(239, 68, 68, 0.8);
+  border-color: rgba(239, 68, 68, 0.2);
+  background: rgba(239, 68, 68, 0.05);
+}
+
+.bg-image-editor__remove-btn:hover {
+  background: rgba(239, 68, 68, 0.12);
+  border-color: rgba(239, 68, 68, 0.4);
+  color: rgb(239, 68, 68);
+}
+
+.bg-image-editor__size-warning {
+  font-size: 10px;
+  color: rgba(251, 146, 60, 0.9);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.bg-image-editor__controls {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.bg-image-editor__slider-row {
+  display: grid;
+  grid-template-columns: 80px 1fr 42px;
+  align-items: center;
+  gap: 8px;
+}
+
+.bg-image-editor__slider-label {
+  font-size: 11px;
+  color: rgba(148, 163, 184, 0.8);
+}
+
+.bg-image-editor__slider-value {
+  font-size: 11px;
+  font-family: 'JetBrains Mono', monospace;
+  color: rgba(203, 213, 225, 0.8);
+  text-align: right;
+}
+
+.bg-image-editor__slider-row input[type="range"] {
+  width: 100%;
+  accent-color: rgb(99, 102, 241);
+  cursor: pointer;
+}
+
+.bg-image-editor__position-row {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  align-items: start;
+  gap: 8px;
+  padding-top: 2px;
+}
+
+/* ── 9-grid position selector ─────────────────────────────────────────────── */
+
+.position-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 26px);
+  grid-template-rows: repeat(3, 26px);
+  gap: 3px;
+}
+
+.position-grid__cell {
+  width: 26px;
+  height: 26px;
+  border-radius: 4px;
+  border: 1px solid rgba(100, 116, 139, 0.3);
+  background: rgba(100, 116, 139, 0.08);
+  cursor: pointer;
+  transition: background 0.12s, border-color 0.12s;
+}
+
+.position-grid__cell:hover {
+  background: rgba(99, 102, 241, 0.15);
+  border-color: rgba(99, 102, 241, 0.4);
+}
+
+.position-grid__cell--active {
+  background: rgba(99, 102, 241, 0.35);
+  border-color: rgb(99, 102, 241);
+}
+
+/* ── Overlay controls ─────────────────────────────────────────────────────── */
+
+.bg-overlay-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border-top: 1px solid rgba(100, 116, 139, 0.15);
+  padding-top: 10px;
+}
+
+.bg-overlay-controls__toggle {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  color: rgba(203, 213, 225, 0.85);
+  cursor: pointer;
+  user-select: none;
+}
+
+.bg-overlay-controls__toggle input[type="checkbox"] {
+  accent-color: rgb(99, 102, 241);
+  cursor: pointer;
+  width: 14px;
+  height: 14px;
+}
+
+.bg-overlay-controls__body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: opacity 0.15s;
+}
+
+.bg-overlay-controls--disabled {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.bg-overlay-controls__type-options {
+  display: flex;
+  gap: 6px;
+  margin-left: 88px;
+}
+
+.bg-overlay-controls__type-option {
+  font-size: 11px;
+  padding: 3px 10px;
+  border-radius: 4px;
+  border: 1px solid rgba(100, 116, 139, 0.3);
+  background: rgba(100, 116, 139, 0.08);
+  color: rgba(203, 213, 225, 0.75);
+  cursor: pointer;
+  transition: background 0.12s, border-color 0.12s, color 0.12s;
+}
+
+.bg-overlay-controls__type-option:hover {
+  background: rgba(99, 102, 241, 0.12);
+  border-color: rgba(99, 102, 241, 0.35);
+  color: rgba(203, 213, 225, 0.95);
+}
+
+.bg-overlay-controls__type-option--active {
+  background: rgba(99, 102, 241, 0.25);
+  border-color: rgb(99, 102, 241);
+  color: rgb(203, 213, 225);
+}
+
+.bg-overlay-controls__type-option:disabled {
+  cursor: default;
+}

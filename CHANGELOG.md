@@ -1,5 +1,31 @@
 # Changelog
 
+## [1.15.0] — 2026-05-15
+
+### Added
+- **Immagini di sfondo per le slide**: ogni slide può avere un'immagine opzionale con controlli di opacità, sfocatura (blur), posizione (9-grid) e overlay (scuro / chiaro / palette)
+- **Tipo slide "Blank"**: canvas privo di header/footer, mostra solo l'immagine di sfondo con didascalia opzionale (posizione configurabile: top / center / bottom)
+- **Tab nell'EditModal**: la form è divisa in due tab — "Contenuto" (tipo, testo, campi specifici) e "Sfondo" (gestione completa immagine)
+- **BackgroundImageLayer**: layer DOM a 3 livelli (`z-index` 0 bg, 1 overlay, 2 contenuto) nel renderer delle slide
+- `src/components/edit-modal/BackgroundImageSection.jsx` — orchestratore stato upload/editor
+- `src/components/edit-modal/BackgroundImageEditor.jsx` — editor con anteprima, slider opacità/blur, 9-grid posizione, overlay
+- `src/components/edit-modal/BackgroundImageUpload.jsx` — area upload con drag & drop
+- `src/components/edit-modal/BackgroundImagePreview.jsx` — mini-anteprima rispettosa del formato
+- `src/components/edit-modal/PositionGrid.jsx` — selettore posizione 3×3
+- `src/slide-renderer/BackgroundImageLayer.jsx` — layer bg + overlay nel renderer
+- `src/slide-renderer/BlankSlide.jsx` — componente slide blank con caption opzionale
+- `src/lib/images/processImage.js` — pipeline resize (max 1080px) + JPEG 0.85
+- `src/lib/images/estimateSize.js` — stima dimensione carosello con warning a 4 MB
+- `src/lib/color/normalize.js` — helper `hexToRgb`
+- `src/assets/presets/blank.json` — preset slide blank
+
+### Changed
+- **EditModal**: anteprima rispetta l'aspect ratio del formato (portrait/landscape/square)
+- **Schema Zod**: aggiunto `BackgroundImageSchema` e `BlankSlideSchema`
+- `slide-renderer.css`: aggiunto `isolation: isolate` su `.slide` per clip corretto del blur
+
+---
+
 ## [1.14.0] — 2026-05-15
 
 ### Added
