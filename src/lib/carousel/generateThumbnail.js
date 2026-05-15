@@ -1,7 +1,6 @@
 import { createRoot } from 'react-dom/client'
 import { flushSync } from 'react-dom'
 import { createElement } from 'react'
-import { toPng } from 'html-to-image'
 import { SlideRenderer } from '../../slide-renderer/SlideRenderer.jsx'
 import { getFormat } from '../formats/registry.js'
 
@@ -48,6 +47,7 @@ export async function generateThumbnail(carousel) {
     await document.fonts.ready
     await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)))
 
+    const { toPng } = await import('html-to-image')
     return await toPng(container, {
       width,
       height,

@@ -1,6 +1,5 @@
 import { createRoot } from 'react-dom/client'
 import { flushSync } from 'react-dom'
-import { toPng } from 'html-to-image'
 import { SlideRenderer } from '../slide-renderer/SlideRenderer.jsx'
 import { getFormat } from './formats/registry.js'
 
@@ -33,6 +32,7 @@ export async function exportSlideToPng(slide, theme, total) {
 
     await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)))
 
+    const { toPng } = await import('html-to-image')
     const dataUrl = await toPng(container, {
       pixelRatio: 2,
       cacheBust: true,

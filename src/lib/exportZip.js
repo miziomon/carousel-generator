@@ -1,4 +1,3 @@
-import JSZip from 'jszip'
 import { saveAs } from 'file-saver'
 import { exportSlideToPng } from './exportPng.jsx'
 import { slugifyTitle } from './filename.js'
@@ -9,6 +8,7 @@ import { slugifyTitle } from './filename.js'
  * @param {function} onProgress - callback({ current, total, label })
  */
 export async function exportCarouselZip(carousel, onProgress) {
+  const { default: JSZip } = await import('jszip')
   const zip = new JSZip()
   const { slides, theme } = carousel
   const total = slides.length

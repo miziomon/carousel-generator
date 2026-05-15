@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, lazy, Suspense } from 'react'
 import { useCarouselStore } from './hooks/useCarouselStore.js'
 import { useAuth } from './hooks/useAuth.js'
 import { useAutoSave } from './hooks/useAutoSave.js'
@@ -21,7 +21,7 @@ import { JsonTab } from './components/json-tab/JsonTab.jsx'
 import { EditModal } from './components/edit-modal/EditModal.jsx'
 import { PaletteManagerModal } from './components/palette-manager/PaletteManagerModal.jsx'
 import { TemplateManagerModal } from './components/template-manager/TemplateManagerModal.jsx'
-import { AiGeneratorModal } from './components/ai-generator/AiGeneratorModal.jsx'
+const AiGeneratorModal = lazy(() => import('./components/ai-generator/AiGeneratorModal.jsx').then(m => ({ default: m.AiGeneratorModal })))
 import { SaveCarouselModal } from './components/carousel-library/SaveCarouselModal.jsx'
 import { SaveOrNewPopup } from './components/carousel-library/SaveOrNewPopup.jsx'
 import { CarouselLibraryModal } from './components/carousel-library/CarouselLibraryModal.jsx'
@@ -303,6 +303,7 @@ function AuthenticatedApp({ auth }) {
             slide={editingSlide}
             theme={store.carousel.theme}
             total={store.carousel.slides.length}
+            carousel={store.carousel}
             onSave={handleSaveSlide}
             onCancel={store.closeEditModal}
           />
@@ -319,14 +320,16 @@ function AuthenticatedApp({ auth }) {
       />
 
       {aiGeneratorOpen && (
-        <AiGeneratorModal
-          open={true}
-          onClose={() => setAiGeneratorOpen(false)}
-          paletteLibrary={store.paletteLibrary}
-          carousel={store.carousel}
-          userId={auth.user?.userId}
-          onReplaceFromAi={store.replaceCarouselFromAi}
-        />
+        <Suspense fallback={null}>
+          <AiGeneratorModal
+            open={true}
+            onClose={() => setAiGeneratorOpen(false)}
+            paletteLibrary={store.paletteLibrary}
+            carousel={store.carousel}
+            userId={auth.user?.userId}
+            onReplaceFromAi={store.replaceCarouselFromAi}
+          />
+        </Suspense>
       )}
 
       <PaletteManagerModal
