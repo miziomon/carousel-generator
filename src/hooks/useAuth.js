@@ -1,5 +1,6 @@
 import { useReducer, useCallback } from 'react'
 import { loadSession, saveSession, clearSession } from '../lib/auth/storage.js'
+import { getTier } from '../lib/auth/tier.js'
 
 const initialState = {
   user: null,
@@ -74,8 +75,11 @@ export function useAuth() {
     dispatch({ type: 'SET_AUTH_LOADING', loading })
   }, [])
 
+  const tier = getTier(state.user, state.isLoggedIn)
+
   return {
     ...state,
+    tier,
     setPendingEmail,
     loginSuccess,
     setUserRole,

@@ -7,7 +7,11 @@ import { useHotkeys } from './hooks/useHotkeys.js'
 import { usePaletteLibraryPersistence } from './hooks/usePaletteLibraryPersistence.js'
 import { useUiPreferences } from './hooks/useUiPreferences.js'
 import { useMediaQuery } from './hooks/useMediaQuery.js'
+import { useCarouselCount } from './hooks/useCarouselCount.js'
 import { defaultCarousel } from './lib/defaultCarousel.js'
+import { canSaveCarousel } from './lib/auth/tier.js'
+import { createCarousel, updateCarousel } from './lib/carousel/api.js'
+import { suggestTitle } from './lib/carousel/suggestTitle.js'
 import { LoginScreen } from './components/auth/LoginScreen.jsx'
 import { Header } from './components/header/Header.jsx'
 import { TabBar } from './components/tabs/TabBar.jsx'
@@ -18,6 +22,9 @@ import { EditModal } from './components/edit-modal/EditModal.jsx'
 import { PaletteManagerModal } from './components/palette-manager/PaletteManagerModal.jsx'
 import { TemplateManagerModal } from './components/template-manager/TemplateManagerModal.jsx'
 import { AiGeneratorModal } from './components/ai-generator/AiGeneratorModal.jsx'
+import { SaveCarouselModal } from './components/carousel-library/SaveCarouselModal.jsx'
+import { SaveOrNewPopup } from './components/carousel-library/SaveOrNewPopup.jsx'
+import { CarouselLibraryModal } from './components/carousel-library/CarouselLibraryModal.jsx'
 import { Modal } from './components/ui/Modal.jsx'
 import { ToastContainer, toast } from './components/ui/Toast.jsx'
 
@@ -40,8 +47,18 @@ function AuthenticatedApp({ auth }) {
   const store = useCarouselStore()
   const [mobileView, setMobileView] = useState(false)
   const [aiGeneratorOpen, setAiGeneratorOpen] = useState(false)
+  const [libraryOpen, setLibraryOpen] = useState(false)
+  const [saveModalOpen, setSaveModalOpen] = useState(false)
+  const [saveOrNewOpen, setSaveOrNewOpen] = useState(false)
+  const [saveAsNewTitle, setSaveAsNewTitle] = useState(null)
   const { uiPrefs, toggleSidebar, setSectionOpen } = useUiPreferences()
   const isDesktop = useMediaQuery('(min-width: 1024px)')
+
+  const userId = auth.user?.userId
+  const { count: carouselCount, refresh: refreshCount } = useCarouselCount({
+    userId,
+    isLoggedIn: auth.isLoggedIn,
+  })
 
   // Auto-save debounced
   useAutoSave(store.carousel, store.meta.isDirty, store.markSaved)
@@ -76,6 +93,94 @@ function AuthenticatedApp({ auth }) {
       ...store.carousel.theme,
       footer: { ...store.carousel.theme.footer, name },
     })
+  }
+
+  // ── Logica salvataggio DB ───────────────────────────────────────────────────
+
+  function buildContentJson() {
+    // Esclude i campi id (runtime) prima di mandare al DB — stesso pattern di exportZip
+    return {
+      ...store.carousel,
+      // eslint-disable-next-line no-unused-vars
+      slides: store.carousel.slides.map(({ id: _id, ...rest }) => rest),
+    }
+  }
+
+  async function handleDbSave(title, thumbnail) {
+    store.setIsSaving(true)
+    try {
+      const content_json = buildContentJson()
+      const payload = { user_id: userId, title, content_json, thumbnail }
+      const result = await createCarousel(payload)
+      store.setDocumentIdentity({
+        documentId: result.id,
+        documentTitle: result.title,
+        documentCreatedAt: result.created_at,
+      })
+      toast('Carosello salvato', 'success')
+      setSaveModalOpen(false)
+      await refreshCount()
+    } catch (err) {
+      store.setIsSaving(false)
+      throw err
+    }
+  }
+
+  async function handleOverwrite() {
+    setSaveOrNewOpen(false)
+    store.setIsSaving(true)
+    try {
+      const content_json = buildContentJson()
+      const thumbnail = null // per la sovrascrittura diretta non rigeneriamo la thumb
+      const result = await updateCarousel(
+        store.meta.documentId,
+        userId,
+        { title: store.meta.documentTitle, content_json, thumbnail }
+      )
+      store.setDocumentIdentity({
+        documentId: result.id,
+        documentTitle: result.title,
+        documentCreatedAt: result.created_at,
+      })
+      toast('Carosello aggiornato', 'success')
+    } catch (err) {
+      store.setIsSaving(false)
+      toast(err.message ?? 'Errore durante il salvataggio', 'error')
+    }
+  }
+
+  function handleSaveCarouselClick() {
+    if (store.meta.documentId) {
+      setSaveOrNewOpen(true)
+    } else {
+      setSaveAsNewTitle(suggestTitle(store.carousel))
+      setSaveModalOpen(true)
+    }
+  }
+
+  function handleSaveNow() {
+    // "Salva ora" dal SyncIndicator: save diretto senza modale
+    handleOverwrite()
+  }
+
+  function handleSaveAsNew() {
+    setSaveOrNewOpen(false)
+    setSaveAsNewTitle(`Copia di ${store.meta.documentTitle ?? suggestTitle(store.carousel)}`)
+    setSaveModalOpen(true)
+  }
+
+  // ── Logica libreria ─────────────────────────────────────────────────────────
+
+  function handleOpenFromLibrary({ carousel, documentId, title, createdAt }) {
+    store.loadFromDb({ carousel, documentId, title, createdAt })
+  }
+
+  function handleDocumentTitleUpdate(id, title) {
+    if (id === store.meta.documentId) store.updateDocumentTitle(title)
+  }
+
+  function handleDocumentCleared(id) {
+    if (id === store.meta.documentId) store.clearDocumentIdentity()
   }
 
   function handleDeleteSlide(id) {
@@ -137,6 +242,11 @@ function AuthenticatedApp({ auth }) {
         sidebarOpen={uiPrefs.sidebarOpen}
         onToggleSidebar={toggleSidebar}
         auth={auth}
+        onSaveCarousel={handleSaveCarouselClick}
+        onOpenLibrary={() => setLibraryOpen(true)}
+        onSaveNow={handleSaveNow}
+        canSave={canSaveCarousel(auth.tier, carouselCount)}
+        canOpen={auth.isLoggedIn}
       />
 
       <div className="flex flex-1 overflow-hidden">
@@ -229,6 +339,38 @@ function AuthenticatedApp({ auth }) {
         duplicatePalette={store.duplicatePalette}
         deletePalette={store.deletePalette}
         importPalette={store.importPalette}
+      />
+
+      {/* Libreria caroselli */}
+      <CarouselLibraryModal
+        open={libraryOpen}
+        onClose={() => setLibraryOpen(false)}
+        userId={userId}
+        currentDocumentId={store.meta.documentId}
+        isDirty={store.meta.isDirty}
+        onOpen={handleOpenFromLibrary}
+        onDocumentTitleUpdate={handleDocumentTitleUpdate}
+        onDocumentCleared={handleDocumentCleared}
+        onCountChanged={refreshCount}
+      />
+
+      {/* Save flow */}
+      <SaveOrNewPopup
+        open={saveOrNewOpen}
+        onClose={() => setSaveOrNewOpen(false)}
+        documentTitle={store.meta.documentTitle}
+        lastSavedToDbAt={store.meta.lastSavedToDbAt}
+        onOverwrite={handleOverwrite}
+        onSaveAsNew={handleSaveAsNew}
+      />
+      <SaveCarouselModal
+        open={saveModalOpen}
+        onClose={() => setSaveModalOpen(false)}
+        carousel={store.carousel}
+        initialTitle={saveAsNewTitle}
+        tier={auth.tier}
+        carouselCount={carouselCount}
+        onSave={handleDbSave}
       />
     </div>
   )

@@ -90,6 +90,11 @@ function buildInitialState() {
     meta: {
       lastSavedAt: saved ? Date.now() : null,
       isDirty: false,
+      documentId: null,
+      documentTitle: null,
+      documentCreatedAt: null,
+      lastSavedToDbAt: null,
+      isSaving: false,
     },
   }
 }
@@ -453,6 +458,62 @@ function reducer(state, action) {
       }
     }
 
+    // ── Azioni persistenza DB ─────────────────────────────────────────────────
+
+    case 'SET_IS_SAVING':
+      return { ...state, meta: { ...state.meta, isSaving: action.payload } }
+
+    case 'SET_DOCUMENT_IDENTITY':
+      return {
+        ...state,
+        meta: {
+          ...state.meta,
+          documentId: action.payload.documentId,
+          documentTitle: action.payload.documentTitle,
+          documentCreatedAt: action.payload.documentCreatedAt,
+          isDirty: false,
+          isSaving: false,
+          lastSavedToDbAt: Date.now(),
+        },
+      }
+
+    case 'LOAD_FROM_DB': {
+      const { carousel: dbCarousel, documentId, title, createdAt } = action.payload
+      const migrated = migrateCarousel(dbCarousel)
+      return {
+        ...state,
+        carousel: { ...migrated, slides: renumber(injectIds(migrated.slides)) },
+        history: { past: [], future: [] },
+        meta: {
+          ...state.meta,
+          documentId,
+          documentTitle: title,
+          documentCreatedAt: createdAt,
+          isDirty: false,
+          isSaving: false,
+          lastSavedToDbAt: Date.now(),
+        },
+      }
+    }
+
+    case 'CLEAR_DOCUMENT_IDENTITY':
+      return {
+        ...state,
+        meta: {
+          ...state.meta,
+          documentId: null,
+          documentTitle: null,
+          documentCreatedAt: null,
+          lastSavedToDbAt: null,
+        },
+      }
+
+    case 'UPDATE_DOCUMENT_TITLE':
+      return {
+        ...state,
+        meta: { ...state.meta, documentTitle: action.payload.title },
+      }
+
     default:
       return state
   }
@@ -506,6 +567,13 @@ export function useCarouselStore() {
   // ── Azione AI ────────────────────────────────────────────────────────────────
   const replaceCarouselFromAi = useCallback((generated, meta)   => dispatch({ type: 'REPLACE_CAROUSEL_FROM_AI', payload: { generated, meta } }), [])
 
+  // ── Azioni persistenza DB ─────────────────────────────────────────────────────
+  const setIsSaving           = useCallback((saving)  => dispatch({ type: 'SET_IS_SAVING',         payload: saving }),    [])
+  const setDocumentIdentity   = useCallback((payload) => dispatch({ type: 'SET_DOCUMENT_IDENTITY', payload }),            [])
+  const loadFromDb            = useCallback((payload) => dispatch({ type: 'LOAD_FROM_DB',          payload }),            [])
+  const clearDocumentIdentity = useCallback(()        => dispatch({ type: 'CLEAR_DOCUMENT_IDENTITY' }),                  [])
+  const updateDocumentTitle   = useCallback((title)   => dispatch({ type: 'UPDATE_DOCUMENT_TITLE', payload: { title } }), [])
+
   return {
     // Stato
     carousel:       state.carousel,
@@ -530,6 +598,8 @@ export function useCarouselStore() {
     applyTemplate, openTemplateManager, closeTemplateManager,
     // Azione AI
     replaceCarouselFromAi,
+    // Azioni persistenza DB
+    setIsSaving, setDocumentIdentity, loadFromDb, clearDocumentIdentity, updateDocumentTitle,
   }
 }
  

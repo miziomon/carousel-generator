@@ -1,6 +1,6 @@
 # WP Draft Generator — API Reference
 
-Versione corrente: **0.44.0**
+Versione corrente: **0.45.0**
 
 ---
 
@@ -42,6 +42,12 @@ Versione corrente: **0.44.0**
 | `PUT` | `/wp-draft-generator/v1/prompts/{user_id}/{prompt_id}` | Bearer token | Aggiorna label/testo prompt |
 | `PATCH` | `/wp-draft-generator/v1/prompts/{user_id}/{prompt_id}/default` | Bearer token | Imposta prompt come predefinito |
 | `DELETE` | `/wp-draft-generator/v1/prompts/{user_id}/{prompt_id}` | Bearer token | Soft delete prompt |
+| `POST` | `/wp-draft-generator/v1/carousel` | Bearer token | Crea nuovo carosello |
+| `GET` | `/wp-draft-generator/v1/carousel` | Bearer token | Lista caroselli utente (search, sort, pagination) |
+| `GET` | `/wp-draft-generator/v1/carousel/{carousel_id}` | Bearer token | Recupera carosello completo |
+| `PUT` | `/wp-draft-generator/v1/carousel/{carousel_id}` | Bearer token | Sovrascrittura totale carosello |
+| `PATCH` | `/wp-draft-generator/v1/carousel/{carousel_id}` | Bearer token | Aggiornamento parziale carosello (es. solo titolo) |
+| `DELETE` | `/wp-draft-generator/v1/carousel/{carousel_id}` | Bearer token | Hard delete carosello |
 
 ### Base URL
 
@@ -2797,4 +2803,311 @@ curl -X DELETE "https://chat.mavida.com/wp-draft-generator/v1/users/550e8400-e29
   -H "Authorization: Bearer <API_AUTH_TOKEN>" \
   -H "X-Admin-User-Id: <uuid-admin>"
 ```
+
+---
+
+## Carosello
+
+Endpoint per la persistenza dei **caroselli editoriali** prodotti dall'app frontend "Carosello Builder". I caroselli sono documenti utente strutturati (theme + slides + thumbnail PNG base64) indipendenti dal flusso di generazione AI.
+
+**Nota limiti tier:**
+- Piano `free`: massimo `CAROUSEL_LIMIT_FREE` caroselli totali (default 10). Superato il limite, `POST /carousel` restituisce `403 CarouselLimitReached`.
+- Piano `pro` / `admin`: illimitato.
+- Il limite si applica solo alla creazione (POST). PUT/PATCH/DELETE sulle risorse esistenti funzionano sempre.
+
+**Rate limit:** `RATE_LIMIT_CAROUSEL_PER_MIN` richieste al minuto per token (default 30), condiviso fra tutti gli endpoint `/carousel/*`.
+
+---
+
+### POST /carousel
+
+Crea un nuovo carosello per l'utente.
+
+#### Request
+
+**Headers:**
+```
+Authorization: Bearer <API_AUTH_TOKEN>
+Content-Type: application/json
+```
+
+**Body JSON:**
+
+| Campo | Tipo | Obbligatorio | Descrizione |
+|-------|------|:---:|-------------|
+| `user_id` | string (UUID) | ✓ | UUID utente (generations_user.id) |
+| `title` | string | ✓ | Titolo del carosello (1-200 char) |
+| `content_json` | object | ✓ | Documento carosello con campo `slides` (array non vuoto) |
+| `thumbnail` | string | ✓ | Data URL PNG base64 (`data:image/png;base64,...`, max 200 KB decodificati) |
+
+Campi inviati ma non elencati (es. `id`, `slide_count`, `ai_generated`) vengono ignorati silenziosamente.
+
+#### Response 201 Created
+
+```json
+{
+  "id": "550e8400-e29b-41d4-a716-446655440000",
+  "title": "Pensieri in pillole #01",
+  "slide_count": 5,
+  "ai_generated": true,
+  "created_at": "2026-05-15T10:30:00Z",
+  "updated_at": "2026-05-15T10:30:00Z"
+}
+```
+
+`content_json` e `thumbnail` non sono inclusi nella response: il client li ha già in memoria.
+
+#### Errors
+
+| Codice | `error` | Causa |
+|--------|---------|-------|
+| `400` | `InvalidBody` | Body non parsabile come JSON |
+| `400` | `ValidationError` | Campi mancanti o non validi (es. thumbnail non PNG) |
+| `401` | — | Bearer token assente o non valido |
+| `403` | `CarouselLimitReached` | Piano free al limite (default 10 caroselli) |
+| `413` | `PayloadTooLarge` | Payload > `MAX_CAROUSEL_PAYLOAD_MB` (default 15 MB) |
+| `500` | `DatabaseError` | Errore Supabase |
+
+#### Esempio curl
+
+```bash
+curl -X POST "https://chat.mavida.com/wp-draft-generator/v1/carousel" \
+  -H "Authorization: Bearer <API_AUTH_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "user_id": "550e8400-e29b-41d4-a716-446655440000",
+    "title": "Pensieri in pillole #01",
+    "content_json": {
+      "theme": {"format": "portrait"},
+      "slides": [{"num": 1, "type": "cover", "lines": ["Titolo"]}],
+      "_ai_generation": {"model": "gemini-2.5-flash"}
+    },
+    "thumbnail": "data:image/png;base64,iVBORw0KGgo..."
+  }'
+```
+
+---
+
+### GET /carousel
+
+Lista paginata dei caroselli dell'utente. Non include `content_json` (usa `GET /carousel/{id}` per il contenuto completo).
+
+#### Request
+
+**Headers:** `Authorization: Bearer <API_AUTH_TOKEN>`
+
+**Query Parameters:**
+
+| Param | Tipo | Default | Descrizione |
+|-------|------|---------|-------------|
+| `user_id` | string (UUID) | — | **Obbligatorio.** UUID utente |
+| `search` | string | — | Ricerca ILIKE su `title` |
+| `sort` | string | `updated_at` | Ordinamento: `title`, `created_at`, `updated_at`, `slide_count` |
+| `order` | string | `desc` | Direzione: `asc`, `desc` |
+| `limit` | int | `50` | Max risultati (1-100) |
+| `offset` | int | `0` | Offset paginazione |
+| `ai_generated` | bool | — | Filtro: `true` solo AI-generated, `false` solo manuali |
+
+#### Response 200 OK
+
+```json
+{
+  "items": [
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440000",
+      "title": "Pensieri in pillole #01",
+      "thumbnail": "data:image/png;base64,iVBORw0KGgo...",
+      "slide_count": 5,
+      "ai_generated": true,
+      "created_at": "2026-05-15T10:30:00Z",
+      "updated_at": "2026-05-15T11:00:00Z"
+    }
+  ],
+  "total": 3,
+  "limit": 50,
+  "offset": 0
+}
+```
+
+#### Errors
+
+| Codice | Causa |
+|--------|-------|
+| `400 Bad Request` | `user_id` mancante/non valido, `sort`/`order` non ammessi, `limit`/`offset` fuori range |
+| `401 Unauthorized` | Bearer token assente o non valido |
+
+#### Esempio curl
+
+```bash
+# Ultimi 20 caroselli
+curl "https://chat.mavida.com/wp-draft-generator/v1/carousel?user_id=550e8400...&limit=20&sort=updated_at&order=desc" \
+  -H "Authorization: Bearer <API_AUTH_TOKEN>"
+
+# Solo AI-generated, ricerca per titolo
+curl "https://chat.mavida.com/wp-draft-generator/v1/carousel?user_id=550e8400...&search=pillole&ai_generated=true" \
+  -H "Authorization: Bearer <API_AUTH_TOKEN>"
+```
+
+---
+
+### GET /carousel/{carousel_id}
+
+Recupera un carosello completo, inclusi `content_json` e `thumbnail`.
+
+#### Request
+
+**Headers:** `Authorization: Bearer <API_AUTH_TOKEN>`
+
+**Path:** `carousel_id` — UUID del carosello
+
+**Query:** `user_id` (UUID utente, obbligatorio)
+
+#### Response 200 OK
+
+```json
+{
+  "id": "550e8400-e29b-41d4-a716-446655440000",
+  "title": "Pensieri in pillole #01",
+  "content_json": { "theme": {}, "slides": [], "_ai_generation": {} },
+  "thumbnail": "data:image/png;base64,iVBORw0KGgo...",
+  "slide_count": 5,
+  "ai_generated": true,
+  "created_at": "2026-05-15T10:30:00Z",
+  "updated_at": "2026-05-15T11:00:00Z"
+}
+```
+
+#### Errors
+
+| Codice | Causa |
+|--------|-------|
+| `400 Bad Request` | UUID non validi |
+| `401 Unauthorized` | Bearer token assente o non valido |
+| `404 Not Found` | Carosello non trovato o non appartiene all'utente |
+
+---
+
+### PUT /carousel/{carousel_id}
+
+Sovrascrittura totale di un carosello. Tutti i campi body sono obbligatori.
+
+#### Request
+
+**Headers:** `Authorization: Bearer <API_AUTH_TOKEN>`, `Content-Type: application/json`
+
+**Path:** `carousel_id` — UUID del carosello
+
+**Query:** `user_id` (UUID utente, obbligatorio)
+
+**Body JSON:** `title`, `content_json`, `thumbnail` (tutti obbligatori — stesse regole del POST)
+
+#### Response 200 OK
+
+```json
+{
+  "id": "550e8400-e29b-41d4-a716-446655440000",
+  "title": "Pensieri in pillole #01 (v2)",
+  "slide_count": 7,
+  "ai_generated": true,
+  "created_at": "2026-05-15T10:30:00Z",
+  "updated_at": "2026-05-15T12:00:00Z"
+}
+```
+
+#### Errors
+
+| Codice | Causa |
+|--------|-------|
+| `400` | UUID non validi o body non conforme |
+| `401` | Bearer token assente o non valido |
+| `404` | Carosello non trovato o non appartiene all'utente |
+| `413` | Payload > `MAX_CAROUSEL_PAYLOAD_MB` |
+
+---
+
+### PATCH /carousel/{carousel_id}
+
+Aggiornamento parziale. Almeno un campo tra `title`, `content_json`, `thumbnail` deve essere presente. Usato principalmente per la **rinomina veloce** (solo `title`).
+
+#### Request
+
+**Headers:** `Authorization: Bearer <API_AUTH_TOKEN>`, `Content-Type: application/json`
+
+**Path:** `carousel_id` — UUID del carosello
+
+**Query:** `user_id` (UUID utente, obbligatorio)
+
+**Body JSON (almeno uno):**
+
+| Campo | Tipo | Descrizione |
+|-------|------|-------------|
+| `title` | string | Aggiorna solo il titolo |
+| `content_json` | object | Aggiorna contenuto (ricalcola `slide_count`, `ai_generated`) |
+| `thumbnail` | string | Aggiorna solo la thumbnail |
+
+#### Response 200 OK
+
+```json
+{
+  "id": "550e8400-e29b-41d4-a716-446655440000",
+  "title": "Nuovo titolo",
+  "slide_count": 5,
+  "ai_generated": true,
+  "created_at": "2026-05-15T10:30:00Z",
+  "updated_at": "2026-05-15T13:00:00Z"
+}
+```
+
+#### Esempio rinomina veloce
+
+```bash
+curl -X PATCH "https://chat.mavida.com/wp-draft-generator/v1/carousel/550e8400...?user_id=660e8400..." \
+  -H "Authorization: Bearer <API_AUTH_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{"title": "Nuovo titolo carosello"}'
+```
+
+---
+
+### DELETE /carousel/{carousel_id}
+
+Hard delete irreversibile del carosello. Il record viene eliminato fisicamente dal DB.
+
+#### Request
+
+**Headers:** `Authorization: Bearer <API_AUTH_TOKEN>`
+
+**Path:** `carousel_id` — UUID del carosello
+
+**Query:** `user_id` (UUID utente, obbligatorio)
+
+#### Response 204 No Content
+
+Body vuoto.
+
+#### Errors
+
+| Codice | Causa |
+|--------|-------|
+| `400 Bad Request` | UUID non validi |
+| `401 Unauthorized` | Bearer token assente o non valido |
+| `404 Not Found` | Carosello non trovato o non appartiene all'utente |
+
+#### Esempio curl
+
+```bash
+curl -X DELETE "https://chat.mavida.com/wp-draft-generator/v1/carousel/550e8400...?user_id=660e8400..." \
+  -H "Authorization: Bearer <API_AUTH_TOKEN>"
+```
+
+---
+
+### Variabili d'ambiente carousel
+
+| Variabile | Default | Descrizione |
+|-----------|---------|-------------|
+| `CAROUSEL_LIMIT_FREE` | `10` | Max caroselli per piano `free` |
+| `MAX_CAROUSEL_PAYLOAD_MB` | `15` | Dimensione massima payload JSON (MB) |
+| `MAX_THUMBNAIL_KB` | `200` | Dimensione max thumbnail decodificata (KB) |
+| `RATE_LIMIT_CAROUSEL_PER_MIN` | `30` | Rate limit per token, condiviso fra tutti gli endpoint `/carousel/*` |
 

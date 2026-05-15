@@ -1,0 +1,493 @@
+/* ── SaveCarouselModal ─────────────────────────────────────────────────────── */
+
+.save-carousel-modal__body {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.save-carousel-modal__thumb {
+  width: 120px;
+  flex-shrink: 0;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #1a2236;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1;
+}
+
+.save-carousel-modal__thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.save-carousel-modal__thumb-spinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.save-carousel-modal__fields {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.save-carousel-modal__label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: rgba(232, 232, 232, 0.45);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 4px;
+}
+
+.save-carousel-modal__input {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(232, 232, 232, 0.15);
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-size: 13px;
+  color: rgba(232, 232, 232, 0.9);
+  outline: none;
+  transition: border-color 0.15s;
+  font-family: inherit;
+}
+
+.save-carousel-modal__input:focus {
+  border-color: rgba(0, 255, 170, 0.5);
+}
+
+.save-carousel-modal__counter {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: rgba(232, 232, 232, 0.4);
+}
+
+.save-carousel-modal__counter--warn {
+  color: rgba(251, 191, 36, 0.8);
+}
+
+.save-carousel-modal__error {
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 12px;
+  color: rgba(239, 68, 68, 0.9);
+  margin-top: 4px;
+}
+
+.save-carousel-modal__footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(232, 232, 232, 0.1);
+  margin-top: 16px;
+}
+
+/* ── SaveOrNewPopup ──────────────────────────────────────────────────────────── */
+
+.save-or-new-popup {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.save-or-new-popup__box {
+  background: #1e2a3a;
+  border: 1px solid rgba(232, 232, 232, 0.15);
+  border-radius: 12px;
+  padding: 24px;
+  width: 380px;
+  max-width: calc(100vw - 32px);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
+}
+
+.save-or-new-popup__title {
+  font-size: 14px;
+  font-weight: 600;
+  color: rgba(232, 232, 232, 0.9);
+  margin-bottom: 8px;
+}
+
+.save-or-new-popup__doc-name {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  color: #00ffaa;
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.save-or-new-popup__meta {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: rgba(232, 232, 232, 0.35);
+  margin-bottom: 20px;
+}
+
+.save-or-new-popup__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+/* ── CarouselLibraryModal ──────────────────────────────────────────────────── */
+
+.carousel-library__toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.carousel-library__search {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(232, 232, 232, 0.15);
+  border-radius: 6px;
+  padding: 7px 10px;
+  font-size: 13px;
+  color: rgba(232, 232, 232, 0.9);
+  outline: none;
+  transition: border-color 0.15s;
+  font-family: inherit;
+}
+
+.carousel-library__search:focus {
+  border-color: rgba(0, 255, 170, 0.5);
+}
+
+.carousel-library__sort {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(232, 232, 232, 0.15);
+  border-radius: 6px;
+  padding: 7px 10px;
+  font-size: 12px;
+  color: rgba(232, 232, 232, 0.8);
+  outline: none;
+  cursor: pointer;
+  font-family: inherit;
+  appearance: none;
+  padding-right: 28px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='rgba(232,232,232,0.4)' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+}
+
+.carousel-library__count {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: rgba(232, 232, 232, 0.35);
+  white-space: nowrap;
+}
+
+.carousel-library__list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 480px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.carousel-library__list::-webkit-scrollbar {
+  width: 4px;
+}
+
+.carousel-library__list::-webkit-scrollbar-thumb {
+  background: rgba(232, 232, 232, 0.15);
+  border-radius: 2px;
+}
+
+.carousel-library__empty {
+  text-align: center;
+  padding: 48px 24px;
+  color: rgba(232, 232, 232, 0.4);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.carousel-library__empty-icon {
+  font-size: 32px;
+  margin-bottom: 12px;
+}
+
+.carousel-library__loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px;
+  color: rgba(232, 232, 232, 0.4);
+  font-size: 13px;
+  gap: 8px;
+}
+
+.carousel-library__error {
+  text-align: center;
+  padding: 32px;
+  color: rgba(239, 68, 68, 0.8);
+  font-size: 13px;
+}
+
+/* ── CarouselListItem ──────────────────────────────────────────────────────── */
+
+.carousel-list-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(232, 232, 232, 0.08);
+  border-radius: 10px;
+  padding: 12px 14px;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.carousel-list-item:hover {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(232, 232, 232, 0.14);
+}
+
+.carousel-list-item--current {
+  border-color: rgba(0, 255, 170, 0.25);
+}
+
+.carousel-list-item__thumb {
+  width: 80px;
+  flex-shrink: 0;
+  border-radius: 6px;
+  overflow: hidden;
+  background: #1a2236;
+  aspect-ratio: 1;
+}
+
+.carousel-list-item__thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.carousel-list-item__thumb--wide {
+  aspect-ratio: 16/9;
+}
+
+.carousel-list-item__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.carousel-list-item__title {
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(232, 232, 232, 0.9);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.carousel-list-item__badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  padding: 2px 5px;
+  border-radius: 3px;
+  background: rgba(99, 102, 241, 0.25);
+  color: rgba(165, 180, 252, 0.9);
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
+}
+
+.carousel-list-item__badge--current {
+  background: rgba(0, 255, 170, 0.15);
+  color: rgba(0, 255, 170, 0.8);
+}
+
+.carousel-list-item__meta {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: rgba(232, 232, 232, 0.35);
+  margin-bottom: 10px;
+}
+
+.carousel-list-item__actions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+/* ── RenameCarouselDialog ─────────────────────────────────────────────────── */
+
+.rename-dialog__input {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(232, 232, 232, 0.15);
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-size: 13px;
+  color: rgba(232, 232, 232, 0.9);
+  outline: none;
+  transition: border-color 0.15s;
+  font-family: inherit;
+  margin-bottom: 12px;
+}
+
+.rename-dialog__input:focus {
+  border-color: rgba(0, 255, 170, 0.5);
+}
+
+.rename-dialog__footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+/* ── UserMenu ─────────────────────────────────────────────────────────────── */
+
+.user-menu {
+  position: relative;
+}
+
+.user-menu__trigger {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: rgba(232, 232, 232, 0.45);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: background 0.12s, color 0.12s;
+}
+
+.user-menu__trigger:hover {
+  background: rgba(255, 255, 255, 0.07);
+  color: rgba(232, 232, 232, 0.7);
+}
+
+.user-menu__dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  background: #1e2a3a;
+  border: 1px solid rgba(232, 232, 232, 0.15);
+  border-radius: 8px;
+  padding: 6px;
+  min-width: 180px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.user-menu__item {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  padding: 8px 12px;
+  border-radius: 5px;
+  border: none;
+  background: transparent;
+  color: rgba(232, 232, 232, 0.7);
+  cursor: pointer;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background 0.12s, color 0.12s;
+  width: 100%;
+}
+
+.user-menu__item:hover {
+  background: rgba(0, 255, 170, 0.1);
+  color: rgba(232, 232, 232, 0.95);
+}
+
+.user-menu__item--danger:hover {
+  background: rgba(239, 68, 68, 0.12);
+  color: rgba(239, 68, 68, 0.9);
+}
+
+.user-menu__sep {
+  height: 1px;
+  background: rgba(232, 232, 232, 0.08);
+  margin: 4px 0;
+}
+
+.user-menu__email {
+  font-size: 10px;
+  color: rgba(232, 232, 232, 0.3);
+  padding: 4px 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── SyncIndicator ─────────────────────────────────────────────────────────── */
+
+.sync-indicator {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: rgba(232, 232, 232, 0.35);
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.sync-indicator--action {
+  cursor: pointer;
+  color: rgba(251, 191, 36, 0.7);
+  text-decoration: none;
+  background: none;
+  border: none;
+  font-family: inherit;
+  font-size: inherit;
+  padding: 0;
+  transition: color 0.15s;
+}
+
+.sync-indicator--action:hover {
+  color: rgba(251, 191, 36, 1);
+}
+
+.sync-indicator--saved {
+  color: rgba(0, 255, 170, 0.45);
+}
+
+.sync-indicator__spinner {
+  width: 10px;
+  height: 10px;
+  border: 1.5px solid rgba(232, 232, 232, 0.15);
+  border-top-color: rgba(0, 255, 170, 0.7);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}

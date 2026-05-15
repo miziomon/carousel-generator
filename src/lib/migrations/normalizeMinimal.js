@@ -21,11 +21,13 @@ import { getBuiltinPalette } from '../palettes/builtinPalettes.js'
 function cloneDefaultTheme() {
   const dt = defaultCarousel.theme
   return {
-    palette_id: dt.palette_id,
-    palette:    { ...dt.palette },
-    header:     { ...dt.header },
-    footer:     { ...dt.footer },
-    fonts:      { ...dt.fonts },
+    format:      dt.format,
+    template_id: dt.template_id,
+    palette_id:  dt.palette_id,
+    palette:     { ...dt.palette },
+    header:      { ...dt.header },
+    footer:      { ...dt.footer },
+    fonts:       { ...dt.fonts },
   }
 }
 
@@ -44,11 +46,15 @@ function normalizeTheme(theme) {
   }
 
   return {
-    palette_id: theme.palette_id ?? dt.palette_id,
-    palette:    { ...basePalette, ...(theme.palette || {}) },
-    header:     { ...dt.header,   ...(theme.header  || {}) },
-    footer:     { ...dt.footer,   ...(theme.footer  || {}) },
-    fonts:      { ...dt.fonts,    ...(theme.fonts   || {}) },
+    // format e template_id vengono preservati dall'input o cadono al default.
+    // Senza questa riga, migrateCarousel li sovrascriveva sempre con 'square'.
+    format:      theme.format      ?? dt.format,
+    template_id: theme.template_id ?? dt.template_id,
+    palette_id:  theme.palette_id  ?? dt.palette_id,
+    palette:     { ...basePalette, ...(theme.palette || {}) },
+    header:      { ...dt.header,   ...(theme.header  || {}) },
+    footer:      { ...dt.footer,   ...(theme.footer  || {}) },
+    fonts:       { ...dt.fonts,    ...(theme.fonts   || {}) },
   }
 }
 

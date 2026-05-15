@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { Upload, Undo2, Redo2, FilePlus, Monitor, Smartphone, Plus, ChevronDown, Sparkles, LogOut, PanelLeft } from 'lucide-react'
+import { Upload, Undo2, Redo2, FilePlus, Monitor, Smartphone, Plus, ChevronDown, Sparkles, Save, FolderOpen, PanelLeft } from 'lucide-react'
 import '../theme-sidebar/theme-sidebar.css'
 import { Button } from '../ui/Button.jsx'
 import { ConfirmDialog } from '../ui/ConfirmDialog.jsx'
@@ -8,6 +8,8 @@ import '../ai-generator/ai-generator.css'
 import { toast } from '../ui/Toast.jsx'
 import { validateJson } from '../../lib/validateJson.js'
 import { slugifyTitle } from '../../lib/filename.js'
+import { UserMenu } from './UserMenu.jsx'
+import { SyncIndicator } from './SyncIndicator.jsx'
 import pkg from '../../../package.json'
 import './header.css'
 
@@ -19,14 +21,6 @@ const SLIDE_TYPES = [
   { id: 'cta',      label: 'Call to action' },
 ]
 
-function formatSavedAgo(ts) {
-  if (!ts) return null
-  const seconds = Math.floor((Date.now() - ts) / 1000)
-  if (seconds < 5) return 'Salvato ora'
-  if (seconds < 60) return `Salvato ${seconds}s fa`
-  const minutes = Math.floor(seconds / 60)
-  return `Salvato ${minutes}m fa`
-}
 
 export function Header({
   carousel,
@@ -46,22 +40,17 @@ export function Header({
   sidebarOpen,
   onToggleSidebar,
   auth,
+  // DB save/open
+  onSaveCarousel,
+  onOpenLibrary,
+  onSaveNow,
+  canSave,
+  canOpen,
 }) {
-  const [savedLabel, setSavedLabel] = useState(null)
   const [showNewConfirm, setShowNewConfirm] = useState(false)
   const [addMenuOpen, setAddMenuOpen] = useState(false)
   const addMenuRef = useRef(null)
   const fileInputRef = useRef(null)
-
-  useEffect(() => {
-    setSavedLabel(formatSavedAgo(meta.lastSavedAt))
-    const interval = setInterval(() => setSavedLabel(formatSavedAgo(meta.lastSavedAt)), 5000)
-    return () => clearInterval(interval)
-  }, [meta.lastSavedAt])
-
-  useEffect(() => {
-    setSavedLabel(formatSavedAgo(meta.lastSavedAt))
-  }, [meta.lastSavedAt])
 
   // Chiude il dropdown "Aggiungi" se si clicca fuori
   useEffect(() => {
@@ -237,28 +226,44 @@ export function Header({
 
           <ExportPanel carousel={carousel} onExportJson={handleExportJson} />
 
-          {savedLabel && <span className="header__saved">{savedLabel}</span>}
-          {meta.isDirty && !meta.lastSavedAt && (
-            <span className="header__saved" style={{ color: 'rgba(0,255,170,0.4)' }}>Non salvato</span>
-          )}
+          <div className="header__separator" />
 
-          {auth && (
+          {/* Bottoni cloud — visibili solo se loggato */}
+          {auth?.isLoggedIn && (
             <>
-              <div className="header__separator" />
-              <span
-                className="header__user-email"
-                title={auth.user?.email}
-              >
-                {auth.user?.email}
-              </span>
               <Button
                 variant="ghost"
-                size="icon"
-                onClick={() => { auth.logout(); toast('Logout effettuato', 'success') }}
-                title="Logout"
+                size="sm"
+                onClick={onOpenLibrary}
+                disabled={!canOpen}
+                title={canOpen ? 'Apri un carosello salvato' : 'Accedi per accedere ai tuoi caroselli'}
               >
-                <LogOut size={15} />
+                <FolderOpen size={14} />
+                Apri
               </Button>
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={onSaveCarousel}
+                disabled={!canSave}
+                title={canSave ? 'Salva il carosello corrente nel cloud' : 'Accedi per salvare'}
+              >
+                <Save size={14} />
+                Salva
+              </Button>
+            </>
+          )}
+
+          <SyncIndicator meta={meta} onSaveNow={meta.documentId && meta.isDirty ? onSaveNow : null} />
+
+          {auth?.isLoggedIn && (
+            <>
+              <div className="header__separator" />
+              <UserMenu
+                user={auth.user}
+                onOpenLibrary={onOpenLibrary}
+                onLogout={() => { auth.logout(); toast('Logout effettuato', 'success') }}
+              />
             </>
           )}
         </div>
