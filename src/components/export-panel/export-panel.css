@@ -41,6 +41,20 @@
   color: #00ffaa;
 }
 
+/* Separatore nel menu dropdown */
+.export-panel__separator {
+  height: 1px;
+  background: rgba(232, 232, 232, 0.1);
+  margin: 4px 6px;
+}
+
+/* Badge warning landscape nella voce PDF */
+.export-panel__item-warning {
+  margin-left: auto;
+  color: #f59e0b;
+  flex-shrink: 0;
+}
+
 /* Modal progresso */
 .export-progress {
   display: flex;
@@ -78,4 +92,52 @@
   font-weight: 600;
   color: #00ffaa;
   letter-spacing: 0.05em;
+}
+
+.export-progress__size {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: rgba(232, 232, 232, 0.4);
+  text-align: center;
+}
+
+.export-progress__label--error {
+  color: #f87171;
+}
+
+/* Dialog warning landscape PDF */
+.export-pdf-warning {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.export-pdf-warning__icon {
+  display: flex;
+  justify-content: center;
+  color: #f59e0b;
+}
+
+.export-pdf-warning__text,
+.export-pdf-warning__suggest,
+.export-pdf-warning__question {
+  font-size: 13px;
+  color: rgba(232, 232, 232, 0.8);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.export-pdf-warning__list {
+  font-size: 13px;
+  color: rgba(232, 232, 232, 0.7);
+  padding-left: 18px;
+  margin: 0;
+  line-height: 1.7;
+}
+
+.export-pdf-warning__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 4px;
 }

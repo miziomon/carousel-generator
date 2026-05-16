@@ -1,5 +1,29 @@
 # Changelog
 
+## [1.16.0] — 2026-05-16
+
+### Added
+- **Export PDF per LinkedIn**: nuovo formato di esportazione che genera un PDF multi-pagina con tutte le slide del carosello, ottimizzato per la pubblicazione su LinkedIn
+- **Voce "Esporta PDF (LinkedIn)"** nel dropdown Esporta, con icona `FileText` e badge warning ⚠ se il formato attivo è landscape
+- **Dialog di warning landscape**: se il formato è landscape, prima dell'export appare un dialog che informa l'utente dello scarso rendering nel feed mobile LinkedIn, con opzione di procedere comunque
+- **Modal di progresso PDF**: mostra slide corrente/totale, progress bar percentuale e dimensione stimata in MB calcolata in tempo reale
+- **Gestione errori PDF**: in caso di errore il modal rimane aperto con il messaggio di errore e un bottone Chiudi
+- **Naming automatico**: il file ha sempre la forma `{slug-titolo}-linkedin.pdf`
+- **Metadata PDF embedded**: title, author, subject, creator valorizzati dai dati del carosello
+- `src/lib/renderSlideAsPng.jsx` — funzione di rendering condivisa con `pixelRatio` parametrizzabile (1× per PDF, 2× retina per PNG/ZIP)
+- `src/lib/exportPdf.js` — pipeline export PDF con import dinamico di `jspdf`
+- `src/components/export-panel/ExportPdfLandscapeWarning.jsx` — dialog conferma formato landscape
+
+### Changed
+- `src/components/export-panel/ExportPanel.jsx` — aggiunta voce PDF + progress modal PDF + gestione warning landscape
+- `src/components/export-panel/export-panel.css` — separatore menu, badge warning, stili modal PDF, dialog landscape
+- `vite.config.js` — aggiunto `jspdf` alla lista dei chunk dinamici (lazy, non bundlato in vendor)
+
+### Dependencies
+- Aggiunto `jspdf` ^4.x (lazy-loaded, ~112KB gzip, caricato solo all'uso)
+
+---
+
 ## [1.15.0] — 2026-05-15
 
 ### Added
