@@ -70,24 +70,15 @@
   text-transform: uppercase;
 }
 
-/* === BODY ARCHIVO === */
-.editorial__body--archivo {
-  font-family: 'Archivo Black', sans-serif;
+/* === BODY (font risolto via CSS variables dal template JSX) === */
+.editorial__body {
+  font-family: var(--font-family);
+  font-weight: var(--font-weight);
+  letter-spacing: var(--font-letter-spacing);
   font-size: var(--editorial-body-size);
   line-height: var(--editorial-body-line-height);
-  letter-spacing: -0.03em;
-  margin-top: auto;
-  margin-bottom: auto;
-}
-
-/* === BODY FRAUNCES === */
-.editorial__body--fraunces {
-  font-family: 'Fraunces', serif;
-  font-weight: 900;
-  font-variation-settings: "opsz" 144;
-  font-size: var(--editorial-body-size);
-  line-height: var(--editorial-body-line-height);
-  letter-spacing: -0.025em;
+  text-transform: var(--font-text-transform, none);
+  font-variation-settings: var(--font-variation-settings, normal);
   margin-top: auto;
   margin-bottom: auto;
 }
@@ -103,7 +94,6 @@
   background-position: 0 92%;
   padding: 0 2px;
 }
-.editorial__body--fraunces .editorial__hl-under { background-size: 100% 10px; }
 
 /* === ELEMENTI SPECIALI === */
 .editorial__swipe-mini {
@@ -116,7 +106,8 @@
   opacity: 0.7;
 }
 .editorial__divider-num {
-  font-family: 'Archivo Black', sans-serif;
+  font-family: var(--slot-primary-family);
+  font-weight: var(--slot-primary-weight);
   font-size: var(--editorial-divider-num-size);
   line-height: 0.85;
   letter-spacing: -0.04em;
@@ -136,10 +127,10 @@
   /* Eredita font, size, letter-spacing e line-height dal parent body */
 }
 .editorial__qmark {
-  font-family: 'Fraunces', serif;
-  font-weight: 900;
+  font-family: var(--slot-secondary-family);
+  font-weight: var(--slot-secondary-weight);
   font-style: normal;
-  font-variation-settings: "opsz" 144;
+  font-variation-settings: var(--slot-secondary-variation, normal);
   color: var(--slide-accent);
   display: inline-block;
   line-height: 0;
@@ -159,9 +150,9 @@
   text-transform: none;
 }
 .editorial__quote-attr-source {
-  font-family: 'Fraunces', serif;
+  font-family: var(--slot-secondary-family);
   font-style: italic;
-  font-weight: 400;
+  font-weight: var(--slot-secondary-weight);
   font-size: var(--editorial-quote-attr-source-size);
   color: var(--slide-muted);
   opacity: 0.75;
@@ -177,7 +168,8 @@
   margin-bottom: 30px;
 }
 .editorial__cta-item {
-  font-family: 'Archivo Black', sans-serif;
+  font-family: var(--slot-primary-family);
+  font-weight: var(--slot-primary-weight);
   font-size: var(--editorial-cta-size);
   line-height: var(--editorial-cta-line-height);
   letter-spacing: -0.03em;

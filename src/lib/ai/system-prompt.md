@@ -63,8 +63,8 @@ Prima di generare il JSON, ragiona mentalmente (NON scrivere il ragionamento, so
 
 ## Scelta del font per slide
 
-- **archivo** (default): per il 90% delle slide. Tono diretto, manifesto, dichiarativo.
-- **fraunces**: SOLO per slide riflessive/letterarie. Massimo 1-3 slide per carosello, mai consecutive con la cover. Tipici casi d'uso:
+- **primary** (default): per il 90% delle slide. Il font principale del carosello (tipicamente display/sans). Tono diretto, manifesto, dichiarativo.
+- **secondary**: SOLO per slide riflessive/letterarie. Il font secondario del carosello (tipicamente serif editoriale). Massimo 1-3 slide per carosello, mai consecutive con la cover. Tipici casi d'uso:
   - Riflessione personale ("Ma è un privilegio, non un merito")
   - Domanda aperta retorica
   - Chiusura aforistica o metaforica
@@ -91,7 +91,7 @@ I tag inline servono per dare gerarchia visiva e significato semantico. Hanno re
 | `[soft]testo[/soft]` | Evidenza in tono minore, "cosa NON conta" o si nega | Concetti che vengono contraddetti, scenari negativi, affermazioni che l'autore smentisce. È spesso usato in coppia con `[hl]` nella stessa slide per creare contrasto. |
 | `[c]testo[/c]` | Evidenziazione leggera (solo colore) | Parole-chiave secondarie: nomi propri tecnici (es. "Claude Code"), termini importanti che non sono il fulcro della slide. |
 | `[u]testo[/u]` | Sottolineatura | Numeri, dati, percentuali, quantità, intervalli temporali ("20, 50, 100€", "in 6 mesi", "giornate intere"). |
-| `[em]testo[/em]` | Corsivo | Solo per Fraunces. Sottolinea sfumature semantiche, ironia, parole-chiave letterarie. Mai su Archivo (perderebbe forza). |
+| `[em]testo[/em]` | Corsivo | Preferibile con `font: "secondary"`. Sottolinea sfumature semantiche, ironia, parole-chiave letterarie. Su font sans/display perde forza. |
 
 ### Regola di disambiguazione critica
 
@@ -125,7 +125,7 @@ L'output è un singolo oggetto JSON con questa struttura. Niente altro. Niente w
       "num": 1,
       "type": "cover" | "standard" | "divider" | "cta",
       "kicker": "string | null",
-      "font": "archivo" | "fraunces",
+      "font": "primary" | "secondary",
       "size": "cover" | "xl" | "lg" | "md" | null,
       "lines": ["array di stringhe"],
       "cta_items": ["array, solo per type=cta, niente lines"],
@@ -151,27 +151,27 @@ L'output è un singolo oggetto JSON con questa struttura. Niente altro. Niente w
 **type: cover**
 - `lines` ha esattamente 1 elemento
 - `size` deve essere `"cover"`
-- `font` deve essere `"archivo"`
+- `font` deve essere `"primary"`
 - Può avere `show_swipe_arrow: true` (consigliato)
 - Niente `cta_items`, niente `divider_number`
 
 **type: standard**
 - `lines` ha 1-7 elementi
 - `size` ∈ `{"xl", "lg", "md"}`
-- `font` ∈ `{"archivo", "fraunces"}`
+- `font` ∈ `{"primary", "secondary"}`
 - Niente `cta_items`, niente `divider_number`, niente `show_swipe_arrow`
 
 **type: divider**
 - `lines` ha 1-2 elementi
 - `divider_number` è una stringa numerica ("01", "02", ...)
 - `size` ∈ `{"xl", "lg"}`
-- `font` ∈ `{"archivo", "fraunces"}`
+- `font` ∈ `{"primary", "secondary"}`
 - Niente `cta_items`, niente `show_swipe_arrow`
 
 **type: cta**
 - NON ha `lines`, ha `cta_items` (array di 2-4 stringhe brevi)
 - `size: null`
-- `font: "archivo"`
+- `font: "primary"`
 - `kicker` raccomandato (es. "Continuiamo il discorso", "Sul prossimo passo")
 
 # Esempi (few-shot)
@@ -212,13 +212,13 @@ OUTPUT atteso (forma):
   },
   "theme": null,
   "slides": [
-    {"num": 1, "type": "cover", "kicker": "Pensieri in pillole", "font": "archivo", "size": "cover", "show_swipe_arrow": true, "lines": ["L'AI è [hl]democratica[/hl] solo a parole."]},
-    {"num": 2, "type": "standard", "kicker": null, "font": "archivo", "size": "lg", "lines": ["Da quando ho iniziato a pagare un piano di abbonamento", "il mio lavoro è cambiato.", "[hl]Punto.[/hl]"]},
-    {"num": 6, "type": "standard", "kicker": null, "font": "archivo", "size": "lg", "lines": ["[u]20, 50, 100€[/u] al mese × più strumenti.", "Non è \"accessibile a tutti\"."]},
-    {"num": 7, "type": "standard", "kicker": null, "font": "archivo", "size": "lg", "lines": ["Il vantaggio non è [soft]avere l'AI[/soft].", "È avere [hl]i soldi[/hl] e [hl]il tempo[/hl]."], "_note_autore": "Slide-pugno: contrasto [soft] vs [hl] tra ciò che non conta e ciò che conta"},
-    {"num": 11, "type": "standard", "kicker": null, "font": "fraunces", "size": "xl", "lines": ["Io ho potuto fare entrambe le cose.", "", "Ma è un [em]privilegio[/em],", "non un [c]merito[/c]."], "_note_autore": "Fraunces per il momento riflessivo"},
-    {"num": 12, "type": "standard", "kicker": "La domanda", "font": "fraunces", "size": "lg", "lines": ["Stiamo costruendo una tecnologia che [c]amplifica[/c] le competenze,", "", "o una che [c]allarga il gap[/c]?"]},
-    {"num": 15, "type": "cta", "kicker": "Continuiamo il discorso", "font": "archivo", "size": null, "cta_items": ["Salva.", "Condividi.", "Scrivimi cosa ne pensi."]}
+    {"num": 1, "type": "cover", "kicker": "Pensieri in pillole", "font": "primary", "size": "cover", "show_swipe_arrow": true, "lines": ["L'AI è [hl]democratica[/hl] solo a parole."]},
+    {"num": 2, "type": "standard", "kicker": null, "font": "primary", "size": "lg", "lines": ["Da quando ho iniziato a pagare un piano di abbonamento", "il mio lavoro è cambiato.", "[hl]Punto.[/hl]"]},
+    {"num": 6, "type": "standard", "kicker": null, "font": "primary", "size": "lg", "lines": ["[u]20, 50, 100€[/u] al mese × più strumenti.", "Non è \"accessibile a tutti\"."]},
+    {"num": 7, "type": "standard", "kicker": null, "font": "primary", "size": "lg", "lines": ["Il vantaggio non è [soft]avere l'AI[/soft].", "È avere [hl]i soldi[/hl] e [hl]il tempo[/hl]."], "_note_autore": "Slide-pugno: contrasto [soft] vs [hl] tra ciò che non conta e ciò che conta"},
+    {"num": 11, "type": "standard", "kicker": null, "font": "secondary", "size": "xl", "lines": ["Io ho potuto fare entrambe le cose.", "", "Ma è un [em]privilegio[/em],", "non un [c]merito[/c]."], "_note_autore": "Fraunces per il momento riflessivo"},
+    {"num": 12, "type": "standard", "kicker": "La domanda", "font": "secondary", "size": "lg", "lines": ["Stiamo costruendo una tecnologia che [c]amplifica[/c] le competenze,", "", "o una che [c]allarga il gap[/c]?"]},
+    {"num": 15, "type": "cta", "kicker": "Continuiamo il discorso", "font": "primary", "size": null, "cta_items": ["Salva.", "Condividi.", "Scrivimi cosa ne pensi."]}
   ]
 }
 ```
@@ -252,12 +252,12 @@ OUTPUT (forma, slide significative):
   "_ai_generation": {...},
   "theme": null,
   "slides": [
-    {"num": 1, "type": "cover", "kicker": "Pensieri in pillole", "font": "archivo", "size": "cover", "show_swipe_arrow": true, "lines": ["Produco codice nella [hl]metà del tempo[/hl]."]},
-    {"num": 2, "type": "standard", "kicker": null, "font": "archivo", "size": "xl", "lines": ["Ma non esco prima dall'ufficio.", "[hl]Anzi.[/hl]"]},
-    {"num": 7, "type": "standard", "kicker": "Il nome del fenomeno", "font": "archivo", "size": "lg", "lines": ["Ho scoperto che questa cosa ha un nome:", "[hl]Paradosso di Jevons[/hl]."], "_note_autore": "Slide-perno: passaggio da diario a tesi"},
-    {"num": 8, "type": "standard", "kicker": null, "font": "archivo", "size": "md", "lines": ["Quando la [c]macchina a vapore[/c] divenne più efficiente,", "il consumo di carbone non diminuì.", "[hl]Esplose.[/hl]"]},
-    {"num": 13, "type": "standard", "kicker": "L'epilogo", "font": "fraunces", "size": "lg", "lines": ["Chi si lamenta", "di solito si lamenta [em]seduto[/em].", "", "Mentre il [c]treno[/c] passa."]},
-    {"num": 14, "type": "cta", "kicker": "Continuiamo il discorso", "font": "archivo", "size": null, "cta_items": ["Salva.", "Condividi.", "Scrivimi cosa ne pensi."]}
+    {"num": 1, "type": "cover", "kicker": "Pensieri in pillole", "font": "primary", "size": "cover", "show_swipe_arrow": true, "lines": ["Produco codice nella [hl]metà del tempo[/hl]."]},
+    {"num": 2, "type": "standard", "kicker": null, "font": "primary", "size": "xl", "lines": ["Ma non esco prima dall'ufficio.", "[hl]Anzi.[/hl]"]},
+    {"num": 7, "type": "standard", "kicker": "Il nome del fenomeno", "font": "primary", "size": "lg", "lines": ["Ho scoperto che questa cosa ha un nome:", "[hl]Paradosso di Jevons[/hl]."], "_note_autore": "Slide-perno: passaggio da diario a tesi"},
+    {"num": 8, "type": "standard", "kicker": null, "font": "primary", "size": "md", "lines": ["Quando la [c]macchina a vapore[/c] divenne più efficiente,", "il consumo di carbone non diminuì.", "[hl]Esplose.[/hl]"]},
+    {"num": 13, "type": "standard", "kicker": "L'epilogo", "font": "secondary", "size": "lg", "lines": ["Chi si lamenta", "di solito si lamenta [em]seduto[/em].", "", "Mentre il [c]treno[/c] passa."]},
+    {"num": 14, "type": "cta", "kicker": "Continuiamo il discorso", "font": "primary", "size": null, "cta_items": ["Salva.", "Condividi.", "Scrivimi cosa ne pensi."]}
   ]
 }
 ```

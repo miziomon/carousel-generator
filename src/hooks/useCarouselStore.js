@@ -5,6 +5,7 @@ import { newId } from '../lib/ids.js'
 import { loadDraft, loadPalettes } from '../lib/storage.js'
 import { migrateCarousel } from '../lib/migrations/migrateCarousel.js'
 import { BUILTIN_PALETTES } from '../lib/palettes/builtinPalettes.js'
+import { FONT_PRESETS } from '../lib/fonts/presets.js'
 
 import presetCover from '../assets/presets/cover.json'
 import presetStandard from '../assets/presets/standard.json'
@@ -77,6 +78,7 @@ function buildInitialState() {
       slides: renumber(injectIds(base.slides)),
     },
     paletteLibrary,
+    fontPreview: null,
     ui: {
       activeTab: 'slides',
       editingSlideId: null,
@@ -348,6 +350,41 @@ function reducer(state, action) {
     case 'CLOSE_TEMPLATE_MANAGER':
       return { ...state, ui: { ...state.ui, templateManagerOpen: false } }
 
+    // ── Azioni font ───────────────────────────────────────────────────────────
+
+    case 'APPLY_FONT': {
+      const { slot, fontId } = action.payload
+      const newFonts = { ...state.carousel.theme.fonts, [slot]: fontId }
+      const carousel = { ...state.carousel, theme: { ...state.carousel.theme, fonts: newFonts } }
+      return {
+        ...state,
+        carousel,
+        fontPreview: null,
+        history: pushHistory(state.history, state.carousel),
+        meta: { ...state.meta, isDirty: true },
+      }
+    }
+
+    case 'APPLY_FONT_PRESET': {
+      const preset = FONT_PRESETS.find((p) => p.id === action.payload.presetId)
+      if (!preset) return state
+      const newFonts = { ...state.carousel.theme.fonts, ...preset.fonts }
+      const carousel = { ...state.carousel, theme: { ...state.carousel.theme, fonts: newFonts } }
+      return {
+        ...state,
+        carousel,
+        fontPreview: null,
+        history: pushHistory(state.history, state.carousel),
+        meta: { ...state.meta, isDirty: true },
+      }
+    }
+
+    case 'PREVIEW_FONT_CHANGE':
+      return { ...state, fontPreview: { slot: action.payload.slot, fontId: action.payload.fontId } }
+
+    case 'CLEAR_FONT_PREVIEW':
+      return { ...state, fontPreview: null }
+
     // ── Azioni libreria palette (Fase 3) ─────────────────────────────────────
 
     case 'CREATE_PALETTE': {
@@ -566,6 +603,12 @@ export function useCarouselStore() {
   const openEditPalette       = useCallback((paletteId)          => dispatch({ type: 'OPEN_EDIT_PALETTE', payload: { paletteId } }),          [])
   const closeEditPalette      = useCallback(()                   => dispatch({ type: 'CLOSE_EDIT_PALETTE' }),                                [])
 
+  // ── Azioni font ───────────────────────────────────────────────────────────────
+  const applyFont          = useCallback((slot, fontId)   => dispatch({ type: 'APPLY_FONT',           payload: { slot, fontId } }),   [])
+  const applyFontPreset    = useCallback((presetId)       => dispatch({ type: 'APPLY_FONT_PRESET',    payload: { presetId } }),        [])
+  const previewFontChange  = useCallback((slot, fontId)   => dispatch({ type: 'PREVIEW_FONT_CHANGE',  payload: { slot, fontId } }),    [])
+  const clearFontPreview   = useCallback(()               => dispatch({ type: 'CLEAR_FONT_PREVIEW' }),                                [])
+
   // ── Azione AI ────────────────────────────────────────────────────────────────
   const replaceCarouselFromAi = useCallback((generated, meta)   => dispatch({ type: 'REPLACE_CAROUSEL_FROM_AI', payload: { generated, meta } }), [])
 
@@ -580,6 +623,7 @@ export function useCarouselStore() {
     // Stato
     carousel:       state.carousel,
     paletteLibrary: state.paletteLibrary,
+    fontPreview:    state.fontPreview,
     ui:             state.ui,
     meta:           state.meta,
     canUndo:        state.history.past.length   > 0,
@@ -598,6 +642,8 @@ export function useCarouselStore() {
     applyFormat,
     // Azioni template
     applyTemplate, openTemplateManager, closeTemplateManager,
+    // Azioni font
+    applyFont, applyFontPreset, previewFontChange, clearFontPreview,
     // Azione AI
     replaceCarouselFromAi,
     // Azioni persistenza DB

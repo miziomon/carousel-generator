@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { FONT_IDS } from './fonts/registry.js'
 
 // ─── Palette colors (6 slot) ──────────────────────────────────────────────────
 // Usato sia nel theme del carosello che nell'entita Palette della libreria.
@@ -48,9 +49,9 @@ const ThemeSchema = z.object({
     show_meta_number:     z.boolean(),
   }),
   fonts: z.object({
-    primary:   z.string(),
-    secondary: z.string(),
-    mono:      z.string(),
+    primary:   z.enum(FONT_IDS),
+    secondary: z.enum(FONT_IDS),
+    mono:      z.enum(FONT_IDS),
   }),
 })
 
@@ -75,7 +76,7 @@ export const BackgroundImageSchema = z.object({
 const SlideBaseFields = {
   num:              z.number().int().positive(),
   kicker:           z.string().nullable().optional(),
-  font:             z.enum(['archivo', 'fraunces']),
+  font:             z.enum(['primary', 'secondary']).default('primary'),
   _note_autore:     z.string().optional(),
   background_image: BackgroundImageSchema.optional(),
 }

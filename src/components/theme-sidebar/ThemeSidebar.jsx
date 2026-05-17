@@ -36,6 +36,11 @@ export function ThemeSidebar({
   applyFormat,
   uiPrefs,
   setSectionOpen,
+  setFontShowAll,
+  applyFont,
+  applyFontPreset,
+  previewFontChange,
+  clearFontPreview,
 }) {
   const sections = uiPrefs?.sidebarSections ?? {}
 
@@ -98,7 +103,12 @@ export function ThemeSidebar({
           isOpen={sections.fonts ?? false}
           onToggle={handleToggleSection}
           theme={theme}
-          onChange={onChange}
+          fontShowAll={uiPrefs?.fontShowAll ?? false}
+          onSetFontShowAll={setFontShowAll}
+          onApplyFont={applyFont}
+          onApplyFontPreset={applyFontPreset}
+          onPreviewFont={previewFontChange}
+          onClearFontPreview={clearFontPreview}
         />
         <ResetSection
           isOpen={sections.reset ?? false}

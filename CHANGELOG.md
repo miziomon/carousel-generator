@@ -1,5 +1,40 @@
 # Changelog
 
+## [1.17.0] — 2026-05-17
+
+### Added
+- **Sistema font espanso (2 → 12 font)**: Archivo Black, Bebas Neue, Anton, Oswald (display); Inter, DM Sans, Plus Jakarta Sans, Manrope (sans); Fraunces, Playfair Display, DM Serif Display, Lora (serif); JetBrains Mono (mono). Tutti self-hosted come `.woff2` in `public/fonts/`
+- **Font slot semantici**: `slide.font` passa da `'archivo'|'fraunces'` a `'primary'|'secondary'`; i template sono ora agnostici al font reale
+- **Modulo `src/lib/fonts/`**: `registry.js`, `categories.js`, `compensations.js`, `presets.js`, `resolveFont.js`, `preload.js` — architettura completa con compensazioni tipografiche per-font (letter-spacing, line-height multiplier, weight, size multiplier, text-transform, font-variation-settings)
+- **5 preset di pairing**: Editorial Classic, Tech Modern, Bold Statement, Minimal Sober, Warm Narrative, ciascuno con label + descrizione
+- **UI sidebar Fonts**: `FontDropdown` con categorie, anteprima nel font stesso, checkmark sull'attivo, badge ⚠ per font fuori-ruolo; `FontPresetSelector` per applicare i 5 preset in un click; toggle "Mostra tutti i font"
+- **Live preview hover**: passando il mouse su un'opzione font le slide si aggiornano in tempo reale; leaving ripristina il font corrente (stato `fontPreview` fuori dalla history)
+- **Preload font on demand**: `preloadAllFonts()` chiamata alla prima apertura di un FontDropdown — FOUT eliminato nelle preview
+- **Migrazione retrocompatibile**: i JSON storici con `slide.font: "archivo"` o `"fraunces"` vengono migrati silenziosamente a `"primary"` / `"secondary"`; font ID sconosciuti nel theme ricadono sui default per categoria
+
+### Changed
+- `src/lib/schema.js` — `slide.font` è ora `z.enum(['primary','secondary'])`, `theme.fonts.*` è `z.enum([...FONT_IDS])`
+- `src/lib/migrations/migrateCarousel.js` — aggiunto `migrateSlideFont` e `migrateThemeFonts`
+- `src/lib/ai/system-prompt.md` — aggiornati tutti i valori ammessi per `slide.font`
+- `src/lib/defaultCarousel.js` — tutti i preset slide aggiornati a `font: 'primary'`
+- 8 template JSX (editorial-mark + bold-corner): tutti usano `resolveFontVars(slide.font, theme)` e CSS vars inline invece di classi `--archivo` / `--fraunces`
+- `src/slide-renderer/templates/editorial-mark/editorial-mark.css` e `bold-corner.css` — rimossi blocchi `--archivo` / `--fraunces`, aggiunto rule unificata con `font-family: var(--font-family)`
+- `src/slide-renderer/SlideRenderer.jsx` — supporto prop `fontPreview` per live preview; inietta CSS vars slot `--slot-primary-*`, `--slot-secondary-*`, `--slot-mono-*`
+- `src/slide-renderer/BlankSlide.jsx` — la caption usa `var(--slot-primary-family)` / `var(--slot-secondary-family)` invece dell'hardcode
+- `src/hooks/useCarouselStore.js` — aggiunte action `APPLY_FONT`, `APPLY_FONT_PRESET`, `PREVIEW_FONT_CHANGE`, `CLEAR_FONT_PREVIEW`; stato `fontPreview` fuori da history
+- `src/hooks/useUiPreferences.js` — aggiunto `fontShowAll: false`
+- `src/components/theme-sidebar/sections/FontsSection.jsx` — completamente riscritta (era 3 TextInput liberi)
+- `src/index.css` — aggiunti 13 blocchi `@font-face` con `font-display: block`
+
+### Tests
+- Nuovo `src/__tests__/migrateFonts.test.js` — 12 test coprono `migrateSlideFont` (archivo/fraunces/sconosciuto) e `migrateThemeFonts` (id valido/invalido/mancante)
+- `src/__tests__/schema.test.js` e `src/__tests__/ai-validateGenerated.test.js` aggiornati ai nuovi enum
+
+### Notes
+- 3 variable font (Inter, Lora, Manrope) vanno scaricati manualmente da [google-webfonts-helper](https://gwfh.mranftl.com/fonts) e salvati come `Inter-Variable.woff2`, `Lora-Variable.woff2`, `Manrope-Variable.woff2` in `public/fonts/`
+
+---
+
 ## [1.16.0] — 2026-05-16
 
 ### Added

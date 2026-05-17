@@ -20,7 +20,7 @@ import { SlideCard } from './SlideCard.jsx'
 import './slide-grid.css'
 
 // ─── Wrapper sortable per ogni card ──────────────────────────────────────────
-function SortableSlideCard({ slide, theme, total, onEdit, onDuplicate, onDelete, mobileView }) {
+function SortableSlideCard({ slide, theme, total, onEdit, onDuplicate, onDelete, mobileView, fontPreview }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: slide.id,
   })
@@ -43,13 +43,14 @@ function SortableSlideCard({ slide, theme, total, onEdit, onDuplicate, onDelete,
         onDelete={onDelete}
         dragHandleProps={listeners}
         mobileView={mobileView}
+        fontPreview={fontPreview}
       />
     </div>
   )
 }
 
 // ─── Griglia principale ───────────────────────────────────────────────────────
-export function SlideGrid({ slides, theme, onEdit, onDuplicate, onDelete, onReorder, mobileView = false }) {
+export function SlideGrid({ slides, theme, onEdit, onDuplicate, onDelete, onReorder, mobileView = false, fontPreview = null }) {
   const [activeId, setActiveId] = useState(null)
   const total = slides.length
 
@@ -97,6 +98,7 @@ export function SlideGrid({ slides, theme, onEdit, onDuplicate, onDelete, onReor
                 onDuplicate={onDuplicate}
                 onDelete={onDelete}
                 mobileView={mobileView}
+                fontPreview={fontPreview}
               />
             ))}
           </div>

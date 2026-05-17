@@ -2,31 +2,37 @@ import { BoldHeader } from './BoldHeader.jsx'
 import { BoldFooter } from './BoldFooter.jsx'
 import { parseLines } from '../../inlineTags.jsx'
 import { BOLD_CLASS_MAP } from './constants.js'
+import { resolveFontVars } from '../../../lib/fonts/resolveFont.js'
 
-// Smart quotes — stessa logica del template Editorial
+// Smart quotes: converte " e ' dritti in tipografici curvi.
+// String.fromCharCode evita problemi di encoding nel sorgente con esbuild.
+const DQ_OPEN  = String.fromCharCode(0x201C)
+const DQ_CLOSE = String.fromCharCode(0x201D)
+const SQ_OPEN  = String.fromCharCode(0x2018)
+const SQ_CLOSE = String.fromCharCode(0x2019)
+const EM_DASH  = String.fromCharCode(0x2014)
+
 function smartQuotes(text) {
   if (typeof text !== 'string') return text
   return text
-    .replace(/(^|[\s([{<])"/g, '$1“')
-    .replace(/"/g, '”')
-    .replace(/(^|[\s([{<])'/g, '$1‘')
-    .replace(/'/g, '’')
+    .replace(/(^|[\s([{<])"/g, `$1${DQ_OPEN}`)
+    .replace(/"/g, DQ_CLOSE)
+    .replace(/(^|[\s([{<])'/g, `$1${SQ_OPEN}`)
+    .replace(/'/g, SQ_CLOSE)
 }
 
 export function BoldQuoteSlide({ slide, theme, total, calib }) {
-  const isFraunces = slide.font === 'fraunces'
-  const fontClass  = isFraunces ? 'bold__body--fraunces' : 'bold__body--archivo'
-  const sizeKey    = slide.size || 'xl'
-  const sizeClass  = sizeKey ? `bold__body--${sizeKey}` : ''
-  const bodyClass  = `${fontClass} ${sizeClass} bold__body--quote`.trim()
+  const fontVars = resolveFontVars(slide.font, theme)
+  const sizeKey  = slide.size || 'xl'
+  const base     = calib.body_archivo[sizeKey] ?? calib.body_archivo.xl
 
-  const bodyCalib = isFraunces
-    ? (calib.body_fraunces[sizeKey] ?? calib.body_fraunces.xl)
-    : (calib.body_archivo[sizeKey]  ?? calib.body_archivo.xl)
+  const finalSize = Math.round(base.size * parseFloat(fontVars['--font-size-multiplier']))
+  const finalLH   = +(base.line_height * parseFloat(fontVars['--font-line-height-multiplier'])).toFixed(3)
 
   const bodyStyle = {
-    '--bold-body-size':        `${bodyCalib.size}px`,
-    '--bold-body-line-height': bodyCalib.line_height,
+    '--bold-body-size':        `${finalSize}px`,
+    '--bold-body-line-height': finalLH,
+    ...fontVars,
   }
 
   const author = slide.author ? smartQuotes(slide.author) : null
@@ -36,13 +42,13 @@ export function BoldQuoteSlide({ slide, theme, total, calib }) {
   return (
     <>
       <BoldHeader theme={theme} slide={slide} total={total} />
-      <div className={bodyClass} style={bodyStyle}>
+      <div className={`bold__body bold__body--${sizeKey} bold__body--quote`} style={bodyStyle}>
         <div className="bold__quote-text">
           {parseLines(slide.lines, `bc-q-${slide.num}`, BOLD_CLASS_MAP)}
         </div>
         {hasAttr && (
           <div className="bold__quote-attr">
-            {author && <span className="bold__quote-attr-author">{`— ${author}`}</span>}
+            {author && <span className="bold__quote-attr-author">{`${EM_DASH} ${author}`}</span>}
             {author && source && <br />}
             {source && <span className="bold__quote-attr-source">{source}</span>}
           </div>

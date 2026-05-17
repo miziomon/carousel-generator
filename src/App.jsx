@@ -51,7 +51,7 @@ function AuthenticatedApp({ auth }) {
   const [saveModalOpen, setSaveModalOpen] = useState(false)
   const [saveOrNewOpen, setSaveOrNewOpen] = useState(false)
   const [saveAsNewTitle, setSaveAsNewTitle] = useState(null)
-  const { uiPrefs, toggleSidebar, setSectionOpen } = useUiPreferences()
+  const { uiPrefs, toggleSidebar, setSectionOpen, setFontShowAll } = useUiPreferences()
   const isDesktop = useMediaQuery('(min-width: 1024px)')
 
   const userId = auth.user?.userId
@@ -266,6 +266,11 @@ function AuthenticatedApp({ auth }) {
           applyFormat={store.applyFormat}
           uiPrefs={uiPrefs}
           setSectionOpen={setSectionOpen}
+          setFontShowAll={setFontShowAll}
+          applyFont={store.applyFont}
+          applyFontPreset={store.applyFontPreset}
+          previewFontChange={store.previewFontChange}
+          clearFontPreview={store.clearFontPreview}
         />
 
         <div className="flex flex-col flex-1 overflow-hidden">
@@ -281,6 +286,7 @@ function AuthenticatedApp({ auth }) {
                 onDelete={handleDeleteSlide}
                 onReorder={store.reorderSlides}
                 mobileView={mobileView}
+                fontPreview={store.fontPreview}
               />
             )}
 

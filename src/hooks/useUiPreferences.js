@@ -4,6 +4,7 @@ const UI_PREFS_KEY = 'carosello.ui-preferences'
 
 const DEFAULT_PREFS = {
   sidebarOpen: true,
+  fontShowAll: false,
   sidebarSections: {
     formato:  true,
     template: false,
@@ -73,5 +74,13 @@ export function useUiPreferences() {
     })
   }, [])
 
-  return { uiPrefs, setSidebarOpen, toggleSidebar, setSectionOpen }
+  const setFontShowAll = useCallback((value) => {
+    setUiPrefs((prev) => {
+      const next = { ...prev, fontShowAll: value }
+      persist(next)
+      return next
+    })
+  }, [])
+
+  return { uiPrefs, setSidebarOpen, toggleSidebar, setSectionOpen, setFontShowAll }
 }

@@ -1,0 +1,236 @@
+/* ── FontsSection ──────────────────────────────────────────────────────────── */
+
+.fonts-section__preset-label {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-muted);
+  margin-bottom: 4px;
+}
+
+.fonts-section__preset-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  padding: 6px 8px;
+  background: var(--color-bg-alt, #f5f5f5);
+  border: 1px solid var(--color-border, #e0e0e0);
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-text, #111);
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.12s;
+}
+
+.fonts-section__preset-btn:hover {
+  background: var(--color-bg-hover, #eaeaea);
+}
+
+.fonts-section__preset-btn svg {
+  flex-shrink: 0;
+  opacity: 0.5;
+}
+
+/* ── FontPresetSelector — pannello dropdown ─────────────────────────────── */
+
+.fonts-section__preset-panel {
+  position: absolute;
+  z-index: 100;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: var(--color-bg-surface, #fff);
+  border: 1px solid var(--color-border, #e0e0e0);
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+  overflow: hidden;
+}
+
+.fonts-section__preset-option {
+  display: block;
+  width: 100%;
+  padding: 8px 10px;
+  text-align: left;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+.fonts-section__preset-option:hover {
+  background: var(--color-bg-hover, #f0f0f0);
+}
+
+.fonts-section__preset-option-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text, #111);
+  display: block;
+}
+
+.fonts-section__preset-option-desc {
+  font-size: 10px;
+  color: var(--color-text-muted, #777);
+  display: block;
+  margin-top: 1px;
+  line-height: 1.4;
+}
+
+.fonts-section__preset-wrap {
+  position: relative;
+  margin-bottom: 12px;
+}
+
+/* ── Slot font (etichetta + dropdown) ───────────────────────────────────── */
+
+.fonts-section__slots {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.fonts-section__slot {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.fonts-section__slot-label {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-muted, #777);
+}
+
+/* ── FontDropdown ──────────────────────────────────────────────────────── */
+
+.font-dropdown {
+  position: relative;
+}
+
+.font-dropdown__btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  padding: 6px 8px;
+  background: var(--color-bg-alt, #f5f5f5);
+  border: 1px solid var(--color-border, #e0e0e0);
+  border-radius: 6px;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.12s;
+}
+
+.font-dropdown__btn:hover {
+  background: var(--color-bg-hover, #eaeaea);
+}
+
+.font-dropdown__btn-text {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text, #111);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.font-dropdown__btn svg {
+  flex-shrink: 0;
+  opacity: 0.5;
+}
+
+.font-dropdown__panel {
+  position: absolute;
+  z-index: 200;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  max-height: 260px;
+  overflow-y: auto;
+  background: var(--color-bg-surface, #fff);
+  border: 1px solid var(--color-border, #e0e0e0);
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+}
+
+.font-dropdown__category-header {
+  padding: 5px 10px 3px;
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-text-muted, #999);
+  background: var(--color-bg-alt, #f8f8f8);
+  border-bottom: 1px solid var(--color-border, #eee);
+  position: sticky;
+  top: 0;
+}
+
+.font-dropdown__option {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 7px 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.1s;
+}
+
+.font-dropdown__option:hover {
+  background: var(--color-bg-hover, #f0f0f0);
+}
+
+.font-dropdown__option-name {
+  font-size: 13px;
+  color: var(--color-text, #111);
+  flex: 1;
+}
+
+.font-dropdown__check {
+  width: 14px;
+  flex-shrink: 0;
+  color: var(--color-accent, #0066cc);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.font-dropdown__offrole {
+  font-size: 9px;
+  color: var(--color-text-muted, #999);
+  background: var(--color-bg-alt, #f0f0f0);
+  border-radius: 3px;
+  padding: 1px 4px;
+  flex-shrink: 0;
+}
+
+/* ── Toggle mostra tutti ─────────────────────────────────────────────────── */
+
+.fonts-section__show-all {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--color-text-muted, #777);
+  cursor: pointer;
+  user-select: none;
+  margin-top: 2px;
+}
+
+.fonts-section__show-all input[type="checkbox"] {
+  margin: 0;
+  cursor: pointer;
+  accent-color: var(--color-accent, #0066cc);
+}

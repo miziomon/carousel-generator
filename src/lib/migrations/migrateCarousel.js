@@ -18,10 +18,45 @@
 import { inferSurface } from '../palettes/colorUtils.js'
 import { matchBuiltin } from '../palettes/matchBuiltin.js'
 import { getBuiltinPalette } from '../palettes/builtinPalettes.js'
+import { FONT_IDS } from '../fonts/registry.js'
 
-const DEFAULT_TEMPLATE_ID = 'system-editorial-mark'
+const DEFAULT_TEMPLATE_ID  = 'system-editorial-mark'
+const DEFAULT_FONTS = {
+  primary:   'Archivo Black',
+  secondary: 'Fraunces',
+  mono:      'JetBrains Mono',
+}
 const DEFAULT_FORMAT_ID   = 'square'
 const VALID_FORMATS       = new Set(['square', 'portrait', 'landscape'])
+
+/**
+ * Migra slide.font dal formato legacy ('archivo'|'fraunces') al semantico ('primary'|'secondary').
+ * Idempotente: se il valore è già 'primary'/'secondary', lo lascia invariato.
+ * @param {object} slide
+ * @returns {object}
+ */
+function migrateSlideFont(slide) {
+  if (!slide || typeof slide !== 'object') return slide
+  if (slide.font === 'archivo') return { ...slide, font: 'primary' }
+  if (slide.font === 'fraunces') return { ...slide, font: 'secondary' }
+  if (slide.font === 'primary' || slide.font === 'secondary') return slide
+  return { ...slide, font: 'primary' } // fallback safe
+}
+
+/**
+ * Migra theme.fonts: ogni slot deve puntare a un ID registrato in FONT_IDS.
+ * Se un ID è sconosciuto (es. JSON di una futura versione, font rimosso), usa il default.
+ * @param {object} fonts
+ * @returns {object}
+ */
+function migrateThemeFonts(fonts) {
+  const f = fonts ?? {}
+  return {
+    primary:   FONT_IDS.includes(f.primary)   ? f.primary   : DEFAULT_FONTS.primary,
+    secondary: FONT_IDS.includes(f.secondary) ? f.secondary : DEFAULT_FONTS.secondary,
+    mono:      FONT_IDS.includes(f.mono)       ? f.mono      : DEFAULT_FONTS.mono,
+  }
+}
 
 /**
  * Migra l'oggetto theme al formato corrente.
@@ -89,10 +124,17 @@ export function migrateCarousel(raw) {
   if (!raw || typeof raw !== 'object') return raw
 
   try {
-    return {
-      ...raw,
-      theme: migrateTheme(raw.theme),
-    }
+    const migratedTheme = migrateTheme(raw.theme)
+    const slides = Array.isArray(raw.slides)
+      ? raw.slides.map(migrateSlideFont)
+      : raw.slides
+
+    // Aggiorna theme.fonts solo se il theme è un oggetto valido
+    const finalTheme = migratedTheme && typeof migratedTheme === 'object'
+      ? { ...migratedTheme, fonts: migrateThemeFonts(migratedTheme.fonts) }
+      : migratedTheme
+
+    return { ...raw, theme: finalTheme, slides }
   } catch {
     // Non crashare mai — Zod produrrà l'errore appropriato
     return raw

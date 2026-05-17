@@ -23,7 +23,7 @@ describe('CarouselSchema', () => {
         {
           num: 1,
           type: 'cover',
-          font: 'archivo',
+          font: 'primary',
           size: 'cover',
           lines: ['riga 1', 'riga 2'],
         },
@@ -39,7 +39,7 @@ describe('CarouselSchema', () => {
         {
           num: 1,
           type: 'cta',
-          font: 'archivo',
+          font: 'primary',
           cta_items: [],
         },
       ],
@@ -65,7 +65,7 @@ describe('CarouselSchema', () => {
         {
           num: 1,
           type: 'divider',
-          font: 'archivo',
+          font: 'primary',
           lines: ['testo'],
           // divider_number mancante
         },
@@ -74,14 +74,14 @@ describe('CarouselSchema', () => {
     expect(CarouselSchema.safeParse(bad).success).toBe(false)
   })
 
-  it('accetta una slide standard con Fraunces', () => {
+  it('accetta una slide standard con font secondary', () => {
     const good = {
       ...defaultCarousel,
       slides: [
         {
           num: 1,
           type: 'standard',
-          font: 'fraunces',
+          font: 'secondary',
           size: 'xl',
           lines: ['Una riga di testo'],
         },

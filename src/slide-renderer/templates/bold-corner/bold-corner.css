@@ -74,7 +74,8 @@
 }
 
 .bold__foot-name {
-  font-family: 'Archivo Black', sans-serif;
+  font-family: var(--slot-primary-family);
+  font-weight: var(--slot-primary-weight);
   font-size: var(--bold-foot-name-size);
   letter-spacing: 0.1em;
   color: var(--slide-fg);
@@ -89,25 +90,15 @@
   text-transform: uppercase;
 }
 
-/* === BODY ARCHIVO === */
-.bold__body--archivo {
-  font-family: 'Archivo Black', sans-serif;
+/* === BODY (font risolto via CSS variables dal template JSX) === */
+.bold__body {
+  font-family: var(--font-family);
+  font-weight: var(--font-weight);
+  letter-spacing: var(--font-letter-spacing);
   font-size: var(--bold-body-size);
   line-height: var(--bold-body-line-height);
-  letter-spacing: -0.02em;
-  text-transform: uppercase;
-  margin-top: auto;
-  margin-bottom: auto;
-}
-
-/* === BODY FRAUNCES === */
-.bold__body--fraunces {
-  font-family: 'Fraunces', serif;
-  font-weight: 900;
-  font-variation-settings: "opsz" 144;
-  font-size: var(--bold-body-size);
-  line-height: var(--bold-body-line-height);
-  letter-spacing: -0.02em;
+  text-transform: var(--font-text-transform, none);
+  font-variation-settings: var(--font-variation-settings, normal);
   margin-top: auto;
   margin-bottom: auto;
 }
@@ -170,7 +161,8 @@
 }
 
 .bold__cta-item {
-  font-family: 'Archivo Black', sans-serif;
+  font-family: var(--slot-primary-family);
+  font-weight: var(--slot-primary-weight);
   font-size: var(--bold-cta-size);
   line-height: var(--bold-cta-line-height);
   letter-spacing: -0.02em;
@@ -179,7 +171,8 @@
 
 /* === DIVIDER === */
 .bold__divider-num {
-  font-family: 'Archivo Black', sans-serif;
+  font-family: var(--slot-primary-family);
+  font-weight: var(--slot-primary-weight);
   font-size: var(--bold-divider-num-size);
   line-height: 0.85;
   letter-spacing: -0.04em;

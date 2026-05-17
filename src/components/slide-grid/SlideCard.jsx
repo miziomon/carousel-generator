@@ -36,6 +36,7 @@ export const SlideCard = memo(function SlideCard({
   dragHandleProps,  // listeners @dnd-kit passati dall'esterno
   isDragOverlay,    // true quando è renderizzato nel DragOverlay
   mobileView = false,
+  fontPreview = null,
 }) {
   const format = getFormat(theme?.format)
   const targetWidth = mobileView ? 380 : 280
@@ -96,7 +97,7 @@ export const SlideCard = memo(function SlideCard({
           className="slide-card__thumbnail-inner"
           style={{ transform: `scale(${scale})`, width: format.width, height: format.height }}
         >
-          <SlideRenderer slide={slide} theme={theme} total={total} mode="preview" />
+          <SlideRenderer slide={slide} theme={theme} total={total} mode="preview" fontPreview={fontPreview} />
         </div>
       </div>
 

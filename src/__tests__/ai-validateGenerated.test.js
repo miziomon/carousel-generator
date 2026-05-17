@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest'
 import { validateCarouselForReplacement } from '../lib/ai/validateGenerated.js'
 
-const coverSlide    = { type: 'cover',    num: 1, font: 'archivo', size: 'cover',    lines: ['Titolo'] }
-const standardSlide = { type: 'standard', num: 2, font: 'archivo', size: 'lg',       lines: ['Corpo'] }
-const dividerSlide  = { type: 'divider',  num: 3, font: 'archivo', divider_number: '01', lines: ['Sezione'] }
+const coverSlide    = { type: 'cover',    num: 1, font: 'primary', size: 'cover',    lines: ['Titolo'] }
+const standardSlide = { type: 'standard', num: 2, font: 'primary', size: 'lg',       lines: ['Corpo'] }
+const dividerSlide  = { type: 'divider',  num: 3, font: 'primary', divider_number: '01', lines: ['Sezione'] }
 
 describe('validateCarouselForReplacement', () => {
   it('carosello valido → { ok: true }', () => {
@@ -21,7 +21,7 @@ describe('validateCarouselForReplacement', () => {
 
   it('slide senza type valido → { ok: false }', () => {
     const result = validateCarouselForReplacement({
-      slides: [{ type: 'unknown', num: 1, font: 'archivo' }],
+      slides: [{ type: 'unknown', num: 1, font: 'primary' }],
     })
     expect(result.ok).toBe(false)
   })
