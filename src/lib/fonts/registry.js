@@ -53,7 +53,7 @@ export const FONTS = [
     weights: [400, 800],
     italic: false,
     is_variable: true,
-    files: ['Inter-Variable.woff2'],
+    files: ['Inter-Variable.ttf'],
   },
   {
     id: 'DM Sans',
@@ -83,7 +83,7 @@ export const FONTS = [
     weights: [400, 800],
     italic: false,
     is_variable: true,
-    files: ['Manrope-Variable.woff2'],
+    files: ['Manrope-Variable.ttf'],
   },
 
   // SERIF
@@ -125,7 +125,7 @@ export const FONTS = [
     weights: [400, 700],
     italic: false,
     is_variable: true,
-    files: ['Lora-Variable.woff2'],
+    files: ['Lora-Variable.ttf'],
   },
 
   // MONO
