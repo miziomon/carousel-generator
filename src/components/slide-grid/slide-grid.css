@@ -58,13 +58,13 @@
 .slide-card__hover-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.62);
+  background: rgba(0, 0, 0, 0.48);
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 14px;
   opacity: 0;
-  transition: opacity 0.15s;
+  transition: opacity 0.18s;
 }
 
 .slide-card__thumbnail-wrap:hover .slide-card__hover-overlay {
@@ -74,35 +74,41 @@
 .slide-card__hover-btn {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.12em;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.9);
-  background: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 6px;
-  padding: 8px 14px;
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.18);
+  border: 2px solid rgba(255, 255, 255, 0.55);
+  border-radius: 8px;
+  padding: 11px 20px;
   cursor: pointer;
-  transition: background 0.12s, border-color 0.12s;
+  backdrop-filter: blur(4px);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
+  transition: background 0.12s, border-color 0.12s, transform 0.1s;
 }
 
 .slide-card__hover-btn:hover {
-  background: rgba(255, 255, 255, 0.22);
-  border-color: rgba(255, 255, 255, 0.55);
+  background: rgba(255, 255, 255, 0.3);
+  border-color: #ffffff;
+  transform: translateY(-1px);
 }
 
 .slide-card__hover-btn--primary {
-  background: rgba(var(--app-accent-rgb), 0.25);
-  border-color: rgba(var(--app-accent-rgb), 0.6);
+  background: rgba(var(--app-accent-rgb), 0.35);
+  border-color: var(--app-accent);
   color: var(--app-accent);
+  text-shadow: 0 0 12px rgba(var(--app-accent-rgb), 0.5);
 }
 
 .slide-card__hover-btn--primary:hover {
-  background: rgba(var(--app-accent-rgb), 0.38);
-  border-color: rgba(var(--app-accent-rgb), 0.85);
+  background: rgba(var(--app-accent-rgb), 0.55);
+  border-color: var(--app-accent);
+  color: #fff;
+  text-shadow: none;
 }
 
 .slide-card__thumbnail-inner {

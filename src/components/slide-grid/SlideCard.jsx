@@ -50,8 +50,8 @@ export const SlideCard = memo(function SlideCard({
   const [exportingPng, setExportingPng] = useState(false)
   const [previewOpen, setPreviewOpen] = useState(false)
 
-  // Calcola dimensioni slide per il modal anteprima (max 600px wide, 560px tall)
-  const MAX_W = 600, MAX_H = 560
+  // Calcola dimensioni slide per il modal anteprima (max 820px wide, 720px tall)
+  const MAX_W = 820, MAX_H = 720
   const scaleW = MAX_W / format.width
   const scaleH = MAX_H / format.height
   const previewScale = Math.min(scaleW, scaleH)
@@ -136,7 +136,7 @@ export const SlideCard = memo(function SlideCard({
         open={previewOpen}
         onClose={() => setPreviewOpen(false)}
         title={`Slide #${String(slide.num).padStart(2, '0')} — ${slide.type}`}
-        size="lg"
+        size="xl"
       >
         <div style={{ display: 'flex', justifyContent: 'center' }}>
           <div style={{ overflow: 'hidden', borderRadius: 6, width: previewDisplayWidth, height: previewDisplayHeight, flexShrink: 0 }}>
