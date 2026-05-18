@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.22.0] — 2026-05-18
+
+### Added
+- **Overlay hover slide migliorato**: il passaggio del mouse sulla thumbnail mostra ora due bottoni distinti con overlay scuro `rgba(0,0,0,0.62)` — "Modifica" (accent colorato) e "Anteprima" (bianco traslucido) con transizione opacity fluida
+- **Modal Anteprima slide**: bottone "Anteprima" nell'overlay apre una `Modal size="lg"` che mostra la slide scalata fino a 600×560px mantenendo l'aspect ratio del formato corrente (quadrato / portrait / landscape)
+
+### Changed
+- **`slide-card__thumbnail-wrap`**: rimosso `onClick` diretto; il clic su "Modifica" nel nuovo overlay chiama `onEdit`
+- **CSS**: rimosso pseudo-elemento `::after` con testo "Modifica" sostituito da `.slide-card__hover-overlay` + `.slide-card__hover-btn` (React DOM, non CSS puro) — permette bottoni cliccabili nell'overlay
+
 ## [1.21.0] — 2026-05-18
 
 ### Added

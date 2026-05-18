@@ -1,6 +1,7 @@
 import { memo, useState } from 'react'
-import { Pencil, Copy, Trash2, Download, GripVertical } from 'lucide-react'
+import { Pencil, Copy, Trash2, Download, GripVertical, Eye } from 'lucide-react'
 import { SlideRenderer } from '../../slide-renderer/SlideRenderer.jsx'
+import { Modal } from '../ui/Modal.jsx'
 import { exportSlideToPng } from '../../lib/exportPng.jsx'
 import { getFormat } from '../../lib/formats/registry.js'
 import { toast } from '../ui/Toast.jsx'
@@ -47,6 +48,15 @@ export const SlideCard = memo(function SlideCard({
   const warning = readabilityWarning(slide, format)
   const [confirmDelete, setConfirmDelete] = useState(false)
   const [exportingPng, setExportingPng] = useState(false)
+  const [previewOpen, setPreviewOpen] = useState(false)
+
+  // Calcola dimensioni slide per il modal anteprima (max 600px wide, 560px tall)
+  const MAX_W = 600, MAX_H = 560
+  const scaleW = MAX_W / format.width
+  const scaleH = MAX_H / format.height
+  const previewScale = Math.min(scaleW, scaleH)
+  const previewDisplayWidth  = Math.round(format.width  * previewScale)
+  const previewDisplayHeight = Math.round(format.height * previewScale)
 
   async function handleExportPng() {
     if (exportingPng) return
@@ -91,7 +101,6 @@ export const SlideCard = memo(function SlideCard({
       <div
         className="slide-card__thumbnail-wrap"
         style={{ width: thumbWidth, height: thumbHeight }}
-        onClick={() => !isDragOverlay && onEdit?.(slide.id)}
       >
         <div
           className="slide-card__thumbnail-inner"
@@ -99,7 +108,44 @@ export const SlideCard = memo(function SlideCard({
         >
           <SlideRenderer slide={slide} theme={theme} total={total} mode="preview" fontPreview={fontPreview} />
         </div>
+
+        {!isDragOverlay && (
+          <div className="slide-card__hover-overlay">
+            <button
+              className="slide-card__hover-btn slide-card__hover-btn--primary"
+              onClick={() => onEdit?.(slide.id)}
+              title="Modifica slide"
+            >
+              <Pencil size={13} />
+              Modifica
+            </button>
+            <button
+              className="slide-card__hover-btn"
+              onClick={() => setPreviewOpen(true)}
+              title="Anteprima slide"
+            >
+              <Eye size={13} />
+              Anteprima
+            </button>
+          </div>
+        )}
       </div>
+
+      {/* Modal anteprima */}
+      <Modal
+        open={previewOpen}
+        onClose={() => setPreviewOpen(false)}
+        title={`Slide #${String(slide.num).padStart(2, '0')} — ${slide.type}`}
+        size="lg"
+      >
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
+          <div style={{ overflow: 'hidden', borderRadius: 6, width: previewDisplayWidth, height: previewDisplayHeight, flexShrink: 0 }}>
+            <div style={{ transform: `scale(${previewScale})`, transformOrigin: 'top left', width: format.width, height: format.height }}>
+              <SlideRenderer slide={slide} theme={theme} total={total} mode="preview" />
+            </div>
+          </div>
+        </div>
+      </Modal>
 
       {/* Footer card */}
       <div className="slide-card__footer">
