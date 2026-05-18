@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.18.0] — 2026-05-18
+
+### Changed
+- **Logo**: rinominato "Carousel Generator" in "SLIDE-ORAMA"
+- **Header — ordine azioni**: SyncIndicator spostato come prima voce (prima di Undo/Redo); "Nuovo" spostato dopo "Aggiungi slide"; "Apri" e "Salva" spostati prima di "Importa" con separatore dinamico (sparisce automaticamente quando non loggato)
+- **Bottoni "Esporta" e "Salva"**: rimosso background (`variant secondary` → `ghost`), allineati visivamente agli altri bottoni dell'header
+- **Export ZIP**: i PNG dentro lo ZIP ora usano il titolo del progetto come prefisso (`nome-progetto-01.png` invece di `slide-01.png`); fallback `carosello` se il titolo è vuoto
+
+---
+
 ## [1.17.0] — 2026-05-17
 
 ### Added
