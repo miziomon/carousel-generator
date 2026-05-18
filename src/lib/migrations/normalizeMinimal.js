@@ -45,7 +45,7 @@ function normalizeTheme(theme) {
     if (builtin) basePalette = builtin.colors
   }
 
-  return {
+  const normalized = {
     // format e template_id vengono preservati dall'input o cadono al default.
     // Senza questa riga, migrateCarousel li sovrascriveva sempre con 'square'.
     format:      theme.format      ?? dt.format,
@@ -56,6 +56,11 @@ function normalizeTheme(theme) {
     footer:      { ...dt.footer,   ...(theme.footer  || {}) },
     fonts:       { ...dt.fonts,    ...(theme.fonts   || {}) },
   }
+  // Propaga background_image globale se presente (null = forzato assente, object = immagine)
+  if (theme.background_image !== undefined) {
+    normalized.background_image = theme.background_image
+  }
+  return normalized
 }
 
 function normalizeSlide(slide, index) {

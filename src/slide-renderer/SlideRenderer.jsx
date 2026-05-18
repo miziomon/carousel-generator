@@ -30,7 +30,10 @@ export function SlideRenderer({ slide, theme, total, mode = 'preview', fontPrevi
   const template = getTemplate(templateId)
   const TemplateComponent = template.Component
   const format = getFormat(effectiveTheme?.format)
-  const bgImage = slide.background_image
+  // null esplicito = forza nessuno sfondo; undefined = eredita dal tema globale; object = override slide
+  const bgImage = slide.background_image === null
+    ? null
+    : (slide.background_image ?? effectiveTheme.background_image)
 
   const isBlank = slide.type === 'blank'
 

@@ -11,7 +11,7 @@ export function BlankSlide({ slide }) {
   if (!slide.caption) return null
 
   const position = slide.caption_position ?? 'center'
-  const slot = slide.font === 'secondary' ? 'secondary' : 'primary'
+  const slot = slide.font === 'secondary' ? 'secondary' : slide.font === 'mono' ? 'mono' : 'primary'
 
   const alignMap = {
     top:    { justifyContent: 'flex-start', paddingTop: '10%' },

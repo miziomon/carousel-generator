@@ -8,6 +8,7 @@ import { PaletteSection }  from './sections/PaletteSection.jsx'
 import { HeaderSection }   from './sections/HeaderSection.jsx'
 import { FooterSection }   from './sections/FooterSection.jsx'
 import { FontsSection }    from './sections/FontsSection.jsx'
+import { ImageSection }    from './sections/ImageSection.jsx'
 import { ResetSection }    from './sections/ResetSection.jsx'
 import './theme-sidebar.css'
 import '../theme-tab/theme-tab.css'
@@ -25,6 +26,7 @@ export function ThemeSidebar({
   onToggle,
   isDesktop,
   theme,
+  carousel,
   onChange,
   paletteLibrary,
   applyPalette,
@@ -41,6 +43,7 @@ export function ThemeSidebar({
   applyFontPreset,
   previewFontChange,
   clearFontPreview,
+  applyThemeBgImage,
 }) {
   const sections = uiPrefs?.sidebarSections ?? {}
 
@@ -109,6 +112,13 @@ export function ThemeSidebar({
           onApplyFontPreset={applyFontPreset}
           onPreviewFont={previewFontChange}
           onClearFontPreview={clearFontPreview}
+        />
+        <ImageSection
+          isOpen={sections.image ?? false}
+          onToggle={handleToggleSection}
+          theme={theme}
+          carousel={carousel}
+          applyThemeBgImage={applyThemeBgImage}
         />
         <ResetSection
           isOpen={sections.reset ?? false}

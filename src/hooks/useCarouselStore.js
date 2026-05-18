@@ -385,6 +385,22 @@ function reducer(state, action) {
     case 'CLEAR_FONT_PREVIEW':
       return { ...state, fontPreview: null }
 
+    // ── Immagine globale theme ─────────────────────────────────────────────────
+
+    case 'APPLY_THEME_BG_IMAGE': {
+      const theme = action.payload === undefined
+        // undefined = rimuovi il campo completamente
+        ? (() => { const t = { ...state.carousel.theme }; delete t.background_image; return t })()
+        : { ...state.carousel.theme, background_image: action.payload }
+      const carousel = { ...state.carousel, theme }
+      return {
+        ...state,
+        carousel,
+        history: pushHistory(state.history, state.carousel),
+        meta: { ...state.meta, isDirty: true },
+      }
+    }
+
     // ── Azioni libreria palette (Fase 3) ─────────────────────────────────────
 
     case 'CREATE_PALETTE': {
@@ -609,6 +625,10 @@ export function useCarouselStore() {
   const previewFontChange  = useCallback((slot, fontId)   => dispatch({ type: 'PREVIEW_FONT_CHANGE',  payload: { slot, fontId } }),    [])
   const clearFontPreview   = useCallback(()               => dispatch({ type: 'CLEAR_FONT_PREVIEW' }),                                [])
 
+  // ── Immagine globale theme ────────────────────────────────────────────────────
+  // bgImage: oggetto BackgroundImage | null (forza nessuno) | undefined (rimuovi campo)
+  const applyThemeBgImage  = useCallback((bgImage)        => dispatch({ type: 'APPLY_THEME_BG_IMAGE', payload: bgImage }),            [])
+
   // ── Azione AI ────────────────────────────────────────────────────────────────
   const replaceCarouselFromAi = useCallback((generated, meta)   => dispatch({ type: 'REPLACE_CAROUSEL_FROM_AI', payload: { generated, meta } }), [])
 
@@ -644,6 +664,8 @@ export function useCarouselStore() {
     applyTemplate, openTemplateManager, closeTemplateManager,
     // Azioni font
     applyFont, applyFontPreset, previewFontChange, clearFontPreview,
+    // Immagine globale theme
+    applyThemeBgImage,
     // Azione AI
     replaceCarouselFromAi,
     // Azioni persistenza DB

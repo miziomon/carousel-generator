@@ -255,6 +255,7 @@ function AuthenticatedApp({ auth }) {
           onToggle={toggleSidebar}
           isDesktop={isDesktop}
           theme={store.carousel.theme}
+          carousel={store.carousel}
           onChange={store.updateTheme}
           paletteLibrary={store.paletteLibrary}
           applyPalette={store.applyPalette}
@@ -271,6 +272,7 @@ function AuthenticatedApp({ auth }) {
           applyFontPreset={store.applyFontPreset}
           previewFontChange={store.previewFontChange}
           clearFontPreview={store.clearFontPreview}
+          applyThemeBgImage={store.applyThemeBgImage}
         />
 
         <div className="flex flex-col flex-1 overflow-hidden">

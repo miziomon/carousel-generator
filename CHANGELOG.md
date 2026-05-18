@@ -1,5 +1,26 @@
 # Changelog
 
+## [1.19.0] — 2026-05-18
+
+### Added
+- **Immagine di sfondo globale**: nuova sezione "Immagine globale" nella sidebar tema (subito dopo Fonts). L'immagine si applica a tutte le slide; ogni slide può ereditarla, personalizzarla o forzare "Nessuno sfondo" tramite override esplicito (`background_image: null`)
+- **Override slide per immagine**: nella tab "Sfondo" del modal di modifica singola slide, tre nuovi stati — "eredita globale" (con bottoni _Personalizza_ e _Nessuno sfondo_), "nessuno sfondo forzato" (con bottone _Ripristina eredità_), più il comportamento originale per slide con immagine custom
+
+### Changed
+- **Tag `<title>`**: rinominato da "Carosello Builder" a "SLIDE-ORAMA"
+- **Font singola slide — 3 opzioni**: i valori legacy `archivo` / `fraunces` sostituiti con `primary` / `secondary` / `mono` (label: Primario / Secondario / Monospace); ora il cambio font si applica realmente al rendering
+- `src/lib/schema.js` — `slide.font` esteso a `z.enum(['primary','secondary','mono'])`; `theme.background_image` aggiunto come campo opzionale nullable; `BackgroundImageSchema` spostato prima di `ThemeSchema` per rispettare l'ordine di dichiarazione
+
+### Fixed
+- **Bug font singola slide**: qualunque opzione scelta (Archivo Black o Fraunces) produceva sempre Archivo Black perché i valori `archivo`/`fraunces` non corrispondevano ai 3 slot semantici del sistema font
+
+### Notes
+- I caroselli salvati con `slide.font: 'mono'` vengono ora preservati dalla migrazione (`migrateSlideFont` aggiornato)
+- `normalizeMinimal.js` propaga `theme.background_image` nell'import di JSON minimali
+- `BlankSlide.jsx` aggiornato per mappare correttamente il terzo slot mono
+
+---
+
 ## [1.18.0] — 2026-05-18
 
 ### Changed

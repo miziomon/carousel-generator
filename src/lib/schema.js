@@ -27,6 +27,24 @@ export const PaletteSchema = z.object({
 
 export const PaletteLibrarySchema = z.array(PaletteSchema)
 
+// ─── Background image ─────────────────────────────────────────────────────────
+// Definita prima di ThemeSchema perché usata sia nel theme che nelle slide.
+export const BackgroundImageSchema = z.object({
+  data:     z.string().startsWith('data:image/'),
+  opacity:  z.number().min(0).max(1).default(1),
+  blur:     z.number().min(0).max(20).default(0),
+  position: z.enum([
+    'top-left', 'top', 'top-right',
+    'left', 'center', 'right',
+    'bottom-left', 'bottom', 'bottom-right',
+  ]).default('center'),
+  overlay: z.object({
+    enabled:   z.boolean().default(false),
+    type:      z.enum(['dark', 'light', 'palette']).default('palette'),
+    intensity: z.number().min(0).max(1).default(0.5),
+  }).default({ enabled: false, type: 'palette', intensity: 0.5 }),
+})
+
 // ─── Theme ────────────────────────────────────────────────────────────────────
 const ThemeSchema = z.object({
   // Formato del carosello. Sempre presente: la migrazione garantisce il valore.
@@ -53,32 +71,21 @@ const ThemeSchema = z.object({
     secondary: z.enum(FONT_IDS),
     mono:      z.enum(FONT_IDS),
   }),
-})
-
-// ─── Background image ─────────────────────────────────────────────────────────
-export const BackgroundImageSchema = z.object({
-  data:     z.string().startsWith('data:image/'),
-  opacity:  z.number().min(0).max(1).default(1),
-  blur:     z.number().min(0).max(20).default(0),
-  position: z.enum([
-    'top-left', 'top', 'top-right',
-    'left', 'center', 'right',
-    'bottom-left', 'bottom', 'bottom-right',
-  ]).default('center'),
-  overlay: z.object({
-    enabled:   z.boolean().default(false),
-    type:      z.enum(['dark', 'light', 'palette']).default('palette'),
-    intensity: z.number().min(0).max(1).default(0.5),
-  }).default({ enabled: false, type: 'palette', intensity: 0.5 }),
+  // Immagine di sfondo globale: applicata a tutte le slide che non la sovrascrivono.
+  // undefined/null = nessuna immagine globale.
+  background_image: BackgroundImageSchema.nullable().optional(),
 })
 
 // ─── Base fields comuni a tutti i tipi ───────────────────────────────────────
 const SlideBaseFields = {
   num:              z.number().int().positive(),
   kicker:           z.string().nullable().optional(),
-  font:             z.enum(['primary', 'secondary']).default('primary'),
+  // 'primary' | 'secondary' | 'mono' — mappa ai font slot del theme.
+  // null esplicito sul tema globale = "forza nessuno sfondo su questa slide".
+  font:             z.enum(['primary', 'secondary', 'mono']).default('primary'),
   _note_autore:     z.string().optional(),
-  background_image: BackgroundImageSchema.optional(),
+  // undefined = eredita da theme.background_image; null = forza nessuno sfondo; object = override.
+  background_image: BackgroundImageSchema.nullable().optional(),
 }
 
 // ─── Schema per tipo (senza superRefine: discriminatedUnion lo richiede) ────

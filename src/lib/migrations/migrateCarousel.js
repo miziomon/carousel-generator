@@ -30,8 +30,8 @@ const DEFAULT_FORMAT_ID   = 'square'
 const VALID_FORMATS       = new Set(['square', 'portrait', 'landscape'])
 
 /**
- * Migra slide.font dal formato legacy ('archivo'|'fraunces') al semantico ('primary'|'secondary').
- * Idempotente: se il valore è già 'primary'/'secondary', lo lascia invariato.
+ * Migra slide.font dal formato legacy ('archivo'|'fraunces') al semantico ('primary'|'secondary'|'mono').
+ * Idempotente: se il valore è già valido, lo lascia invariato.
  * @param {object} slide
  * @returns {object}
  */
@@ -39,8 +39,8 @@ function migrateSlideFont(slide) {
   if (!slide || typeof slide !== 'object') return slide
   if (slide.font === 'archivo') return { ...slide, font: 'primary' }
   if (slide.font === 'fraunces') return { ...slide, font: 'secondary' }
-  if (slide.font === 'primary' || slide.font === 'secondary') return slide
-  return { ...slide, font: 'primary' } // fallback safe
+  if (slide.font === 'primary' || slide.font === 'secondary' || slide.font === 'mono') return slide
+  return { ...slide, font: 'primary' } // fallback safe per valori sconosciuti
 }
 
 /**

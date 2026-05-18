@@ -1,0 +1,10 @@
+.image-section {
+  padding: 4px 0 2px;
+}
+
+.image-section__hint {
+  font-size: 11px;
+  color: #64748b;
+  line-height: 1.4;
+  margin: 0 0 10px;
+}

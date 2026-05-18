@@ -22,8 +22,9 @@ const TYPE_OPTIONS = [
 ]
 
 const FONT_OPTIONS = [
-  { value: 'archivo',  label: 'Archivo Black' },
-  { value: 'fraunces', label: 'Fraunces' },
+  { value: 'primary',   label: 'Primario' },
+  { value: 'secondary', label: 'Secondario' },
+  { value: 'mono',      label: 'Monospace' },
 ]
 
 const SIZE_OPTIONS_STANDARD = [

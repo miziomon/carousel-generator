@@ -255,3 +255,68 @@
 .bg-overlay-controls__type-option:disabled {
   cursor: default;
 }
+
+/* ── Stato: nessuno sfondo forzato o eredita globale ─────────────────────── */
+
+.bg-image-section {
+  padding: 16px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.bg-image-section__label {
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(203, 213, 225, 0.85);
+  margin: 0;
+}
+
+.bg-image-section__sub {
+  font-size: 11px;
+  color: rgba(148, 163, 184, 0.6);
+  margin: 0 0 6px;
+}
+
+.bg-image-section__restore-btn,
+.bg-image-section__customize-btn,
+.bg-image-section__force-none-btn {
+  font-size: 11px;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+  width: fit-content;
+}
+
+.bg-image-section__restore-btn,
+.bg-image-section__customize-btn {
+  border: 1px solid rgba(100, 116, 139, 0.3);
+  background: rgba(100, 116, 139, 0.1);
+  color: rgba(203, 213, 225, 0.85);
+}
+
+.bg-image-section__restore-btn:hover,
+.bg-image-section__customize-btn:hover {
+  background: rgba(100, 116, 139, 0.2);
+  border-color: rgba(100, 116, 139, 0.5);
+}
+
+.bg-image-section__force-none-btn {
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  background: rgba(239, 68, 68, 0.05);
+  color: rgba(239, 68, 68, 0.8);
+}
+
+.bg-image-section__force-none-btn:hover {
+  background: rgba(239, 68, 68, 0.12);
+  border-color: rgba(239, 68, 68, 0.4);
+  color: rgb(239, 68, 68);
+}
+
+.bg-image-section__inherit-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 2px;
+}
