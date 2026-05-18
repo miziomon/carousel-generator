@@ -13,11 +13,12 @@ export async function exportCarouselZip(carousel, onProgress) {
   const { slides, theme } = carousel
   const total = slides.length
   const padLen = String(total).length
+  const slug = slugifyTitle(carousel.title) || 'carosello'
 
   for (let i = 0; i < total; i++) {
     const slide = slides[i]
     const num = String(i + 1).padStart(Math.max(padLen, 2), '0')
-    const filename = `slide-${num}.png`
+    const filename = `${slug}-${num}.png`
 
     onProgress?.({ current: i + 1, total, label: `Esporto slide ${i + 1}/${total}…` })
 

@@ -162,7 +162,7 @@ export function ExportPanel({ carousel, onExportJson }) {
             </button>
           </div>
         )}
-        <Button variant="secondary" size="sm" onClick={() => setMenuOpen((v) => !v)} title="Opzioni export">
+        <Button variant="ghost" size="sm" onClick={() => setMenuOpen((v) => !v)} title="Opzioni export">
           <Download size={14} />
           Esporta
           <ChevronDown size={12} style={{ opacity: 0.6 }} />

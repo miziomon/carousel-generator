@@ -115,7 +115,7 @@ export function Header({
       <header className="header">
         {/* Logo + versione */}
         <span className="header__logo">
-          Carousel Generator
+          SLIDE-ORAMA
           <span className="header__version">v{pkg.version}</span>
         </span>
 
@@ -156,6 +156,11 @@ export function Header({
         <div className="header__spacer" />
 
         <div className="header__actions">
+          {/* SyncIndicator — prima voce, sempre visibile */}
+          <SyncIndicator meta={meta} onSaveNow={meta.documentId && meta.isDirty ? onSaveNow : null} />
+
+          <div className="header__separator" />
+
           <Button variant="ghost" size="icon" disabled={!canUndo} onClick={onUndo} title="Annulla (Ctrl+Z)">
             <Undo2 size={16} />
           </Button>
@@ -165,7 +170,7 @@ export function Header({
 
           <div className="header__separator" />
 
-          {/* M9: toggle Desktop / Mobile */}
+          {/* Toggle Desktop / Mobile */}
           <Button
             variant="ghost"
             size="icon"
@@ -178,13 +183,7 @@ export function Header({
 
           <div className="header__separator" />
 
-          {/* Nuovo progetto */}
-          <Button variant="ghost" size="sm" onClick={() => setShowNewConfirm(true)} title="Nuovo progetto">
-            <FilePlus size={14} />
-            Nuovo
-          </Button>
-
-          {/* Genera con AI — azione secondaria rispetto ad Aggiungi slide */}
+          {/* Genera con AI */}
           <button
             type="button"
             className="btn-generate-ai"
@@ -218,18 +217,15 @@ export function Header({
             </Button>
           </div>
 
-          <div className="header__separator" />
-
-          <Button variant="ghost" size="sm" onClick={handleImportClick} title="Importa JSON">
-            <Upload size={14} />
-            Importa
+          {/* Nuovo progetto — dopo Aggiungi slide */}
+          <Button variant="ghost" size="sm" onClick={() => setShowNewConfirm(true)} title="Nuovo progetto">
+            <FilePlus size={14} />
+            Nuovo
           </Button>
 
-          <ExportPanel carousel={carousel} onExportJson={handleExportJson} />
-
           <div className="header__separator" />
 
-          {/* Bottoni cloud — visibili solo se loggato */}
+          {/* Apri e Salva — prima di Importa, visibili solo se loggato */}
           {auth?.isLoggedIn && (
             <>
               <Button
@@ -243,7 +239,7 @@ export function Header({
                 Apri
               </Button>
               <Button
-                variant="secondary"
+                variant="ghost"
                 size="sm"
                 onClick={onSaveCarousel}
                 disabled={!canSave}
@@ -252,10 +248,16 @@ export function Header({
                 <Save size={14} />
                 Salva
               </Button>
+              <div className="header__separator" />
             </>
           )}
 
-          <SyncIndicator meta={meta} onSaveNow={meta.documentId && meta.isDirty ? onSaveNow : null} />
+          <Button variant="ghost" size="sm" onClick={handleImportClick} title="Importa JSON">
+            <Upload size={14} />
+            Importa
+          </Button>
+
+          <ExportPanel carousel={carousel} onExportJson={handleExportJson} />
 
           {auth?.isLoggedIn && (
             <>
