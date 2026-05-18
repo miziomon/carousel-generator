@@ -47,6 +47,7 @@ export function Header({
   onSaveNow,
   canSave,
   canOpen,
+  onOpenPreferences,
 }) {
   const [showNewConfirm, setShowNewConfirm] = useState(false)
   const [addMenuOpen, setAddMenuOpen] = useState(false)
@@ -265,6 +266,7 @@ export function Header({
               <UserMenu
                 user={auth.user}
                 onOpenLibrary={onOpenLibrary}
+                onOpenPreferences={onOpenPreferences}
                 onLogout={() => { auth.logout(); toast('Logout effettuato', 'success') }}
               />
             </>

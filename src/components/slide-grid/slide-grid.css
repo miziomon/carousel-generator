@@ -1,6 +1,6 @@
 .slide-card {
-  background: #141929;
-  border: 1px solid rgba(232, 232, 232, 0.1);
+  background: var(--app-bg-card);
+  border: 1px solid rgba(var(--app-fg-rgb), 0.1);
   border-radius: 8px;
   overflow: hidden;
   display: flex;
@@ -11,7 +11,7 @@
 
 .slide-card--overlay {
   box-shadow: 0 16px 48px rgba(0, 0, 0, 0.6);
-  border-color: rgba(0, 255, 170, 0.3);
+  border-color: rgba(var(--app-accent-rgb), 0.3);
   transform: rotate(1.5deg);
   cursor: grabbing;
 }
@@ -23,7 +23,7 @@
   left: 6px;
   z-index: 10;
   padding: 4px;
-  color: rgba(232, 232, 232, 0.25);
+  color: rgba(var(--app-fg-rgb), 0.25);
   cursor: grab;
   opacity: 0;
   transition: opacity 0.15s;
@@ -36,11 +36,11 @@
 
 .slide-card__drag-handle:active {
   cursor: grabbing;
-  color: rgba(0, 255, 170, 0.6);
+  color: rgba(var(--app-accent-rgb), 0.6);
 }
 
 .slide-card:hover {
-  border-color: rgba(232, 232, 232, 0.22);
+  border-color: rgba(var(--app-fg-rgb), 0.22);
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
 }
 
@@ -50,7 +50,7 @@
   height: 280px;
   overflow: hidden;
   position: relative;
-  background: #0a0e1a;
+  background: var(--app-bg-deep);
   flex-shrink: 0;
   cursor: pointer;
 }
@@ -66,7 +66,7 @@
   font-family: 'JetBrains Mono', monospace;
   font-size: 13px;
   letter-spacing: 0.2em;
-  color: #00ffaa;
+  color: var(--app-accent);
   text-transform: uppercase;
 }
 
@@ -80,7 +80,7 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  border-top: 1px solid rgba(232, 232, 232, 0.08);
+  border-top: 1px solid rgba(var(--app-fg-rgb), 0.08);
 }
 
 .slide-card__meta {
@@ -93,7 +93,7 @@
   font-family: 'JetBrains Mono', monospace;
   font-size: 11px;
   font-weight: 600;
-  color: rgba(232, 232, 232, 0.5);
+  color: rgba(var(--app-fg-rgb), 0.5);
   letter-spacing: 0.15em;
 }
 
@@ -104,8 +104,8 @@
   text-transform: uppercase;
   padding: 2px 7px;
   border-radius: 4px;
-  background: rgba(232, 232, 232, 0.08);
-  color: rgba(232, 232, 232, 0.5);
+  background: rgba(var(--app-fg-rgb), 0.08);
+  color: rgba(var(--app-fg-rgb), 0.5);
 }
 
 .slide-card__warning {
@@ -144,14 +144,14 @@
   border-radius: 4px;
   border: none;
   background: transparent;
-  color: rgba(232, 232, 232, 0.5);
+  color: rgba(var(--app-fg-rgb), 0.5);
   cursor: pointer;
   transition: background 0.12s, color 0.12s;
 }
 
 .slide-card__action:hover {
-  background: rgba(232, 232, 232, 0.08);
-  color: rgba(232, 232, 232, 0.9);
+  background: rgba(var(--app-fg-rgb), 0.08);
+  color: rgba(var(--app-fg-rgb), 0.9);
 }
 
 .slide-card__action--danger:hover {
@@ -166,7 +166,7 @@
 
 .slide-card__action--loading:hover {
   background: transparent;
-  color: rgba(232, 232, 232, 0.5);
+  color: rgba(var(--app-fg-rgb), 0.5);
 }
 
 /* M9: layout mobile (colonna singola, card più strette) */
@@ -184,4 +184,3 @@
 }
 
 /* La scala (≈0.352) viene impostata inline dal componente SlideCard */
-

@@ -1,8 +1,8 @@
 .tab-bar {
   display: flex;
   align-items: center;
-  background: #0d1224;
-  border-bottom: 1px solid rgba(232, 232, 232, 0.1);
+  background: var(--app-bg-panel);
+  border-bottom: 1px solid rgba(var(--app-fg-rgb), 0.1);
   padding: 0 20px;
   gap: 2px;
   flex-shrink: 0;
@@ -13,7 +13,7 @@
   font-size: 12px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: rgba(232, 232, 232, 0.45);
+  color: rgba(var(--app-fg-rgb), 0.45);
   padding: 10px 16px;
   border: none;
   background: transparent;
@@ -25,12 +25,12 @@
 }
 
 .tab-bar__tab:hover {
-  color: rgba(232, 232, 232, 0.8);
+  color: rgba(var(--app-fg-rgb), 0.8);
 }
 
 .tab-bar__tab--active {
-  color: #00ffaa;
-  border-bottom-color: #00ffaa;
+  color: var(--app-accent);
+  border-bottom-color: var(--app-accent);
 }
 
 .tab-bar__tab--disabled {

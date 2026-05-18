@@ -1,0 +1,79 @@
+.app-prefs {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.app-prefs__section-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(var(--app-fg-rgb), 0.45);
+  margin-bottom: 12px;
+}
+
+.app-prefs__theme-grid {
+  display: flex;
+  gap: 10px;
+}
+
+.app-prefs__theme-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 10px 12px;
+  border-radius: 10px;
+  border: 1.5px solid rgba(var(--app-fg-rgb), 0.12);
+  background: rgba(var(--app-fg-rgb), 0.03);
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+  color: inherit;
+}
+
+.app-prefs__theme-btn:hover {
+  border-color: rgba(var(--app-fg-rgb), 0.25);
+  background: rgba(var(--app-fg-rgb), 0.06);
+}
+
+.app-prefs__theme-btn--active {
+  border-color: var(--app-accent);
+  background: rgba(var(--app-accent-rgb), 0.08);
+}
+
+.app-prefs__theme-swatch {
+  width: 40px;
+  height: 28px;
+  border-radius: 6px;
+  border: 1px solid rgba(var(--app-fg-rgb), 0.15);
+  display: block;
+}
+
+/* Swatch visuali per i tre temi */
+.app-prefs__theme-swatch[data-theme-value="dark"] {
+  background: linear-gradient(135deg, #0f172a 50%, #1e2a3a 50%);
+}
+
+.app-prefs__theme-swatch[data-theme-value="light"] {
+  background: linear-gradient(135deg, #faf9f7 50%, #f5f3ef 50%);
+}
+
+.app-prefs__theme-swatch[data-theme-value="auto"] {
+  background: linear-gradient(135deg, #0f172a 50%, #faf9f7 50%);
+}
+
+.app-prefs__theme-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(var(--app-fg-rgb), 0.85);
+}
+
+.app-prefs__theme-desc {
+  font-size: 10px;
+  color: rgba(var(--app-fg-rgb), 0.4);
+  text-align: center;
+  line-height: 1.4;
+}

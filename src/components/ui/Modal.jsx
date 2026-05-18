@@ -3,10 +3,6 @@ import { createPortal } from 'react-dom'
 import { X } from 'lucide-react'
 import { cn } from '../../lib/cn.js'
 
-/**
- * Modal generico con backdrop.
- * Chiude su Esc e su click esterno (se onClose è fornito).
- */
 export function Modal({ open, onClose, title, children, size = 'md', className }) {
   useEffect(() => {
     if (!open) return
@@ -29,18 +25,38 @@ export function Modal({ open, onClose, title, children, size = 'md', className }
     >
       <div
         className={cn(
-          'relative w-full bg-slate-800 rounded-xl shadow-2xl flex flex-col max-h-[90vh]',
+          'relative w-full rounded-xl shadow-2xl flex flex-col max-h-[90vh]',
           widths[size],
           className
         )}
+        style={{ background: 'var(--app-bg-popup)' }}
       >
         {(title || onClose) && (
-          <div className="flex items-center justify-between px-5 py-4 border-b border-slate-700 shrink-0">
-            {title && <h2 className="text-base font-semibold text-slate-100">{title}</h2>}
+          <div
+            className="flex items-center justify-between px-5 py-4 shrink-0"
+            style={{ borderBottom: '1px solid rgba(var(--app-fg-rgb), 0.12)' }}
+          >
+            {title && (
+              <h2
+                className="text-base font-semibold"
+                style={{ color: 'var(--app-fg)' }}
+              >
+                {title}
+              </h2>
+            )}
             {onClose && (
               <button
                 onClick={onClose}
-                className="ml-auto p-1 rounded hover:bg-slate-700 text-slate-400 hover:text-slate-100 transition-colors"
+                className="ml-auto p-1 rounded transition-colors"
+                style={{ color: 'rgba(var(--app-fg-rgb), 0.5)' }}
+                onMouseEnter={e => {
+                  e.currentTarget.style.background = 'rgba(var(--app-fg-rgb), 0.08)'
+                  e.currentTarget.style.color = 'var(--app-fg)'
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.background = 'transparent'
+                  e.currentTarget.style.color = 'rgba(var(--app-fg-rgb), 0.5)'
+                }}
                 aria-label="Chiudi"
               >
                 <X size={18} />

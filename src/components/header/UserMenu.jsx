@@ -1,12 +1,8 @@
 import { useState, useEffect, useRef } from 'react'
-import { ChevronDown, BookOpen, LogOut } from 'lucide-react'
+import { ChevronDown, BookOpen, Settings, LogOut } from 'lucide-react'
 import '../carousel-library/carousel-library.css'
 
-/**
- * Menu a dropdown sull'email utente.
- * Voci: "I tuoi caroselli" + Logout.
- */
-export function UserMenu({ user, onOpenLibrary, onLogout }) {
+export function UserMenu({ user, onOpenLibrary, onOpenPreferences, onLogout }) {
   const [open, setOpen] = useState(false)
   const ref = useRef(null)
 
@@ -47,6 +43,14 @@ export function UserMenu({ user, onOpenLibrary, onLogout }) {
           >
             <BookOpen size={13} />
             I tuoi caroselli
+          </button>
+          <button
+            type="button"
+            className="user-menu__item"
+            onClick={() => handleItem(onOpenPreferences)}
+          >
+            <Settings size={13} />
+            Preferenze
           </button>
           <div className="user-menu__sep" />
           <button

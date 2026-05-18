@@ -140,6 +140,33 @@
   font-display: block;
 }
 
+/* ─── App theme variables ─────────────────────────────────────────────────── */
+:root {
+  --app-bg:         #0f172a;
+  --app-bg-deep:    #0a0e1a;
+  --app-bg-card:    #141929;
+  --app-bg-panel:   #0d1224;
+  --app-bg-popup:   #1e2a3a;
+  --app-fg:         #f1f5f9;
+  --app-fg-rgb:     232, 232, 232;
+  --app-accent:     #00ffaa;
+  --app-accent-rgb: 0, 255, 170;
+  --app-danger:     #ef4444;
+}
+
+[data-theme="light"] {
+  --app-bg:         #faf9f7;
+  --app-bg-deep:    #f0ede9;
+  --app-bg-card:    #ffffff;
+  --app-bg-panel:   #f5f3ef;
+  --app-bg-popup:   #ffffff;
+  --app-fg:         #1c1917;
+  --app-fg-rgb:     28, 25, 23;
+  --app-accent:     #00a86b;
+  --app-accent-rgb: 0, 168, 107;
+  --app-danger:     #dc2626;
+}
+
 *, *::before, *::after {
   box-sizing: border-box;
 }
@@ -152,7 +179,8 @@ html, body, #root {
 
 body {
   font-family: system-ui, sans-serif;
-  background: #0f172a;
-  color: #f1f5f9;
+  background: var(--app-bg);
+  color: var(--app-fg);
   -webkit-font-smoothing: antialiased;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }

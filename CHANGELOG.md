@@ -1,5 +1,24 @@
 # Changelog
 
+## [1.21.0] — 2026-05-18
+
+### Added
+- **Titolo dinamico**: il tag `<title>` mostra ora `SLIDE-ORAMA — v{versione}` (versione presa da `package.json`)
+- **Sistema tema chiaro/scuro**: l'app supporta ora tre modalità — Automatico (segue `prefers-color-scheme`), Scuro, Chiaro (warm off-white editoriale: sfondo `#faf9f7`, testo `#1c1917`, accent `#00a86b`)
+- **Preferenze utente**: nuova voce "Preferenze" nel menu utente che apre `AppPreferencesModal` — toggle grafico tre-opzioni (Auto / Scuro / Chiaro) con swatch visivi e descrizione
+- **`useAppTheme.js`**: hook che gestisce la preferenza tema (`auto | dark | light`), la persiste in `localStorage` (chiave `app-theme`), applica `[data-theme="light"]` su `<html>` e si aggiorna quando cambia `prefers-color-scheme` (solo in modalità auto)
+- **Variabili CSS globali**: sistema `--app-*` in `:root` (dark default) con override `[data-theme="light"]` per bg-panel, bg-card, bg-popup, bg-deep, fg, fg-rgb, accent, accent-rgb, danger
+- `src/components/header/AppPreferencesModal.jsx` + `app-preferences-modal.css` — modal preferenze con swatch e toggle tema
+
+### Changed
+- **`.header__logo`**: invariato per design constraint (JetBrains Mono, colore `#00ffaa`)
+- **CSS componenti**: tutti i file CSS dell'UI shell (`header.css`, `theme-sidebar.css`, `tab-bar.css`, `slide-grid.css`, `edit-modal.css`, `carousel-library.css`) refactorizzati per usare variabili `--app-*` invece di colori hardcoded
+- **`Modal.jsx`**: convertito da classi Tailwind `bg-slate-*` a stili inline con variabili CSS, compatibile con entrambi i temi
+- **`UserMenu.jsx`**: aggiunta voce "Preferenze" con icona `Settings` nel menu dropdown utente
+- **`Header.jsx`**: accetta e propaga nuova prop `onOpenPreferences`
+- **`App.jsx`**: importa `useAppTheme` e `pkg.version`; imposta il titolo via `useEffect`; passa `appTheme` ad `AuthenticatedApp` e renderizza `AppPreferencesModal`
+- **`body` in `index.css`**: usa `var(--app-bg)` / `var(--app-fg)` + `transition: background-color 0.2s ease, color 0.2s ease`
+
 ## [1.20.0] — 2026-05-18
 
 ### Added

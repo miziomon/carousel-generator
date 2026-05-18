@@ -1,4 +1,6 @@
 import { useState, lazy, Suspense, useEffect } from 'react'
+import pkg from '../package.json'
+import { useAppTheme } from './hooks/useAppTheme.js'
 import { useCarouselStore } from './hooks/useCarouselStore.js'
 import { useAuth } from './hooks/useAuth.js'
 import { useAutoSave } from './hooks/useAutoSave.js'
@@ -26,10 +28,16 @@ import { SaveCarouselModal } from './components/carousel-library/SaveCarouselMod
 import { SaveOrNewPopup } from './components/carousel-library/SaveOrNewPopup.jsx'
 import { CarouselLibraryModal } from './components/carousel-library/CarouselLibraryModal.jsx'
 import { Modal } from './components/ui/Modal.jsx'
+import { AppPreferencesModal } from './components/header/AppPreferencesModal.jsx'
 import { ToastContainer, toast } from './components/ui/Toast.jsx'
 
 export default function App() {
   const auth = useAuth()
+  const appTheme = useAppTheme()
+
+  useEffect(() => {
+    document.title = `SLIDE-ORAMA — v${pkg.version}`
+  }, [])
 
   if (!auth.isLoggedIn) {
     return (
@@ -40,14 +48,15 @@ export default function App() {
     )
   }
 
-  return <AuthenticatedApp auth={auth} />
+  return <AuthenticatedApp auth={auth} appTheme={appTheme} />
 }
 
-function AuthenticatedApp({ auth }) {
+function AuthenticatedApp({ auth, appTheme }) {
   const store = useCarouselStore()
   const [mobileView, setMobileView] = useState(false)
   const [aiGeneratorOpen, setAiGeneratorOpen] = useState(false)
   const [libraryOpen, setLibraryOpen] = useState(false)
+  const [preferencesOpen, setPreferencesOpen] = useState(false)
   const [saveModalOpen, setSaveModalOpen] = useState(false)
   const [saveOrNewOpen, setSaveOrNewOpen] = useState(false)
   const [saveAsNewTitle, setSaveAsNewTitle] = useState(null)
@@ -260,6 +269,7 @@ function AuthenticatedApp({ auth }) {
         onSaveNow={handleSaveNow}
         canSave={canSaveCarousel(auth.tier, carouselCount)}
         canOpen={auth.isLoggedIn}
+        onOpenPreferences={() => setPreferencesOpen(true)}
       />
 
       <div className="flex flex-1 overflow-hidden">
@@ -378,6 +388,14 @@ function AuthenticatedApp({ auth }) {
         onDocumentTitleUpdate={handleDocumentTitleUpdate}
         onDocumentCleared={handleDocumentCleared}
         onCountChanged={refreshCount}
+      />
+
+      {/* Preferenze app */}
+      <AppPreferencesModal
+        open={preferencesOpen}
+        onClose={() => setPreferencesOpen(false)}
+        preference={appTheme.preference}
+        onSetTheme={appTheme.setTheme}
       />
 
       {/* Save flow */}
