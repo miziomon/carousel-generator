@@ -42,6 +42,29 @@
   color: rgba(217, 119, 6, 0.55);
 }
 
+/* ── Overrides tema chiaro per elementi header__actions ───────────────────── */
+/* I bottoni ghost usano classi Tailwind text-slate-300 pensate per il dark */
+[data-theme="light"] .header__actions button {
+  color: rgba(var(--app-fg-rgb), 0.75) !important;
+}
+[data-theme="light"] .header__actions button:hover:not(:disabled) {
+  background: rgba(var(--app-fg-rgb), 0.09) !important;
+  color: rgba(var(--app-fg-rgb), 0.95) !important;
+}
+[data-theme="light"] .header__actions button:disabled {
+  color: rgba(var(--app-fg-rgb), 0.3) !important;
+  background: transparent !important;
+}
+
+/* Bottone "Aggiungi slide" (primary/emerald) → arancione */
+[data-theme="light"] .header__add-slide > button {
+  background-color: var(--app-accent) !important;
+  color: #fff !important;
+}
+[data-theme="light"] .header__add-slide > button:hover:not(:disabled) {
+  background-color: #b45309 !important;
+}
+
 /* Gruppo nome progetto + autore */
 .header__identity {
   display: flex;

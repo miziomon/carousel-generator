@@ -616,3 +616,13 @@
 .btn-generate-ai__label {
   /* nessun stile extra — eredita dal parent */
 }
+
+/* Nel tema chiaro → arancione */
+[data-theme="light"] .btn-generate-ai {
+  color: var(--app-accent);
+  border-color: rgba(var(--app-accent-rgb), 0.5);
+}
+[data-theme="light"] .btn-generate-ai:hover {
+  background: rgba(var(--app-accent-rgb), 0.1);
+  border-color: rgba(var(--app-accent-rgb), 0.8);
+}
