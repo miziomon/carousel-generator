@@ -12,7 +12,7 @@
   z-index: 20;
 }
 
-/* .header__logo — lasciato invariato per design constraint */
+/* .header__logo — font e colore invariati nel tema scuro (design constraint) */
 .header__logo {
   font-family: 'JetBrains Mono', monospace;
   font-size: 13px;
@@ -31,6 +31,15 @@
   font-weight: 400;
   letter-spacing: 0.1em;
   color: rgba(0, 255, 170, 0.45);
+}
+
+/* Nel tema chiaro il neon-green del logo ha scarso contrasto → arancione */
+[data-theme="light"] .header__logo {
+  color: #d97706;
+}
+
+[data-theme="light"] .header__version {
+  color: rgba(217, 119, 6, 0.55);
 }
 
 /* Gruppo nome progetto + autore */

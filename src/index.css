@@ -156,14 +156,14 @@
 
 [data-theme="light"] {
   --app-bg:         #faf9f7;
-  --app-bg-deep:    #f0ede9;
-  --app-bg-card:    #ffffff;
-  --app-bg-panel:   #f5f3ef;
-  --app-bg-popup:   #ffffff;
-  --app-fg:         #1c1917;
-  --app-fg-rgb:     28, 25, 23;
-  --app-accent:     #00a86b;
-  --app-accent-rgb: 0, 168, 107;
+  --app-bg-deep:    #dedad4;
+  --app-bg-card:    #f4f0eb;
+  --app-bg-panel:   #e3ddd6;
+  --app-bg-popup:   #eee9e3;
+  --app-fg:         #0d0c0a;
+  --app-fg-rgb:     13, 12, 10;
+  --app-accent:     #d97706;
+  --app-accent-rgb: 217, 119, 6;
   --app-danger:     #dc2626;
 }
 
