@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.22.2] — 2026-05-18
+
+### Fixed
+- **Bottoni Sostituisci/Rimuovi immagine nella sidebar**: spostati da affianco all'anteprima (layout row) a sotto di essa (layout column), larghezza piena — erano nascosti/inaccessibili nella sidebar stretta
+
+## [1.22.1] — 2026-05-18
+
+### Fixed
+- **Overlay hover slide**: CTA "Modifica" e "Anteprima" disposte in colonna verticale centrata invece di affiancate
+
 ## [1.22.0] — 2026-05-18
 
 ### Added
