@@ -1,0 +1,38 @@
+/* ── CustomCssSection ───────────────────────────────────────────────────────── */
+
+.custom-css-section__hint {
+  font-size: 10px;
+  color: var(--color-text-muted, #888);
+  line-height: 1.5;
+  margin-bottom: 8px;
+}
+
+.custom-css-section__hint code {
+  font-family: monospace;
+  background: var(--color-bg-alt, #f0f0f0);
+  padding: 1px 4px;
+  border-radius: 3px;
+  font-size: 9px;
+}
+
+.custom-css-section__editor {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 8px;
+  background: var(--color-bg-alt, #f5f5f5);
+  border: 1px solid var(--color-border, #e0e0e0);
+  border-radius: 6px;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 11px;
+  line-height: 1.6;
+  color: var(--color-text, #111);
+  resize: vertical;
+  min-height: 120px;
+  tab-size: 2;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.custom-css-section__editor:focus {
+  border-color: var(--color-accent, #0066cc);
+}

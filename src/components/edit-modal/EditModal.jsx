@@ -4,10 +4,12 @@ import { FieldGroup, TextInput, SelectInput, RadioGroup, Toggle } from './FieldG
 import { LinesEditor } from './LinesEditor.jsx'
 import { CtaItemsEditor } from './CtaItemsEditor.jsx'
 import { BackgroundImageSection } from './BackgroundImageSection.jsx'
+import { TypographyPanel } from './TypographyPanel.jsx'
 import { Button } from '../ui/Button.jsx'
 import { getFormat } from '../../lib/formats/registry.js'
 import './edit-modal.css'
 import './background-image-section.css'
+import './typography-panel.css'
 
 // Larghezza fissa dell'anteprima (px). L'altezza varia con il formato.
 const PREVIEW_W_PX = 389
@@ -19,12 +21,6 @@ const TYPE_OPTIONS = [
   { value: 'quote',    label: 'Citazione' },
   { value: 'cta',      label: 'Call to action' },
   { value: 'blank',    label: 'Blank (solo immagine)' },
-]
-
-const FONT_OPTIONS = [
-  { value: 'primary',   label: 'Primario' },
-  { value: 'secondary', label: 'Secondario' },
-  { value: 'mono',      label: 'Monospace' },
 ]
 
 const SIZE_OPTIONS_STANDARD = [
@@ -243,6 +239,13 @@ export function EditModal({ slide, theme, total, carousel, onSave, onCancel }) {
             >
               Sfondo
             </button>
+            <button
+              type="button"
+              className={`edit-modal__tab${activeTab === 'tipografia' ? ' edit-modal__tab--active' : ''}`}
+              onClick={() => setActiveTab('tipografia')}
+            >
+              Tipografia
+            </button>
           </div>
 
           {/* ── TAB 1: Contenuto ── */}
@@ -277,16 +280,6 @@ export function EditModal({ slide, theme, total, carousel, onSave, onCancel }) {
                   </div>
                 </FieldGroup>
               )}
-
-              {/* Font */}
-              <FieldGroup label="Font">
-                <RadioGroup
-                  name={`font-${draft.id}`}
-                  value={draft.font}
-                  onChange={(v) => set('font', v)}
-                  options={FONT_OPTIONS}
-                />
-              </FieldGroup>
 
               {/* Size (non per cta, cover, blank) */}
               {!isCta && !isCover && !isBlank && (
@@ -425,6 +418,13 @@ export function EditModal({ slide, theme, total, carousel, onSave, onCancel }) {
                   placeholder="Appunti privati..."
                 />
               </FieldGroup>
+            </div>
+          )}
+
+          {/* ── TAB 3: Tipografia per-slide ── */}
+          {activeTab === 'tipografia' && (
+            <div className="edit-modal__tab-panel">
+              <TypographyPanel draft={draft} theme={theme} set={set} />
             </div>
           )}
 

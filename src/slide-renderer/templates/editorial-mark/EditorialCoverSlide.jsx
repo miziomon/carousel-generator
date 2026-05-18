@@ -2,14 +2,17 @@ import { EditorialHeader } from './EditorialHeader.jsx'
 import { EditorialFooter } from './EditorialFooter.jsx'
 import { parseLines } from '../../inlineTags.jsx'
 import { EDITORIAL_CLASS_MAP } from './constants.js'
-import { resolveFontVars } from '../../../lib/fonts/resolveFont.js'
+import { resolveSlideFont } from '../../../lib/fonts/resolveFont.js'
 
 export function EditorialCoverSlide({ slide, theme, total, calib }) {
-  const fontVars = resolveFontVars(slide.font, theme)
-  const base     = calib.body_archivo.cover
+  const fontVars = resolveSlideFont(slide, theme)
+  const entry    = calib.body_archivo.cover
+  const mdSize   = calib.body_archivo.md.size
+  const base     = parseFloat(fontVars['--font-size-base'])
+  const ratio    = entry.size / mdSize
 
-  const finalSize = Math.round(base.size * parseFloat(fontVars['--font-size-multiplier']))
-  const finalLH   = +(base.line_height * parseFloat(fontVars['--font-line-height-multiplier'])).toFixed(3)
+  const finalSize = Math.round(base * ratio * parseFloat(fontVars['--font-size-multiplier']))
+  const finalLH   = +(entry.line_height * parseFloat(fontVars['--font-line-height-multiplier'])).toFixed(3)
 
   const bodyStyle = {
     '--editorial-body-size':        `${finalSize}px`,

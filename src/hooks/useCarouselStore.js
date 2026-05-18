@@ -385,6 +385,29 @@ function reducer(state, action) {
     case 'CLEAR_FONT_PREVIEW':
       return { ...state, fontPreview: null }
 
+    case 'APPLY_FONT_SIZE': {
+      const { slot, size } = action.payload
+      const newSizes  = { ...state.carousel.theme.fonts.sizes, [slot]: size }
+      const newFonts  = { ...state.carousel.theme.fonts, sizes: newSizes }
+      const carousel  = { ...state.carousel, theme: { ...state.carousel.theme, fonts: newFonts } }
+      return {
+        ...state,
+        carousel,
+        history: pushHistory(state.history, state.carousel),
+        meta: { ...state.meta, isDirty: true },
+      }
+    }
+
+    case 'SET_CUSTOM_CSS': {
+      const carousel = { ...state.carousel, theme: { ...state.carousel.theme, customCss: action.payload.css } }
+      return {
+        ...state,
+        carousel,
+        history: pushHistory(state.history, state.carousel),
+        meta: { ...state.meta, isDirty: true },
+      }
+    }
+
     // ── Immagine globale theme ─────────────────────────────────────────────────
 
     case 'APPLY_THEME_BG_IMAGE': {
@@ -624,6 +647,8 @@ export function useCarouselStore() {
   const applyFontPreset    = useCallback((presetId)       => dispatch({ type: 'APPLY_FONT_PRESET',    payload: { presetId } }),        [])
   const previewFontChange  = useCallback((slot, fontId)   => dispatch({ type: 'PREVIEW_FONT_CHANGE',  payload: { slot, fontId } }),    [])
   const clearFontPreview   = useCallback(()               => dispatch({ type: 'CLEAR_FONT_PREVIEW' }),                                [])
+  const applyFontSize      = useCallback((slot, size)     => dispatch({ type: 'APPLY_FONT_SIZE',      payload: { slot, size } }),      [])
+  const setCustomCss       = useCallback((css)            => dispatch({ type: 'SET_CUSTOM_CSS',       payload: { css } }),             [])
 
   // ── Immagine globale theme ────────────────────────────────────────────────────
   // bgImage: oggetto BackgroundImage | null (forza nessuno) | undefined (rimuovi campo)
@@ -663,7 +688,7 @@ export function useCarouselStore() {
     // Azioni template
     applyTemplate, openTemplateManager, closeTemplateManager,
     // Azioni font
-    applyFont, applyFontPreset, previewFontChange, clearFontPreview,
+    applyFont, applyFontPreset, previewFontChange, clearFontPreview, applyFontSize, setCustomCss,
     // Immagine globale theme
     applyThemeBgImage,
     // Azione AI

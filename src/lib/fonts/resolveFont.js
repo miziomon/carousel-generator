@@ -7,12 +7,14 @@ import { getCompensation } from './compensations.js';
  *
  * @param {'primary'|'secondary'|'mono'} slot
  * @param {object} theme - Il theme del carosello (deve avere theme.fonts)
+ * @param {{ fontId?: string, sizePx?: number }} [overrides] - Override per-slide opzionali
  * @returns {object} Oggetto con chiavi CSS variable
  */
-export function resolveFontVars(slot, theme) {
-  const fontId = theme.fonts?.[slot];
+export function resolveFontVars(slot, theme, overrides = {}) {
+  const fontId = overrides.fontId ?? theme.fonts?.[slot];
   const font = getFont(fontId);
   const comp = getCompensation(font.id);
+  const sizeBase = overrides.sizePx ?? theme.fonts?.sizes?.[slot] ?? 68;
 
   return {
     '--font-family': font.css_family,
@@ -22,7 +24,24 @@ export function resolveFontVars(slot, theme) {
     '--font-size-multiplier': String(comp.font_size_multiplier ?? 1),
     '--font-text-transform': comp.text_transform,
     '--font-variation-settings': comp.font_variation_settings ?? 'normal',
+    '--font-size-base': String(sizeBase),
   };
+}
+
+/**
+ * Risolve il font per una singola slide, applicando gli override per-slide
+ * (font_id_override, font_size_override) sopra le impostazioni globali del tema.
+ *
+ * @param {object} slide - La slide con eventuali campi font_id_override / font_size_override
+ * @param {object} theme - Il theme del carosello
+ * @returns {object} Oggetto con chiavi CSS variable
+ */
+export function resolveSlideFont(slide, theme) {
+  const slot = slide.font ?? 'primary';
+  return resolveFontVars(slot, theme, {
+    fontId: slide.font_id_override,
+    sizePx: slide.font_size_override,
+  });
 }
 
 /**

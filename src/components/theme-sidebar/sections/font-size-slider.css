@@ -1,0 +1,38 @@
+/* ── FontSizeSlider ─────────────────────────────────────────────────────────── */
+
+.font-size-slider {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.font-size-slider__range {
+  flex: 1;
+  height: 4px;
+  cursor: pointer;
+  accent-color: var(--color-accent, #0066cc);
+}
+
+.font-size-slider__num {
+  width: 42px;
+  padding: 2px 4px;
+  background: var(--color-bg-alt, #f5f5f5);
+  border: 1px solid var(--color-border, #e0e0e0);
+  border-radius: 4px;
+  font-size: 11px;
+  color: var(--color-text, #111);
+  text-align: center;
+  -moz-appearance: textfield;
+}
+
+.font-size-slider__num::-webkit-inner-spin-button,
+.font-size-slider__num::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+}
+
+.font-size-slider__unit {
+  font-size: 10px;
+  color: var(--color-text-muted, #888);
+  flex-shrink: 0;
+}

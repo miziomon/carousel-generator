@@ -130,3 +130,55 @@ describe('migrateThemeFonts — campo theme.fonts', () => {
     })
   })
 })
+
+// ─── migrateThemeFonts — sizes ────────────────────────────────────────────────
+
+describe('migrateThemeFonts — campo theme.fonts.sizes', () => {
+  it('aggiunge sizes con default quando assente (carosello pre-v1.20)', () => {
+    const raw = makeRaw()
+    const result = migrateCarousel(raw)
+    expect(result.theme.fonts.sizes).toEqual({ primary: 68, secondary: 68, mono: 18 })
+  })
+
+  it('preserva sizes già presenti e valide', () => {
+    const raw = makeRaw()
+    raw.theme.fonts.sizes = { primary: 48, secondary: 36, mono: 14 }
+    const result = migrateCarousel(raw)
+    expect(result.theme.fonts.sizes).toEqual({ primary: 48, secondary: 36, mono: 14 })
+  })
+
+  it('sostituisce size fuori range con il default', () => {
+    const raw = makeRaw()
+    raw.theme.fonts.sizes = { primary: 5, secondary: 200, mono: 18 }
+    const result = migrateCarousel(raw)
+    expect(result.theme.fonts.sizes.primary).toBe(68)
+    expect(result.theme.fonts.sizes.secondary).toBe(68)
+    expect(result.theme.fonts.sizes.mono).toBe(18)
+  })
+
+  it('completa sizes parziale con i default', () => {
+    const raw = makeRaw()
+    raw.theme.fonts.sizes = { primary: 50 }
+    const result = migrateCarousel(raw)
+    expect(result.theme.fonts.sizes.primary).toBe(50)
+    expect(result.theme.fonts.sizes.secondary).toBe(68)
+    expect(result.theme.fonts.sizes.mono).toBe(18)
+  })
+})
+
+// ─── migrateTheme — customCss ─────────────────────────────────────────────────
+
+describe('migrateTheme — campo theme.customCss', () => {
+  it('aggiunge customCss vuoto quando assente (carosello pre-v1.20)', () => {
+    const raw = makeRaw()
+    const result = migrateCarousel(raw)
+    expect(result.theme.customCss).toBe('')
+  })
+
+  it('preserva customCss già presente', () => {
+    const raw = makeRaw()
+    raw.theme.customCss = '.slide { border-radius: 20px; }'
+    const result = migrateCarousel(raw)
+    expect(result.theme.customCss).toBe('.slide { border-radius: 20px; }')
+  })
+})

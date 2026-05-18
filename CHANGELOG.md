@@ -1,5 +1,32 @@
 # Changelog
 
+## [1.20.0] — 2026-05-18
+
+### Added
+- **Slider dimensione font per slot**: nella sidebar → sezione Fonts, sotto ogni dropdown font (Primario, Secondario, Monospace) è ora presente uno slider 8–120 px che imposta la **dimensione base** del testo per quello slot. Il valore è il base size da cui i template derivano le dimensioni per ogni preset (xl/lg/md) tramite ratio
+- **Override tipografia per-slide**: l'EditModal ora ha un terzo tab "Tipografia" che permette di sovrascrivere, solo per quella slide, tre parametri: slot font (primary/secondary/mono), famiglia specifica (override), dimensione in px (override). Le impostazioni per-slide hanno la precedenza su quelle globali del tema
+- **Custom CSS globale**: nuova sezione "Custom CSS" nella sidebar (sotto Immagine, prima di Reset). Il CSS scritto in questa textarea viene applicato a tutte le slide tramite un `<style>` globale nell'`<head>`. Debounced per non saturare la history; persistito nel JSON e nel draft
+- **`resolveSlideFont`**: nuovo helper in `src/lib/fonts/resolveFont.js` che fonde lo slot, il font override e il size override per-slide in un unico set di CSS variables
+- **`--font-size-base`**: nuova CSS variable esposta da `resolveFontVars` e `resolveSlideFont`, usata dai template per scalare il testo rispetto al base size del tema
+
+### Changed
+- **Template slides** (editorial-mark e bold-corner): `Standard`, `Cover`, `Divider`, `Quote` ora calcolano `finalSize` come `base × ratio × fontSizeMultiplier` invece di `calibration.px × multiplier`. Il ratio è derivato dalle calibrazioni del template (xl/lg/md rispetto a md). Compatibilità garantita: con i default (68px) il rendering visivo è identico alla versione precedente per editorial-mark
+- **Tab "Contenuto" EditModal**: il radio "Font" (slot) è stato spostato nel nuovo tab "Tipografia"
+- `theme.fonts` ora include sotto-oggetto `sizes: { primary, secondary, mono }` (default 68/68/18 px)
+- `theme.customCss` aggiunto al ThemeSchema (stringa, max 20.000 caratteri, default '')
+- `slide.font_id_override` e `slide.font_size_override` aggiunti agli SlideBaseFields come campi opzionali
+- Migrazione retrocompatibile: `migrateCarousel` aggiunge automaticamente `fonts.sizes` e `customCss` ai caroselli più vecchi
+- `useUiPreferences.js`: aggiunta sezione `customCss` nelle preferenze sidebar
+- 9 nuovi test unitari (resolveSlideFont: 6; migrazione sizes: 3; migrazione customCss: 2)
+
+### Files created
+- `src/components/theme-sidebar/sections/FontSizeSlider.jsx` + `.css`
+- `src/components/theme-sidebar/sections/CustomCssSection.jsx` + `.css`
+- `src/components/edit-modal/TypographyPanel.jsx` + `.css`
+- `src/__tests__/resolveSlideFont.test.js`
+
+---
+
 ## [1.19.0] — 2026-05-18
 
 ### Added

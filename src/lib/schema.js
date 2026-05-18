@@ -70,7 +70,16 @@ const ThemeSchema = z.object({
     primary:   z.enum(FONT_IDS),
     secondary: z.enum(FONT_IDS),
     mono:      z.enum(FONT_IDS),
+    // Dimensioni base per slot (px). Sovrascrivono le calibrazioni dei template
+    // come base size; i preset xl/lg/md diventano moltiplicatori relativi.
+    sizes: z.object({
+      primary:   z.number().min(8).max(120).default(68),
+      secondary: z.number().min(8).max(120).default(68),
+      mono:      z.number().min(8).max(120).default(18),
+    }).default({ primary: 68, secondary: 68, mono: 18 }),
   }),
+  // CSS personalizzato iniettato globalmente su tutte le slide.
+  customCss: z.string().max(20000).default(''),
   // Immagine di sfondo globale: applicata a tutte le slide che non la sovrascrivono.
   // undefined/null = nessuna immagine globale.
   background_image: BackgroundImageSchema.nullable().optional(),
@@ -83,6 +92,9 @@ const SlideBaseFields = {
   // 'primary' | 'secondary' | 'mono' — mappa ai font slot del theme.
   // null esplicito sul tema globale = "forza nessuno sfondo su questa slide".
   font:             z.enum(['primary', 'secondary', 'mono']).default('primary'),
+  // Override per-slide che sovrascrivono le impostazioni del tema globale.
+  font_id_override:   z.enum(FONT_IDS).optional(),
+  font_size_override: z.number().min(8).max(120).optional(),
   _note_autore:     z.string().optional(),
   // undefined = eredita da theme.background_image; null = forza nessuno sfondo; object = override.
   background_image: BackgroundImageSchema.nullable().optional(),

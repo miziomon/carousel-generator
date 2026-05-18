@@ -12,8 +12,9 @@ const DEFAULT_PREFS = {
     header:   false,
     footer:   false,
     fonts:    false,
-    image:    false,
-    reset:    false,
+    image:     false,
+    customCss: false,
+    reset:     false,
   },
 }
 

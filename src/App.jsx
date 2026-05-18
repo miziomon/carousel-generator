@@ -1,4 +1,4 @@
-import { useState, lazy, Suspense } from 'react'
+import { useState, lazy, Suspense, useEffect } from 'react'
 import { useCarouselStore } from './hooks/useCarouselStore.js'
 import { useAuth } from './hooks/useAuth.js'
 import { useAutoSave } from './hooks/useAutoSave.js'
@@ -69,6 +69,19 @@ function AuthenticatedApp({ auth }) {
 
   // Persiste le palette utente su localStorage con debounce
   usePaletteLibraryPersistence(store.paletteLibrary)
+
+  // Sincronizza il CSS personalizzato del tema in un <style> globale nell'<head>.
+  // È globale (non scoped per slide) per design: l'utente usa selettori specifici.
+  useEffect(() => {
+    const css = store.carousel.theme.customCss || ''
+    let el = document.getElementById('slide-custom-css')
+    if (!el) {
+      el = document.createElement('style')
+      el.id = 'slide-custom-css'
+      document.head.appendChild(el)
+    }
+    el.textContent = css
+  }, [store.carousel.theme.customCss])
 
   const editingSlide = store.ui.editingSlideId
     ? store.carousel.slides.find((s) => s.id === store.ui.editingSlideId)
@@ -272,6 +285,8 @@ function AuthenticatedApp({ auth }) {
           applyFontPreset={store.applyFontPreset}
           previewFontChange={store.previewFontChange}
           clearFontPreview={store.clearFontPreview}
+          applyFontSize={store.applyFontSize}
+          setCustomCss={store.setCustomCss}
           applyThemeBgImage={store.applyThemeBgImage}
         />
 

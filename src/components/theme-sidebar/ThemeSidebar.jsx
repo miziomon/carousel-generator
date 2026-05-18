@@ -8,8 +8,9 @@ import { PaletteSection }  from './sections/PaletteSection.jsx'
 import { HeaderSection }   from './sections/HeaderSection.jsx'
 import { FooterSection }   from './sections/FooterSection.jsx'
 import { FontsSection }    from './sections/FontsSection.jsx'
-import { ImageSection }    from './sections/ImageSection.jsx'
-import { ResetSection }    from './sections/ResetSection.jsx'
+import { ImageSection }     from './sections/ImageSection.jsx'
+import { CustomCssSection } from './sections/CustomCssSection.jsx'
+import { ResetSection }     from './sections/ResetSection.jsx'
 import './theme-sidebar.css'
 import '../theme-tab/theme-tab.css'
 
@@ -43,6 +44,8 @@ export function ThemeSidebar({
   applyFontPreset,
   previewFontChange,
   clearFontPreview,
+  applyFontSize,
+  setCustomCss,
   applyThemeBgImage,
 }) {
   const sections = uiPrefs?.sidebarSections ?? {}
@@ -112,6 +115,7 @@ export function ThemeSidebar({
           onApplyFontPreset={applyFontPreset}
           onPreviewFont={previewFontChange}
           onClearFontPreview={clearFontPreview}
+          onApplyFontSize={applyFontSize}
         />
         <ImageSection
           isOpen={sections.image ?? false}
@@ -119,6 +123,12 @@ export function ThemeSidebar({
           theme={theme}
           carousel={carousel}
           applyThemeBgImage={applyThemeBgImage}
+        />
+        <CustomCssSection
+          isOpen={sections.customCss ?? false}
+          onToggle={handleToggleSection}
+          customCss={theme.customCss ?? ''}
+          setCustomCss={setCustomCss}
         />
         <ResetSection
           isOpen={sections.reset ?? false}

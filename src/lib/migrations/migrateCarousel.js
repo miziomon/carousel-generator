@@ -26,6 +26,9 @@ const DEFAULT_FONTS = {
   secondary: 'Fraunces',
   mono:      'JetBrains Mono',
 }
+// Default derivati da editorial-mark square body md (68px).
+// Garantiscono identità visiva per chi aggiorna da versioni precedenti.
+const DEFAULT_FONT_SIZES = { primary: 68, secondary: 68, mono: 18 }
 const DEFAULT_FORMAT_ID   = 'square'
 const VALID_FORMATS       = new Set(['square', 'portrait', 'landscape'])
 
@@ -51,10 +54,17 @@ function migrateSlideFont(slide) {
  */
 function migrateThemeFonts(fonts) {
   const f = fonts ?? {}
+  const s = f.sizes ?? {}
+  const validSize = (v) => typeof v === 'number' && v >= 8 && v <= 120
   return {
     primary:   FONT_IDS.includes(f.primary)   ? f.primary   : DEFAULT_FONTS.primary,
     secondary: FONT_IDS.includes(f.secondary) ? f.secondary : DEFAULT_FONTS.secondary,
     mono:      FONT_IDS.includes(f.mono)       ? f.mono      : DEFAULT_FONTS.mono,
+    sizes: {
+      primary:   validSize(s.primary)   ? s.primary   : DEFAULT_FONT_SIZES.primary,
+      secondary: validSize(s.secondary) ? s.secondary : DEFAULT_FONT_SIZES.secondary,
+      mono:      validSize(s.mono)      ? s.mono      : DEFAULT_FONT_SIZES.mono,
+    },
   }
 }
 
@@ -84,18 +94,23 @@ function migrateTheme(theme) {
   const validFormat   = hasFormat && VALID_FORMATS.has(withTemplateId.format)
   const withFormat    = validFormat ? withTemplateId : { ...withTemplateId, format: DEFAULT_FORMAT_ID }
 
+  // ── customCss: garantisce stringa vuota per caroselli senza il campo ─────
+  const withCustomCss = typeof withFormat.customCss === 'string'
+    ? withFormat
+    : { ...withFormat, customCss: '' }
+
   // ── Caso A: 5 colori, nessun palette_id ──────────────────────────────────
   if (!hasSurface && !hasPaletteId) {
     const surface    = inferSurface(palette.background)
     const newPalette = { ...palette, surface }
     const matched    = matchBuiltin(newPalette)
-    return { ...withFormat, palette: newPalette, palette_id: matched }
+    return { ...withCustomCss, palette: newPalette, palette_id: matched }
   }
 
   // ── Caso B: 6 colori, nessun palette_id ──────────────────────────────────
   if (hasSurface && !hasPaletteId) {
     const matched = matchBuiltin(palette)
-    return { ...withFormat, palette_id: matched }
+    return { ...withCustomCss, palette_id: matched }
   }
 
   // ── Casi C e D: palette_id presente ──────────────────────────────────────
@@ -104,13 +119,13 @@ function migrateTheme(theme) {
   if (hasPaletteId && theme.palette_id && !hasSurface) {
     const builtin = getBuiltinPalette(theme.palette_id)
     if (builtin) {
-      return { ...withFormat, palette: { ...builtin.colors }, palette_id: theme.palette_id }
+      return { ...withCustomCss, palette: { ...builtin.colors }, palette_id: theme.palette_id }
     }
   }
 
   // Caso C (palette_id valido, palette completa) → template_id e format se mancanti
   // Caso D (palette_id sconosciuto, palette completa) → idem, la UI gestisce il dangling
-  return withFormat
+  return withCustomCss
 }
 
 /**
