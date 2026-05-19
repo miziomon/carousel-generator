@@ -7,8 +7,14 @@ export function estimateCarouselSize(carousel) {
   }
 }
 
-/** Soglia warning localStorage (4MB). */
+/** Soglia warning nell'editor immagini (localStorage, 4MB). */
 export const SIZE_WARNING_THRESHOLD = 4 * 1024 * 1024
+
+/** Soglia warning per il salvataggio su API (content_json, 700KB). */
+export const API_SIZE_WARNING_THRESHOLD = 700 * 1024
+
+/** Soglia errore bloccante per il salvataggio su API (content_json, 1.5MB). */
+export const API_SIZE_ERROR_THRESHOLD = 1.5 * 1024 * 1024
 
 /** Formatta byte in unità leggibili (KB / MB). */
 export function formatBytes(bytes) {

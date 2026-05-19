@@ -45,6 +45,13 @@ export const BackgroundImageSchema = z.object({
   }).default({ enabled: false, type: 'palette', intensity: 0.5 }),
 })
 
+// Schema per override immagine a livello slide: data è opzionale.
+// Quando data è assente, il renderer usa l'immagine del tema globale.
+// Permette di personalizzare opacity/blur/position/overlay senza duplicare il base64.
+export const SlideBackgroundImageSchema = BackgroundImageSchema.extend({
+  data: z.string().startsWith('data:image/').optional(),
+})
+
 // ─── Theme ────────────────────────────────────────────────────────────────────
 const ThemeSchema = z.object({
   // Formato del carosello. Sempre presente: la migrazione garantisce il valore.
@@ -97,7 +104,8 @@ const SlideBaseFields = {
   font_size_override: z.number().min(8).max(120).optional(),
   _note_autore:     z.string().optional(),
   // undefined = eredita da theme.background_image; null = forza nessuno sfondo; object = override.
-  background_image: BackgroundImageSchema.nullable().optional(),
+  // data può essere assente: la slide usa allora il data del tema (evita duplicazione base64).
+  background_image: SlideBackgroundImageSchema.nullable().optional(),
 }
 
 // ─── Schema per tipo (senza superRefine: discriminatedUnion lo richiede) ────

@@ -30,10 +30,14 @@ export function SlideRenderer({ slide, theme, total, mode = 'preview', fontPrevi
   const template = getTemplate(templateId)
   const TemplateComponent = template.Component
   const format = getFormat(effectiveTheme?.format)
-  // null esplicito = forza nessuno sfondo; undefined = eredita dal tema globale; object = override slide
-  const bgImage = slide.background_image === null
+  // null = forza nessuno sfondo; undefined = eredita dal tema; object = override slide
+  const rawBgImage = slide.background_image === null
     ? null
     : (slide.background_image ?? effectiveTheme.background_image)
+  // Se la slide ha un override senza data propria (solo impostazioni), inietta il data del tema
+  const bgImage = (rawBgImage && !rawBgImage.data && effectiveTheme.background_image?.data)
+    ? { ...rawBgImage, data: effectiveTheme.background_image.data }
+    : rawBgImage
 
   const isBlank = slide.type === 'blank'
 

@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.24.0] — 2026-05-19
+
+### Added
+- **Check dimensione payload prima del salvataggio**: prima di `createCarousel` e `updateCarousel`, viene calcolata la dimensione del `content_json`. Warning toast a 700KB, errore bloccante a 1.5MB. Costanti `API_SIZE_WARNING_THRESHOLD` / `API_SIZE_ERROR_THRESHOLD` in `estimateSize.js`
+- **`SlideBackgroundImageSchema`**: nuovo schema Zod con `data` opzionale per le slide. Permette override impostazioni (opacity, blur, position, overlay) senza duplicare il base64 dell'immagine globale
+
+### Fixed
+- **Duplicazione immagine globale**: "Personalizza per questa slide" copiava l'intero base64 nella slide (`{ ...globalImage }`), raddoppiando la dimensione del JSON per ogni slide personalizzata. Ora copia solo le impostazioni (opacity, blur, position, overlay) e la slide usa automaticamente il `data` del tema globale
+- **Deduplicazione in `buildContentJson()`**: se una slide ha `background_image.data === theme.background_image.data` (legacy carouselli già duplicati), il `data` viene rimosso dalla slide prima dell'invio — riduce il payload senza perdita informazioni
+
+### Changed
+- **`SlideRenderer.jsx`**: quando una slide ha `background_image` senza `data` proprio, risolve il data dal `theme.background_image` prima di passarlo a `BackgroundImageLayer` — zero cambiamenti visivi, ma consente lo storage compresso
+- **`BackgroundImageSection.jsx`**: nuovo stato `hasSettingsOverride` — mostra `BackgroundImageEditor` con anteprima dell'immagine globale + settings slide-specifici, senza duplicare il base64. Il bottone "Rimuovi" in questo stato rimuove la personalizzazione (slide torna a ereditare completamente)
+
 ## [1.23.0] — 2026-05-19
 
 ### Added

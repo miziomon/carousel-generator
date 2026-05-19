@@ -15,6 +15,7 @@ import { canSaveCarousel } from './lib/auth/tier.js'
 import { createCarousel, updateCarousel } from './lib/carousel/api.js'
 import { generateThumbnail } from './lib/carousel/generateThumbnail.js'
 import { suggestTitle } from './lib/carousel/suggestTitle.js'
+import { estimateCarouselSize, API_SIZE_WARNING_THRESHOLD, API_SIZE_ERROR_THRESHOLD, formatBytes } from './lib/images/estimateSize.js'
 import { LoginScreen } from './components/auth/LoginScreen.jsx'
 import { Header } from './components/header/Header.jsx'
 import { TabBar } from './components/tabs/TabBar.jsx'
@@ -121,18 +122,47 @@ function AuthenticatedApp({ auth, appTheme }) {
   // ── Logica salvataggio DB ───────────────────────────────────────────────────
 
   function buildContentJson() {
-    // Esclude i campi id (runtime) prima di mandare al DB — stesso pattern di exportZip
+    const globalBgData = store.carousel.theme.background_image?.data
     return {
       ...store.carousel,
-      // eslint-disable-next-line no-unused-vars
-      slides: store.carousel.slides.map(({ id: _id, ...rest }) => rest),
+      slides: store.carousel.slides.map(({ id: _id, ...rest }) => {
+        // Deduplica: se la slide ha lo stesso data del tema globale, rimuove data per evitare duplicazione base64.
+        // Il renderer la recupera automaticamente da theme.background_image al momento del render.
+        if (rest.background_image?.data && globalBgData && rest.background_image.data === globalBgData) {
+          // eslint-disable-next-line no-unused-vars
+          const { data: _data, ...bgWithoutData } = rest.background_image
+          return { ...rest, background_image: bgWithoutData }
+        }
+        return rest
+      }),
     }
+  }
+
+  // Controlla la dimensione del payload prima di inviarlo al backend.
+  // Restituisce true se si può procedere, false se è bloccante.
+  function checkContentJsonSize(contentJson) {
+    const sizeBytes = estimateCarouselSize(contentJson)
+    if (sizeBytes >= API_SIZE_ERROR_THRESHOLD) {
+      toast(
+        `Il carosello è troppo grande per essere salvato (${formatBytes(sizeBytes)}). Riduci le dimensioni delle immagini prima di procedere.`,
+        'error'
+      )
+      return false
+    }
+    if (sizeBytes >= API_SIZE_WARNING_THRESHOLD) {
+      toast(
+        `Il carosello è molto grande (${formatBytes(sizeBytes)}). Se il salvataggio fallisce, prova a usare immagini più leggere.`,
+        'warning'
+      )
+    }
+    return true
   }
 
   async function handleDbSave(title, thumbnail) {
     store.setIsSaving(true)
     try {
       const content_json = buildContentJson()
+      if (!checkContentJsonSize(content_json)) { store.setIsSaving(false); return }
       const payload = { user_id: userId, title, content_json, thumbnail }
       const result = await createCarousel(payload)
       store.setDocumentIdentity({
@@ -154,6 +184,7 @@ function AuthenticatedApp({ auth, appTheme }) {
     store.setIsSaving(true)
     try {
       const content_json = buildContentJson()
+      if (!checkContentJsonSize(content_json)) { store.setIsSaving(false); return }
       const thumbnail = await generateThumbnail(content_json).catch(() => undefined)
       const result = await updateCarousel(
         store.meta.documentId,

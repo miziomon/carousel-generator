@@ -16,7 +16,8 @@ const DEFAULT_BG_IMAGE = {
  *   - bgImage === undefined + no globale → upload
  *   - bgImage === undefined + globale presente → stato "eredita"
  *   - bgImage === null → "nessuno sfondo forzato"
- *   - bgImage?.data → editor slide-specifico
+ *   - bgImage?.data → editor slide-specifico (immagine propria)
+ *   - bgImage senza data + globale → editor con impostazioni override (image dal tema)
  *
  * In modalità globale (isGlobal=true):
  *   - bgImage?.data → editor
@@ -27,6 +28,8 @@ export function BackgroundImageSection({ bgImage, theme, format, carousel, onCha
   const isForceNone = !isGlobal && bgImage === null
   const globalImage = !isGlobal ? theme?.background_image : null
   const isInheriting = !isGlobal && bgImage === undefined && !!globalImage?.data
+  // Slide con override impostazioni (opacity/blur/ecc.) ma senza immagine propria — usa quella globale
+  const hasSettingsOverride = !isGlobal && bgImage !== undefined && bgImage !== null && !hasImage && !!globalImage?.data
 
   function handleUpload(dataUrl) {
     onChange({ ...DEFAULT_BG_IMAGE, data: dataUrl })
@@ -51,7 +54,13 @@ export function BackgroundImageSection({ bgImage, theme, format, carousel, onCha
     }
   }
 
-  // ── Stato: immagine custom (slide o globale) ─────────────────────────────
+  function handleRemoveSettingsOverride() {
+    if (window.confirm("Rimuovere la personalizzazione? La slide tornerà a ereditare completamente l'immagine globale.")) {
+      onChange(undefined)
+    }
+  }
+
+  // ── Stato: immagine propria della slide (o immagine globale in modalità globale) ──
   if (hasImage) {
     return (
       <BackgroundImageEditor
@@ -62,6 +71,23 @@ export function BackgroundImageSection({ bgImage, theme, format, carousel, onCha
         onChange={handleChange}
         onReplace={handleReplace}
         onRemove={handleRemove}
+      />
+    )
+  }
+
+  // ── Stato: override impostazioni senza immagine propria (usa data dal tema) ─
+  if (hasSettingsOverride) {
+    // L'editor mostra il global data come anteprima, ma onChange usa bgImage (senza data)
+    const effectiveBgForDisplay = { ...globalImage, ...bgImage }
+    return (
+      <BackgroundImageEditor
+        bgImage={effectiveBgForDisplay}
+        theme={theme}
+        format={format}
+        carousel={carousel}
+        onChange={handleChange}
+        onReplace={handleReplace}
+        onRemove={handleRemoveSettingsOverride}
       />
     )
   }
@@ -101,7 +127,12 @@ export function BackgroundImageSection({ bgImage, theme, format, carousel, onCha
           <button
             type="button"
             className="bg-image-section__customize-btn"
-            onClick={() => onChange({ ...globalImage })}
+            onClick={() => onChange({
+              opacity:  globalImage.opacity,
+              blur:     globalImage.blur,
+              position: globalImage.position,
+              overlay:  { ...globalImage.overlay },
+            })}
           >
             Personalizza per questa slide
           </button>
