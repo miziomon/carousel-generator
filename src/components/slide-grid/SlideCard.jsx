@@ -1,7 +1,6 @@
 import { memo, useState } from 'react'
 import { Pencil, Copy, Trash2, Download, GripVertical, Eye } from 'lucide-react'
 import { SlideRenderer } from '../../slide-renderer/SlideRenderer.jsx'
-import { Modal } from '../ui/Modal.jsx'
 import { exportSlideToPng } from '../../lib/exportPng.jsx'
 import { getFormat } from '../../lib/formats/registry.js'
 import { toast } from '../ui/Toast.jsx'
@@ -34,6 +33,7 @@ export const SlideCard = memo(function SlideCard({
   onDuplicate,
   onDelete,
   onExportPng,
+  onPreview,
   dragHandleProps,  // listeners @dnd-kit passati dall'esterno
   isDragOverlay,    // true quando è renderizzato nel DragOverlay
   mobileView = false,
@@ -48,15 +48,6 @@ export const SlideCard = memo(function SlideCard({
   const warning = readabilityWarning(slide, format)
   const [confirmDelete, setConfirmDelete] = useState(false)
   const [exportingPng, setExportingPng] = useState(false)
-  const [previewOpen, setPreviewOpen] = useState(false)
-
-  // Calcola dimensioni slide per il modal anteprima (max 820px wide, 720px tall)
-  const MAX_W = 820, MAX_H = 720
-  const scaleW = MAX_W / format.width
-  const scaleH = MAX_H / format.height
-  const previewScale = Math.min(scaleW, scaleH)
-  const previewDisplayWidth  = Math.round(format.width  * previewScale)
-  const previewDisplayHeight = Math.round(format.height * previewScale)
 
   async function handleExportPng() {
     if (exportingPng) return
@@ -121,7 +112,7 @@ export const SlideCard = memo(function SlideCard({
             </button>
             <button
               className="slide-card__hover-btn"
-              onClick={() => setPreviewOpen(true)}
+              onClick={() => onPreview?.(slide.id)}
               title="Anteprima slide"
             >
               <Eye size={13} />
@@ -130,22 +121,6 @@ export const SlideCard = memo(function SlideCard({
           </div>
         )}
       </div>
-
-      {/* Modal anteprima */}
-      <Modal
-        open={previewOpen}
-        onClose={() => setPreviewOpen(false)}
-        title={`Slide #${String(slide.num).padStart(2, '0')} — ${slide.type}`}
-        size="xl"
-      >
-        <div style={{ display: 'flex', justifyContent: 'center' }}>
-          <div style={{ overflow: 'hidden', borderRadius: 6, width: previewDisplayWidth, height: previewDisplayHeight, flexShrink: 0 }}>
-            <div style={{ transform: `scale(${previewScale})`, transformOrigin: 'top left', width: format.width, height: format.height }}>
-              <SlideRenderer slide={slide} theme={theme} total={total} mode="preview" />
-            </div>
-          </div>
-        </div>
-      </Modal>
 
       {/* Footer card */}
       <div className="slide-card__footer">

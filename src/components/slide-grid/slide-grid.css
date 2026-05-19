@@ -228,3 +228,57 @@
 }
 
 /* La scala (≈0.352) viene impostata inline dal componente SlideCard */
+
+/* ── Modal anteprima con navigazione ────────────────────────────────────────── */
+
+.slide-preview-modal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+.slide-preview-modal__nav-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.slide-preview-modal__nav-btn {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: 8px;
+  border: 1px solid rgba(var(--app-fg-rgb), 0.2);
+  background: rgba(var(--app-fg-rgb), 0.06);
+  color: rgba(var(--app-fg-rgb), 0.55);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.slide-preview-modal__nav-btn:hover:not(:disabled) {
+  background: rgba(var(--app-fg-rgb), 0.12);
+  border-color: rgba(var(--app-fg-rgb), 0.35);
+  color: rgba(var(--app-fg-rgb), 0.9);
+}
+
+.slide-preview-modal__nav-btn:disabled {
+  opacity: 0.2;
+  cursor: default;
+}
+
+.slide-preview-modal__slide-wrap {
+  overflow: hidden;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+
+.slide-preview-modal__counter {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  color: rgba(var(--app-fg-rgb), 0.4);
+}

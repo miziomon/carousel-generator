@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.23.0] — 2026-05-19
+
+### Added
+- **Navigazione slide nel modal Anteprima**: il modal di anteprima (aperto dall'overlay hover) ora mostra frecce prev/next ai lati della slide per scorrere tutto il carosello senza chiudere il modal. Supporto tasto tastiera ← → per navigare, contatore "N / TOTAL" centrato sotto la slide
+
+### Fixed
+- **Errore HTTP 400 al salvataggio**: la procedura `handleOverwrite` (sovrascrittura carosello esistente) generava un errore backend `thumbnail: Input should be a valid string` perché inviava `thumbnail: null`. Ora la thumbnail viene ricalcolata prima dell'invio tramite `generateThumbnail`
+
+### Changed
+- **Navigazione anteprima spostata in `SlideGrid`**: lo state `previewId` è ora nel componente padre `SlideGrid` (invece che in ogni `SlideCard`) per permettere la navigazione fra slide; `SlideCard` riceve la prop `onPreview(id)` e non gestisce più il modal internamente
+- **Refactor colori hardcoded `ai-generator.css`**: sostituiti tutti i valori `rgba(232,232,232,...)` con `rgba(var(--app-fg-rgb),...)`, `rgba(255,255,255,...)` con `rgba(var(--app-fg-rgb),...)`, `#00ffaa` / `rgba(0,255,170,...)` con `var(--app-accent)` / `rgba(var(--app-accent-rgb),...)` — il modulo AI è ora pienamente compatibile con entrambi i temi
+- **Refactor colori hardcoded `background-image-section.css`**: sostituiti `rgba(100,116,139,...)` (slate), `rgba(203,213,225,...)`, `rgba(148,163,184,...)`, `rgba(99,102,241,...)` (indigo) con variabili CSS `--app-fg-rgb` e `--app-accent-rgb` — i controlli immagine di sfondo sono ora compatibili con tema chiaro/scuro
+- Rimosse le override `[data-theme="light"]` su `btn-generate-ai` (ora innecessarie, usa già le variabili globali)
+
 ## [1.22.2] — 2026-05-18
 
 ### Fixed

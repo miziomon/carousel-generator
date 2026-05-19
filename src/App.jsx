@@ -13,6 +13,7 @@ import { useCarouselCount } from './hooks/useCarouselCount.js'
 import { defaultCarousel } from './lib/defaultCarousel.js'
 import { canSaveCarousel } from './lib/auth/tier.js'
 import { createCarousel, updateCarousel } from './lib/carousel/api.js'
+import { generateThumbnail } from './lib/carousel/generateThumbnail.js'
 import { suggestTitle } from './lib/carousel/suggestTitle.js'
 import { LoginScreen } from './components/auth/LoginScreen.jsx'
 import { Header } from './components/header/Header.jsx'
@@ -153,7 +154,7 @@ function AuthenticatedApp({ auth, appTheme }) {
     store.setIsSaving(true)
     try {
       const content_json = buildContentJson()
-      const thumbnail = null // per la sovrascrittura diretta non rigeneriamo la thumb
+      const thumbnail = await generateThumbnail(content_json).catch(() => undefined)
       const result = await updateCarousel(
         store.meta.documentId,
         userId,
