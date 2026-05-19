@@ -95,6 +95,123 @@
   margin-top: 16px;
 }
 
+/* ── Size indicator ────────────────────────────────────────────────────────── */
+
+.save-carousel-modal__size-block {
+  border: 1px solid rgba(var(--app-fg-rgb), 0.1);
+  border-radius: 8px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: rgba(var(--app-fg-rgb), 0.03);
+}
+
+.save-carousel-modal__size-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.save-carousel-modal__size-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: rgba(var(--app-fg-rgb), 0.45);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.save-carousel-modal__size-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 4px;
+  letter-spacing: 0.04em;
+}
+
+.save-carousel-modal__size-badge--ok {
+  background: rgba(16, 185, 129, 0.15);
+  color: rgb(16, 185, 129);
+}
+
+.save-carousel-modal__size-badge--warn {
+  background: rgba(251, 191, 36, 0.15);
+  color: rgb(251, 191, 36);
+}
+
+.save-carousel-modal__size-badge--error {
+  background: rgba(239, 68, 68, 0.15);
+  color: rgb(239, 68, 68);
+}
+
+.save-carousel-modal__size-delta {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: rgba(16, 185, 129, 0.85);
+  margin-left: 2px;
+}
+
+.save-carousel-modal__size-note {
+  font-size: 11px;
+  color: rgba(var(--app-fg-rgb), 0.5);
+  line-height: 1.4;
+  margin: 0;
+}
+
+.save-carousel-modal__size-note--warn {
+  color: rgba(251, 191, 36, 0.8);
+}
+
+.save-carousel-modal__size-note--error {
+  color: rgba(239, 68, 68, 0.85);
+}
+
+.save-carousel-modal__compress-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.save-carousel-modal__compress-btn {
+  font-size: 11px;
+  font-family: 'JetBrains Mono', monospace;
+  padding: 4px 10px;
+  border-radius: 5px;
+  border: 1px solid rgba(var(--app-fg-rgb), 0.2);
+  background: rgba(var(--app-fg-rgb), 0.06);
+  color: rgba(var(--app-fg-rgb), 0.75);
+  cursor: pointer;
+  transition: background 0.12s, border-color 0.12s, color 0.12s;
+  white-space: nowrap;
+}
+
+.save-carousel-modal__compress-btn:hover:not(:disabled) {
+  background: rgba(var(--app-fg-rgb), 0.12);
+  border-color: rgba(var(--app-fg-rgb), 0.35);
+  color: rgba(var(--app-fg-rgb), 0.95);
+}
+
+.save-carousel-modal__compress-btn:disabled {
+  opacity: 0.4;
+  cursor: wait;
+}
+
+.save-carousel-modal__compress-spinner {
+  width: 12px;
+  height: 12px;
+  border: 2px solid rgba(var(--app-fg-rgb), 0.2);
+  border-top-color: rgba(var(--app-fg-rgb), 0.7);
+  border-radius: 50%;
+  animation: compress-spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes compress-spin {
+  to { transform: rotate(360deg); }
+}
+
 /* ── SaveOrNewPopup ──────────────────────────────────────────────────────────── */
 
 .save-or-new-popup {

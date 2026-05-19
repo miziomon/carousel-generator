@@ -121,11 +121,12 @@ function AuthenticatedApp({ auth, appTheme }) {
 
   // ── Logica salvataggio DB ───────────────────────────────────────────────────
 
-  function buildContentJson() {
-    const globalBgData = store.carousel.theme.background_image?.data
+  function buildContentJson(sourceCarousel) {
+    const src = sourceCarousel ?? store.carousel
+    const globalBgData = src.theme.background_image?.data
     return {
-      ...store.carousel,
-      slides: store.carousel.slides.map(({ id: _id, ...rest }) => {
+      ...src,
+      slides: src.slides.map(({ id: _id, ...rest }) => {
         // Deduplica: se la slide ha lo stesso data del tema globale, rimuove data per evitare duplicazione base64.
         // Il renderer la recupera automaticamente da theme.background_image al momento del render.
         if (rest.background_image?.data && globalBgData && rest.background_image.data === globalBgData) {
@@ -158,10 +159,10 @@ function AuthenticatedApp({ auth, appTheme }) {
     return true
   }
 
-  async function handleDbSave(title, thumbnail) {
+  async function handleDbSave(title, thumbnail, compressedCarousel) {
     store.setIsSaving(true)
     try {
-      const content_json = buildContentJson()
+      const content_json = buildContentJson(compressedCarousel)
       if (!checkContentJsonSize(content_json)) { store.setIsSaving(false); return }
       const payload = { user_id: userId, title, content_json, thumbnail }
       const result = await createCarousel(payload)

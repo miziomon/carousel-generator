@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.25.0] — 2026-05-19
+
+### Added
+- **Indicatore peso payload nella modale di salvataggio**: badge colorato (verde / giallo / rosso) con la dimensione stimata del `content_json`. Soglie: OK < 700KB, warning 700KB–1.5MB, errore > 1.5MB
+- **Compressione immagini nella modale di salvataggio**: due pulsanti "Qualità 85%" e "Qualità 75%" ricomprimono tutte le immagini di sfondo (globali e per-slide) tramite Canvas API. Dopo la compressione viene mostrato il delta rispetto all'originale (es. "↓ 32%, era 1.1 MB"). "Ripristina originale" annulla la compressione
+- **`src/lib/images/recompressImages.js`**: utility `recompressCarouselImages(carousel, quality)` e `carouselHasImages(carousel)`. Usa Canvas API (browser-only)
+
+### Changed
+- **`buildContentJson(sourceCarousel?)` in `App.jsx`**: accetta ora un carosello sorgente opzionale. `handleDbSave` passa il carosello compresso dalla modale se disponibile, altrimenti usa lo store
+- **`SaveCarouselModal`**: interfaccia `onSave(title, thumbnail, compressedCarousel?)` — il terzo parametro è opzionale e usato solo quando l'utente ha applicato la compressione
+
 ## [1.24.0] — 2026-05-19
 
 ### Added
