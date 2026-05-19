@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.25.1] — 2026-05-19
+
+### Added
+- **Indicatore peso payload e compressione in `SaveOrNewPopup`**: il popup "Sovrascrivi/Salva come nuovo" mostra ora lo stesso badge dimensione + pulsanti di compressione già presenti nella modale di primo salvataggio. Il carosello compresso (se applicato) viene passato a `handleOverwrite` prima dell'invio API
+
+### Changed
+- **`SaveOrNewPopup`**: aggiunto prop `carousel`, stato interno `compressedCarousel`/`compressing`, blocco size con `.save-carousel-modal__size-*` (classi riusate). Box allargato da 380px a 440px per contenere il blocco aggiuntivo
+- **`handleOverwrite(compressedCarousel?)`** in `App.jsx`: accetta ora il carosello compresso opzionale passato dal popup
+
 ## [1.25.0] — 2026-05-19
 
 ### Added

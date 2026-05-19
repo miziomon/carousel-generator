@@ -180,11 +180,11 @@ function AuthenticatedApp({ auth, appTheme }) {
     }
   }
 
-  async function handleOverwrite() {
+  async function handleOverwrite(compressedCarousel) {
     setSaveOrNewOpen(false)
     store.setIsSaving(true)
     try {
-      const content_json = buildContentJson()
+      const content_json = buildContentJson(compressedCarousel)
       if (!checkContentJsonSize(content_json)) { store.setIsSaving(false); return }
       const thumbnail = await generateThumbnail(content_json).catch(() => undefined)
       const result = await updateCarousel(
@@ -437,6 +437,7 @@ function AuthenticatedApp({ auth, appTheme }) {
         onClose={() => setSaveOrNewOpen(false)}
         documentTitle={store.meta.documentTitle}
         lastSavedToDbAt={store.meta.lastSavedToDbAt}
+        carousel={store.carousel}
         onOverwrite={handleOverwrite}
         onSaveAsNew={handleSaveAsNew}
       />

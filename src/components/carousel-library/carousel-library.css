@@ -229,9 +229,14 @@
   border: 1px solid rgba(var(--app-fg-rgb), 0.15);
   border-radius: 12px;
   padding: 24px;
-  width: 380px;
+  width: 440px;
   max-width: calc(100vw - 32px);
   box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
+}
+
+.save-or-new-popup__box .save-carousel-modal__size-block {
+  margin-top: 16px;
+  margin-bottom: 20px;
 }
 
 .save-or-new-popup__title {
