@@ -16,8 +16,10 @@ export function FontsSection({
   onPreviewFont,
   onClearFontPreview,
   onApplyFontSize,
+  onApplyLineHeight,
 }) {
   const sizes = theme.fonts?.sizes ?? { primary: 68, secondary: 68, mono: 18 }
+  const lineHeight = theme.lineHeight ?? 1
 
   const slots = [
     { key: 'primary',   label: 'Primario (titoli)' },
@@ -52,6 +54,25 @@ export function FontsSection({
           </div>
         ))}
       </div>
+
+      {onApplyLineHeight && (
+        <div className="fonts-section__lh-row">
+          <div className="fonts-section__lh-header">
+            <span className="fonts-section__slot-label">Interlinea</span>
+            <span className="fonts-section__lh-value">{lineHeight.toFixed(2)}×</span>
+          </div>
+          <input
+            type="range"
+            min={0.6}
+            max={2.5}
+            step={0.05}
+            value={lineHeight}
+            onChange={(e) => onApplyLineHeight(Number(e.target.value))}
+            className="fonts-section__lh-range"
+            aria-label="Moltiplicatore interlinea globale"
+          />
+        </div>
+      )}
 
       <label className="fonts-section__show-all">
         <input

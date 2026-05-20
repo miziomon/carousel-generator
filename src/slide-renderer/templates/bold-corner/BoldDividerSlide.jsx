@@ -13,7 +13,8 @@ export function BoldDividerSlide({ slide, theme, total, calib }) {
   const ratio    = entry.size / mdSize
 
   const finalSize = Math.round(base * ratio * parseFloat(fontVars['--font-size-multiplier']))
-  const finalLH   = +(entry.line_height * parseFloat(fontVars['--font-line-height-multiplier'])).toFixed(3)
+  const lhMult    = slide.line_height_override ?? theme.lineHeight ?? 1
+  const finalLH   = +(entry.line_height * parseFloat(fontVars['--font-line-height-multiplier']) * lhMult).toFixed(3)
 
   const bodyStyle = {
     '--bold-body-size':        `${finalSize}px`,

@@ -49,6 +49,30 @@ export function TypographyPanel({ draft, theme, set }) {
   const hasSizeOverride = draft.font_size_override !== undefined && draft.font_size_override !== null
   const currentSize = hasSizeOverride ? draft.font_size_override : globalSize
 
+  const globalLh = theme.lineHeight ?? 1
+  const hasLhOverride = draft.line_height_override !== undefined && draft.line_height_override !== null
+  const currentLh = hasLhOverride ? draft.line_height_override : globalLh
+
+  function handleLhToggle(e) {
+    if (!e.target.checked) {
+      set('line_height_override', undefined)
+    } else {
+      set('line_height_override', globalLh)
+    }
+  }
+
+  function handleLhSlider(e) {
+    set('line_height_override', Number(e.target.value))
+  }
+
+  function handleLhInput(e) {
+    const parsed = parseFloat(e.target.value)
+    if (!isNaN(parsed)) {
+      const clamped = Math.min(2.5, Math.max(0.6, parsed))
+      set('line_height_override', Math.round(clamped * 100) / 100)
+    }
+  }
+
   return (
     <div className="typography-panel">
       {/* Slot */}
@@ -78,6 +102,51 @@ export function TypographyPanel({ draft, theme, set }) {
             <option key={f.id} value={f.id}>{f.label}</option>
           ))}
         </select>
+      </div>
+
+      {/* Interlinea (override) */}
+      <div className="typography-panel__group">
+        <label className="typography-panel__label">
+          Interlinea
+          <span className="typography-panel__badge">override</span>
+        </label>
+        <div className="typography-panel__size-toggle">
+          <label className="typography-panel__check-label">
+            <input
+              type="checkbox"
+              checked={hasLhOverride}
+              onChange={handleLhToggle}
+            />
+            Personalizza interlinea
+          </label>
+        </div>
+        {hasLhOverride ? (
+          <div className="typography-panel__size-row">
+            <input
+              type="range"
+              min={0.6}
+              max={2.5}
+              step={0.05}
+              value={currentLh}
+              onChange={handleLhSlider}
+              className="typography-panel__range"
+            />
+            <input
+              type="number"
+              min={0.6}
+              max={2.5}
+              step={0.05}
+              value={currentLh}
+              onChange={handleLhInput}
+              className="typography-panel__num"
+            />
+            <span className="typography-panel__unit">×</span>
+          </div>
+        ) : (
+          <p className="typography-panel__inherited">
+            Dal tema: {globalLh.toFixed(2)}×
+          </p>
+        )}
       </div>
 
       {/* Dimensione (override) */}

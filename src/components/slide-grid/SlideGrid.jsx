@@ -46,13 +46,14 @@ function SlidePreviewModal({ slides, theme, total, previewId, onClose, onNavigat
   }, [idx, hasNext, slides, onNavigate])
 
   useEffect(() => {
+    if (!previewId) return
     function onKey(e) {
       if (e.key === 'ArrowLeft') goPrev()
       else if (e.key === 'ArrowRight') goNext()
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [goPrev, goNext])
+  }, [goPrev, goNext, previewId])
 
   if (!slide) return null
 

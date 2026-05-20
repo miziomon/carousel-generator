@@ -38,6 +38,8 @@ export const BackgroundImageSchema = z.object({
     'left', 'center', 'right',
     'bottom-left', 'bottom', 'bottom-right',
   ]).default('center'),
+  // 'cover' | 'contain' | 'auto' oppure una stringa percentuale es. '80%'
+  size:     z.string().default('cover'),
   overlay: z.object({
     enabled:   z.boolean().default(false),
     type:      z.enum(['dark', 'light', 'palette']).default('palette'),
@@ -85,6 +87,8 @@ const ThemeSchema = z.object({
       mono:      z.number().min(8).max(120).default(18),
     }).default({ primary: 68, secondary: 68, mono: 18 }),
   }),
+  // Moltiplicatore interlinea globale (1 = calibrazione template invariata).
+  lineHeight: z.number().min(0.6).max(2.5).default(1),
   // CSS personalizzato iniettato globalmente su tutte le slide.
   customCss: z.string().max(20000).default(''),
   // Immagine di sfondo globale: applicata a tutte le slide che non la sovrascrivono.
@@ -100,8 +104,9 @@ const SlideBaseFields = {
   // null esplicito sul tema globale = "forza nessuno sfondo su questa slide".
   font:             z.enum(['primary', 'secondary', 'mono']).default('primary'),
   // Override per-slide che sovrascrivono le impostazioni del tema globale.
-  font_id_override:   z.enum(FONT_IDS).optional(),
-  font_size_override: z.number().min(8).max(120).optional(),
+  font_id_override:    z.enum(FONT_IDS).optional(),
+  font_size_override:  z.number().min(8).max(120).optional(),
+  line_height_override: z.number().min(0.6).max(2.5).optional(),
   _note_autore:     z.string().optional(),
   // undefined = eredita da theme.background_image; null = forza nessuno sfondo; object = override.
   // data può essere assente: la slide usa allora il data del tema (evita duplicazione base64).

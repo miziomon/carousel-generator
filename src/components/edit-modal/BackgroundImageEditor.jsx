@@ -120,6 +120,44 @@ export function BackgroundImageEditor({ bgImage, theme, format, carousel, onChan
           />
         </div>
 
+        {/* Dimensione */}
+        <div className="bg-image-editor__size-block">
+          <label className="bg-image-editor__slider-label">Dimensione</label>
+          <div className="bg-overlay-controls__type-options">
+            {['cover', 'contain', 'auto'].map((v) => (
+              <button
+                key={v}
+                type="button"
+                className={`bg-overlay-controls__type-option${(bgImage.size ?? 'cover') === v ? ' bg-overlay-controls__type-option--active' : ''}`}
+                onClick={() => onChange({ size: v })}
+              >
+                {v}
+              </button>
+            ))}
+            <button
+              type="button"
+              className={`bg-overlay-controls__type-option${!['cover', 'contain', 'auto'].includes(bgImage.size ?? 'cover') ? ' bg-overlay-controls__type-option--active' : ''}`}
+              onClick={() => onChange({ size: '100%' })}
+            >
+              %
+            </button>
+          </div>
+          {!['cover', 'contain', 'auto'].includes(bgImage.size ?? 'cover') && (
+            <div className="bg-image-editor__slider-row" style={{ marginTop: 6 }}>
+              <label className="bg-image-editor__slider-label">Valore</label>
+              <input
+                type="range"
+                min={10}
+                max={200}
+                step={5}
+                value={parseInt(bgImage.size) || 100}
+                onChange={(e) => onChange({ size: `${e.target.value}%` })}
+              />
+              <span className="bg-image-editor__slider-value">{parseInt(bgImage.size) || 100}%</span>
+            </div>
+          )}
+        </div>
+
         {/* Overlay */}
         <div className="bg-overlay-controls">
           <label className="bg-overlay-controls__toggle">

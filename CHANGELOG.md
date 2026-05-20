@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.26.0] — 2026-05-20
+
+### Fixed
+- **Freccia destra (→) apriva sempre la preview**: il listener `keydown` per la navigazione slide veniva registrato anche a modale chiusa. Ora è attivo solo quando la preview è aperta
+- **Toggle "pallino" disallineato**: aggiunto `left-0` esplicito allo span assoluto nel componente `Toggle` di `FieldGroup.jsx` per garantire allineamento corretto in tutti i browser
+
+### Added
+- **Interlinea globale** (`theme.lineHeight`, default `1`): slider nel pannello "Fonts" della sidebar (range 0.6×–2.5×). Agisce come moltiplicatore sul `line_height` delle calibrazioni del template per tutti i tipi di slide (body + CTA)
+- **Interlinea per-slide** (`slide.line_height_override`): checkbox + slider nella tab "Tipografia" dell'EditModal. Se impostato sovrascrive il moltiplicatore globale per quella singola slide
+- **Dimensione immagine di sfondo** (`background_image.size`, default `'cover'`): selettore con i valori `cover`, `contain`, `auto` e un valore personalizzato in percentuale (slider 10%–200%). Disponibile sia per l'immagine globale del tema sia per le immagini per-slide
+
+### Changed
+- `BackgroundImageSchema` (e `SlideBackgroundImageSchema`): nuovo campo `size: string` con default `'cover'`
+- `ThemeSchema`: nuovo campo `lineHeight: number` (0.6–2.5, default `1`)
+- `SlideBaseFields`: nuovo campo `line_height_override: number` opzionale
+- Tutti i template slide (8 file body + 2 container CTA): moltiplicano `finalLH` o `cta_item.line_height` per il moltiplicatore utente
+
 ## [1.25.1] — 2026-05-19
 
 ### Added

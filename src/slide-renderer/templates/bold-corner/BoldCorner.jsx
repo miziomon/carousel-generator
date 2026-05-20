@@ -22,7 +22,7 @@ export function BoldCorner({ slide, theme, total, mode }) {
     '--bold-divider-num-size':       `${calib.divider_num.size}px`,
     '--bold-divider-num-top':        `${calib.divider_num.top}px`,
     '--bold-cta-size':               `${calib.cta_item.size}px`,
-    '--bold-cta-line-height':        calib.cta_item.line_height,
+    '--bold-cta-line-height':        calib.cta_item.line_height * (theme.lineHeight ?? 1),
     '--bold-cta-gap':                `${calib.cta_item.gap}px`,
     '--bold-swipe-bottom':           calib.swipe_bottom,
     '--bold-quote-attr-size':        calib.quote_attr.size,

@@ -23,7 +23,7 @@ export function EditorialMark({ slide, theme, total, mode }) {
     '--editorial-divider-num-size':       `${calib.divider_num.size}px`,
     '--editorial-divider-num-top':        `${calib.divider_num.top}px`,
     '--editorial-cta-size':               `${calib.cta_item.size}px`,
-    '--editorial-cta-line-height':        calib.cta_item.line_height,
+    '--editorial-cta-line-height':        calib.cta_item.line_height * (theme.lineHeight ?? 1),
     '--editorial-cta-gap':                `${calib.cta_item.gap}px`,
     '--editorial-quote-attr-size':        calib.quote_attr.size,
     '--editorial-quote-attr-source-size': calib.quote_attr.source_size,

@@ -116,6 +116,7 @@ export function ThemeSidebar({
           onPreviewFont={previewFontChange}
           onClearFontPreview={clearFontPreview}
           onApplyFontSize={applyFontSize}
+          onApplyLineHeight={(v) => onChange({ ...theme, lineHeight: v })}
         />
         <ImageSection
           isOpen={sections.image ?? false}

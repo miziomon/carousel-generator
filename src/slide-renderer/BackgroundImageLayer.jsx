@@ -10,6 +10,7 @@ export function BackgroundImageLayer({ bgImage, theme }) {
   const imageStyle = {
     backgroundImage:    `url("${bgImage.data}")`,
     backgroundPosition: positionToCss(bgImage.position),
+    backgroundSize:     bgImage.size ?? 'cover',
     opacity:            bgImage.opacity,
     filter:             hasBlur ? `blur(${bgImage.blur}px)` : 'none',
   }
