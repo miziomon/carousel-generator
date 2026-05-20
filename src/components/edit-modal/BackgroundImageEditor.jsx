@@ -123,7 +123,7 @@ export function BackgroundImageEditor({ bgImage, theme, format, carousel, onChan
         {/* Dimensione */}
         <div className="bg-image-editor__size-block">
           <label className="bg-image-editor__slider-label">Dimensione</label>
-          <div className="bg-overlay-controls__type-options">
+          <div className="bg-image-editor__size-options">
             {['cover', 'contain', 'auto'].map((v) => (
               <button
                 key={v}
