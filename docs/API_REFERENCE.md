@@ -1,6 +1,6 @@
 # WP Draft Generator — API Reference
 
-Versione corrente: **0.45.0**
+Versione corrente: **0.53.0**
 
 ---
 
@@ -15,7 +15,10 @@ Versione corrente: **0.45.0**
 | `GET` | `/health` | nessuna | Health check — verifica connessione Redis |
 | `POST` | `/wp-draft-generator/v1/create` | Bearer token | Crea task di generazione asincrono |
 | `GET` | `/wp-draft-generator/v1/status/{task_id}` | Bearer token | Controlla stato di un task |
-| `POST` | `/wp-draft-generator/v1/send/{blog_id}` | Bearer token | Invia titolo e contenuto a WordPress (sincrono) |
+| `POST` | `/wp-draft-generator/v1/send/{blog_id}` | Bearer token | Crea post su WordPress (sincrono, supporta featured image) |
+| `PATCH` | `/wp-draft-generator/v1/send/{blog_id}/{post_id}` | Bearer token | Aggiorna post WordPress esistente (richiede session_id) |
+| `POST` | `/wp-draft-generator/v1/media/{blog_id}` | Bearer token | Carica immagine nella media library WordPress |
+| `GET` | `/wp-draft-generator/v1/media/{blog_id}/{media_id}` | Bearer token | Recupera metadati media dalla library WP |
 | `POST` | `/wp-draft-generator/v1/telegram` | Secret token header (opzionale) | Webhook bot Telegram |
 | `POST` | `/wp-draft-generator/v1/update` | Bearer token | Deploy automatico via GitHub Actions |
 | `POST` | `/wp-draft-generator/v1/otp-request` | nessuna | Richiesta OTP per login passwordless (Wandly) |
@@ -33,6 +36,22 @@ Versione corrente: **0.45.0**
 | `GET` | `/wp-draft-generator/v1/users/{user_id}` | Bearer token + X-Admin-User-Id (admin) | Dettaglio singolo utente |
 | `PATCH` | `/wp-draft-generator/v1/users/{user_id}` | Bearer token + X-Admin-User-Id (admin) | Aggiorna utente (inclusi status, role, plan) |
 | `DELETE` | `/wp-draft-generator/v1/users/{user_id}` | Bearer token + X-Admin-User-Id (admin) | Soft delete utente (status='inactive') |
+| `GET` | `/wp-draft-generator/v1/admin/users/{user_id}/tools` | Bearer token + X-Admin-User-Id (admin) | Tool effettivi di un utente (piano + override) |
+| `PUT` | `/wp-draft-generator/v1/admin/users/{user_id}/tools` | Bearer token + X-Admin-User-Id (admin) | Imposta override tool per un utente |
+| `GET` | `/wp-draft-generator/v1/admin/tools` | Bearer token + X-Admin-User-Id (admin) | Lista catalogo tool Mavida |
+| `POST` | `/wp-draft-generator/v1/admin/tools` | Bearer token + X-Admin-User-Id (admin) | Crea nuovo tool nel catalogo |
+| `PATCH` | `/wp-draft-generator/v1/admin/tools/{tool_id}` | Bearer token + X-Admin-User-Id (admin) | Aggiorna campi tool |
+| `DELETE` | `/wp-draft-generator/v1/admin/tools/{tool_id}` | Bearer token + X-Admin-User-Id (admin) | Soft delete tool (is_active=false) |
+| `GET` | `/wp-draft-generator/v1/admin/plans` | Bearer token + X-Admin-User-Id (admin) | Lista piani commerciali con tool inclusi |
+| `POST` | `/wp-draft-generator/v1/admin/plans` | Bearer token + X-Admin-User-Id (admin) | Crea nuovo piano commerciale |
+| `PATCH` | `/wp-draft-generator/v1/admin/plans/{plan_id}` | Bearer token + X-Admin-User-Id (admin) | Aggiorna campi piano |
+| `DELETE` | `/wp-draft-generator/v1/admin/plans/{plan_id}` | Bearer token + X-Admin-User-Id (admin) | Soft delete piano (is_active=false) |
+| `PUT` | `/wp-draft-generator/v1/admin/plans/{plan_id}/tools` | Bearer token + X-Admin-User-Id (admin) | Sostituisce tool inclusi nel piano (atomico) |
+| `GET` | `/wp-draft-generator/v1/admin/stats/overview` | Bearer token + X-Admin-User-Id (admin) | KPI globali e per periodo |
+| `GET` | `/wp-draft-generator/v1/admin/stats/timeseries` | Bearer token + X-Admin-User-Id (admin) | Serie temporale giornaliera per grafico |
+| `GET` | `/wp-draft-generator/v1/admin/stats/top-users` | Bearer token + X-Admin-User-Id (admin) | Utenti più attivi |
+| `GET` | `/wp-draft-generator/v1/admin/stats/recent-logins` | Bearer token + X-Admin-User-Id (admin) | Ultimi accessi OTP verificati |
+| `GET` | `/wp-draft-generator/v1/admin/stats/recent-signups` | Bearer token + X-Admin-User-Id (admin) | Ultime registrazioni utente |
 | `POST` | `/wp-draft-generator/v1/messages` | Bearer token | Proxy sincrono LLM con salvataggio sessione opzionale |
 | `GET` | `/wp-draft-generator/v1/sessions` | Bearer token | Lista sessioni di chat dell'utente |
 | `GET` | `/wp-draft-generator/v1/sessions/{session_id}` | Bearer token | Dettaglio sessione con messaggi |
@@ -48,6 +67,14 @@ Versione corrente: **0.45.0**
 | `PUT` | `/wp-draft-generator/v1/carousel/{carousel_id}` | Bearer token | Sovrascrittura totale carosello |
 | `PATCH` | `/wp-draft-generator/v1/carousel/{carousel_id}` | Bearer token | Aggiornamento parziale carosello (es. solo titolo) |
 | `DELETE` | `/wp-draft-generator/v1/carousel/{carousel_id}` | Bearer token | Hard delete carosello |
+| `POST` | `/wp-draft-generator/v1/images` | Bearer token | Genera immagine via Gemini Image Model e la salva su disco |
+| `GET` | `/wp-draft-generator/v1/images` | Bearer token | Lista immagini dell'utente (filtro user_id, session_id, limit) |
+| `GET` | `/wp-draft-generator/v1/images/{image_id}` | nessuna | Serve il file immagine via UUID (no auth, signed URL pattern) |
+| `PATCH` | `/wp-draft-generator/v1/images/{image_id}` | Bearer token | Aggiorna alt_text e/o custom_filename di un'immagine generata |
+| `POST` | `/wp-draft-generator/v1/uploads` | Bearer token | Carica un file su Supabase Storage (immagini, PDF, testo, markdown) |
+| `GET` | `/wp-draft-generator/v1/uploads` | Bearer token | Lista file caricati dall'utente (filtro user_id, type, limit) |
+| `GET` | `/wp-draft-generator/v1/uploads/{id}` | Bearer token | Metadati e public_url di un singolo file |
+| `PATCH` | `/wp-draft-generator/v1/uploads/{id}` | Bearer token | Aggiorna title e/o description di un file caricato |
 
 ### Base URL
 
@@ -292,9 +319,11 @@ Authorization: Bearer <token>
 
 ### `POST /send/{blog_id}`
 
-Invia titolo e contenuto a WordPress in modo **sincrono**, usando le credenziali del blog specificato. Non usa Celery né Redis: risponde direttamente con l'esito della chiamata WordPress.
+Crea un nuovo post su WordPress in modo **sincrono**, usando le credenziali del blog specificato. Non usa Celery né Redis: risponde direttamente con l'esito della chiamata WordPress.
 
-Utile per integrazioni che già dispongono del contenuto (es. output di un modello AI esterno) e vogliono solo pubblicarlo su WordPress senza passare per la pipeline completa di generazione.
+Utile per integrazioni che già dispongono del contenuto (es. output di un modello AI) e vogliono pubblicarlo su WordPress senza la pipeline completa. Supporta featured image tramite upload on-the-fly da `generations_images`. (v0.53.0)
+
+> Per la documentazione completa con architettura, workflow e troubleshooting vedi [`docs/send-media-endpoints.md`](send-media-endpoints.md).
 
 #### Request
 
@@ -314,61 +343,291 @@ Authorization: Bearer <token>
 
 | Campo | Tipo | Obbligatorio | Descrizione |
 |---|---|---|---|
-| `user_id` | `string (UUID)` | sì | UUID utente (`generations_user.id`) — verifica ownership del blog |
-| `title` | `string` | sì | Titolo del post WordPress (max 500 caratteri) |
-| `content` | `string` | sì | Contenuto HTML del post |
-| `status` | `string` | no (default: `"draft"`) | Stato del post: `draft` \| `publish` \| `pending` \| `private` |
-| `excerpt` | `string` | no | Estratto/sommario del post (tag `<p>` accettato) |
-| `categories` | `array` | no | Categorie WordPress: lista di ID interi **oppure** nomi/slug stringa. Le stringhe vengono risolte in ID via WP REST API (auto-create se non esistono). Es: `[3, "Cucina italiana"]` (v0.42.0) |
-| `tags` | `array` | no | Tag WordPress: lista di ID interi **oppure** nomi/slug stringa. Stessa logica di `categories`. Es: `["pasta", 12, "carbonara"]` (v0.42.0) |
-| `session_id` | `string (UUID)` | no | UUID sessione che ha generato il contenuto. Se fornito, dopo il publish con successo la sessione viene marcata pubblicata in `generations_sessions` (`published_at`, `published_blog_id`). (v0.39.0) |
-| `message_id` | `integer` | no | BIGINT id del messaggio assistant (`generations_messages.id`). Se fornito assieme a `session_id` viene salvato come `published_message_id`. (v0.39.0) |
+| `user_id` | `string (UUID)` | **sì** | UUID utente (`generations_user.id`) — verifica ownership del blog |
+| `title` | `string` | **sì** | Titolo del post WordPress (1–500 caratteri) |
+| `content` | `string` | **sì** | Contenuto HTML del post (min 1 carattere) |
+| `status` | `string` | no (default `"draft"`) | Stato pubblicazione: `draft` \| `publish` \| `pending` \| `private` |
+| `excerpt` | `string` | no | Estratto/sommario (tag HTML accettati) |
+| `categories` | `array` | no | Categorie: ID interi **oppure** nomi/slug stringa (auto-create su WP se inesistenti). Es: `[3, "Cucina italiana"]` |
+| `tags` | `array` | no | Tag: ID interi **oppure** nomi/slug stringa. Stessa logica di `categories`. Es: `["pasta", 12]` |
+| `session_id` | `string (UUID)` | no | UUID sessione. Se fornito, la sessione viene marcata pubblicata (`published_at`, `published_blog_id`, `published_wp_post_id`) |
+| `message_id` | `integer > 0` | no | BIGINT id messaggio assistant. Salvato come `published_message_id` se assieme a `session_id` |
+| `featured_media_id` | `integer > 0` | no | ID di un media **già presente** nella media library WP. Mutuamente esclusivo con `featured_image_id` |
+| `featured_image_id` | `string (UUID)` | no | UUID immagine da `generations_images` (parte finale di `image_url` da `POST /images`). Upload on-the-fly nella media library WP. Mutuamente esclusivo con `featured_media_id` |
+| `image_title` | `string` | no | Titolo e alt text del media su WP (max 200 caratteri). Default: titolo del post |
+| `image_filename` | `string` | no | Nome file nel Content-Disposition WP (es. `copertina.png`). Estensioni `.png/.jpg/.jpeg/.webp`. No path traversal |
 
-#### Esempio Request
+> **Nota `featured_image_id`**: è il segmento finale dell'`image_url` restituita da `POST /images`. Esempio: se `image_url` è `https://api.example.com/wp-draft-generator/v1/images/7c9e6679-7425-40de-944b-e07fc1f90ae7`, allora `featured_image_id = "7c9e6679-7425-40de-944b-e07fc1f90ae7"`.
+
+> `featured_media_id` e `featured_image_id` sono mutuamente esclusivi → `400` se entrambi forniti.
+
+#### Esempio — crea bozza con featured image
 
 ```bash
-curl -X POST https://tuoserver.com/wp-draft-generator/v1/send/550e8400-e29b-41d4-a716-446655440001 \
+# Passo 1: genera immagine
+IMAGE_RESP=$(curl -s -X POST https://tuoserver.com/wp-draft-generator/v1/images \
   -H "Authorization: Bearer <token>" \
   -H "Content-Type: application/json" \
-  -d '{
-    "user_id": "550e8400-e29b-41d4-a716-446655440000",
-    "title": "Come fare la pasta carbonara autentica",
-    "content": "<p>La carbonara è uno dei piatti più amati della cucina romana...</p>",
-    "status": "draft",
-    "excerpt": "Guida definitiva alla carbonara tradizionale romana.",
-    "categories": [3, "Ricette"],
-    "tags": ["pasta", "carbonara", 42],
-    "session_id": "660e8400-e29b-41d4-a716-446655440001",
-    "message_id": 42
-  }'
+  -d '{"user_id":"USER_UUID","prompt":"Tramonto adriatico, olio su tela"}')
+IMAGE_ID=$(echo $IMAGE_RESP | python3 -c "import sys,json,re; u=json.load(sys.stdin)['image_url']; print(u.split('/')[-1])")
+
+# Passo 2: pubblica post
+curl -X POST https://tuoserver.com/wp-draft-generator/v1/send/BLOG_UUID \
+  -H "Authorization: Bearer <token>" \
+  -H "Content-Type: application/json" \
+  -d "{
+    \"user_id\": \"USER_UUID\",
+    \"title\": \"Tramonto sull'Adriatico\",
+    \"content\": \"<p>Le coste adriatiche...</p>\",
+    \"status\": \"draft\",
+    \"categories\": [3, \"Natura\"],
+    \"tags\": [\"mare\", \"tramonto\"],
+    \"session_id\": \"SESSION_UUID\",
+    \"featured_image_id\": \"$IMAGE_ID\",
+    \"image_title\": \"Tramonto Adriatico al tramonto\",
+    \"image_filename\": \"tramonto-adriatico.png\"
+  }"
 ```
 
-#### Response
-
-**200 OK** — post creato con successo:
+#### Response — 200 OK
 
 ```json
 {
   "post_id": 42,
   "post_url": "https://miosito.com/?p=42",
   "status": "draft",
-  "resolved_categories": [3, 7],
-  "resolved_tags": [12, 45, 99],
+  "featured_media_id": 123,
+  "resolved_categories": [3, 8],
+  "resolved_tags": [12, 45],
   "session_published": true
 }
 ```
 
-> `resolved_categories` e `resolved_tags` sono presenti solo se i rispettivi campi erano nel body; contengono gli ID WP interi usati al momento del publish (v0.42.1).  
-> `session_published` è presente solo se `session_id` era nel body. `true` se la sessione è stata marcata correttamente, `false` se la verifica di ownership è fallita o l'aggiornamento Supabase è fallito (non bloccante).
+Campi condizionali (presenti solo se il campo corrispondente era nel body):
 
-#### Errori
+| Campo | Tipo | Quando presente |
+|---|---|---|
+| `featured_media_id` | `integer` | Se `featured_image_id` o `featured_media_id` erano nel body |
+| `resolved_categories` | `array[int]` | Se `categories` era nel body |
+| `resolved_tags` | `array[int]` | Se `tags` era nel body |
+| `session_published` | `boolean` | Se `session_id` era nel body (`true` = OK, `false` = fallito non-bloccante) |
 
-| Codice | Causa |
-|---|---|
-| `400 Bad Request` | `blog_id` non è un UUID valido, o body non conforme (campo mancante, `status` non valido, elemento non int/string in `categories`/`tags`) |
-| `401 Unauthorized` | Token assente o non valido |
-| `404 Not Found` | Blog non trovato, non attivo, o `user_id` non è il proprietario |
-| `502 Bad Gateway` | Errore nella comunicazione con WordPress: connessione, timeout, HTTP error durante la pubblicazione del post **oppure** durante la risoluzione/creazione di categorie e tag (richiede che l'utente WP abbia capability `manage_categories`) |
+#### Codici di errore
+
+| Codice | `error` | Causa |
+|---|---|---|
+| `400` | `ValidationError` | Body non conforme (campo obbligatorio mancante, tipo errato, `status` non valido) |
+| `400` | `ValidationError` | `featured_media_id` e `featured_image_id` entrambi valorizzati |
+| `400` | `ValidationError` | `image_filename` con path traversal o estensione non accettata |
+| `400` | `InvalidParameter` | `blog_id` non è un UUID valido |
+| `401` | — | Token assente o non valido |
+| `403` | `Forbidden` | `featured_image_id` appartiene a un altro utente |
+| `404` | `NotFound` | Blog non trovato / `user_id` non è il proprietario |
+| `404` | `NotFound` | Immagine `featured_image_id` non trovata in `generations_images` |
+| `502` | `WordPressError` | Errore connessione/HTTP durante pubblicazione, risoluzione termini, o upload immagine |
+
+> La risoluzione categorie/tag richiede che l'utente WP abbia la capability `manage_categories` (ruolo Editor o superiore).
+
+---
+
+### `PATCH /send/{blog_id}/{post_id}`
+
+Aggiorna un post WordPress **già pubblicato** tramite il blog specificato. (v0.53.0)
+
+Richiede `session_id` **obbligatorio**: il backend verifica che `generations_sessions.published_wp_post_id` corrisponda al `post_id` nel path — garantisce che solo chi ha creato il post via questa API possa modificarlo.
+
+> Per la documentazione completa vedi [`docs/send-media-endpoints.md`](send-media-endpoints.md).
+
+#### Request
+
+```
+PATCH /wp-draft-generator/v1/send/{blog_id}/{post_id}
+Content-Type: application/json
+Authorization: Bearer <token>
+```
+
+#### Parametri Path
+
+| Campo | Tipo | Descrizione |
+|---|---|---|
+| `blog_id` | `string (UUID)` | UUID del blog (`generations_user_blogs.id`) |
+| `post_id` | `integer` | ID intero del post WordPress da aggiornare (campo `post_id` dalla risposta di `POST /send`) |
+
+#### Parametri Body (JSON)
+
+| Campo | Tipo | Obbligatorio | Descrizione |
+|---|---|---|---|
+| `user_id` | `string (UUID)` | **sì** | UUID utente — verifica ownership del blog |
+| `session_id` | `string (UUID)` | **sì** | UUID sessione che ha creato il post. Deve avere `published_wp_post_id == post_id` |
+| `title` | `string` | no | Nuovo titolo |
+| `content` | `string` | no | Nuovo contenuto HTML |
+| `status` | `string` | no | `draft` \| `publish` \| `pending` \| `private` |
+| `excerpt` | `string` | no | Nuovo sommario |
+| `categories` | `array` | no | Nuove categorie (ID interi o nomi stringa) |
+| `tags` | `array` | no | Nuovi tag (ID interi o nomi stringa) |
+| `featured_media_id` | `integer > 0` | no | ID media già su WP da impostare come featured |
+| `featured_image_id` | `string (UUID)` | no | UUID immagine in `generations_images` da caricare e impostare come featured |
+| `image_title` | `string` | no | Title/alt del media su WP (max 200 caratteri) |
+| `image_filename` | `string` | no | Nome file nel Content-Disposition |
+
+> Almeno uno tra `title`, `content`, `status`, `excerpt`, `categories`, `tags`, `featured_media_id`, `featured_image_id` deve essere valorizzato → altrimenti `400`.
+
+#### Esempio
+
+```bash
+curl -X PATCH https://tuoserver.com/wp-draft-generator/v1/send/BLOG_UUID/42 \
+  -H "Authorization: Bearer <token>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "user_id": "550e8400-e29b-41d4-a716-446655440000",
+    "session_id": "660e8400-e29b-41d4-a716-446655440001",
+    "title": "Tramonto sull'\''Adriatico (aggiornato)",
+    "status": "publish",
+    "featured_image_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+    "image_title": "Tramonto Adriatico estate",
+    "image_filename": "tramonto-adriatico-v2.png"
+  }'
+```
+
+#### Response — 200 OK
+
+```json
+{
+  "post_id": 42,
+  "post_url": "https://miosito.com/tramonto-sulladriatico/",
+  "status": "publish",
+  "updated": true,
+  "featured_media_id": 124
+}
+```
+
+#### Codici di errore
+
+| Codice | `error` | Causa |
+|---|---|---|
+| `400` | `ValidationError` | Body non conforme, body senza campi da aggiornare, `featured_*` mutuamente esclusivi violati |
+| `400` | `InvalidParameter` | `blog_id` non UUID |
+| `401` | — | Token assente o non valido |
+| `403` | `Forbidden` | `session.published_wp_post_id` ≠ `post_id`, o `featured_image_id` di altro utente |
+| `404` | `NotFound` | Blog, sessione o immagine non trovati |
+| `502` | `WordPressError` | Errore WordPress durante aggiornamento o upload immagine |
+
+---
+
+## Media Library WordPress
+
+### `POST /media/{blog_id}`
+
+Carica un'immagine da `generations_images` nella media library WordPress. (v0.53.0)
+
+Endpoint dedicato per upload standalone: ottieni il `media_id` WP prima della pubblicazione e passalo come `featured_media_id` a `POST /send` o `PATCH /send`.
+
+> Per la documentazione completa vedi [`docs/send-media-endpoints.md`](send-media-endpoints.md).
+
+#### Request
+
+```
+POST /wp-draft-generator/v1/media/{blog_id}
+Content-Type: application/json
+Authorization: Bearer <token>
+```
+
+#### Parametri Body (JSON)
+
+| Campo | Tipo | Obbligatorio | Descrizione |
+|---|---|---|---|
+| `user_id` | `string (UUID)` | **sì** | UUID utente — verifica ownership blog e immagine |
+| `image_id` | `string (UUID)` | **sì** | UUID immagine in `generations_images` (parte finale di `image_url` da `POST /images`) |
+| `image_title` | `string` | no | Titolo e alt text nella library WP (max 200 caratteri). Default: UUID del file |
+| `image_filename` | `string` | no | Nome file nel Content-Disposition (es. `copertina.png`). Estensioni `.png/.jpg/.jpeg/.webp` |
+
+**Rate limit:** `RATE_LIMIT_MEDIA_UPLOAD_PER_MIN` per IP/min (default `10`).
+
+#### Esempio
+
+```bash
+curl -X POST https://tuoserver.com/wp-draft-generator/v1/media/BLOG_UUID \
+  -H "Authorization: Bearer <token>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "user_id": "550e8400-e29b-41d4-a716-446655440000",
+    "image_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+    "image_title": "Copertina articolo carbonara",
+    "image_filename": "carbonara-copertina.png"
+  }'
+```
+
+#### Response — 200 OK
+
+```json
+{
+  "media_id": 123,
+  "blog_id": "550e8400-e29b-41d4-a716-446655440001",
+  "image_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+  "uploaded_at": "2026-05-22T10:30:00+00:00"
+}
+```
+
+#### Codici di errore
+
+| Codice | `error` | Causa |
+|---|---|---|
+| `400` | `ValidationError` | Body non conforme, `image_filename` con estensione non valida o path traversal |
+| `401` | — | Token assente o non valido |
+| `403` | `Forbidden` | `image_id` appartiene a un altro utente |
+| `404` | `NotFound` | Blog non trovato o `image_id` non in `generations_images` |
+| `429` | `RateLimitExceeded` | Rate limit superato |
+| `502` | `WordPressError` | Errore connessione/HTTP con WordPress durante upload |
+
+---
+
+### `GET /media/{blog_id}/{media_id}`
+
+Recupera i metadati di un media dalla library WordPress. Proxy verso `GET /wp-json/wp/v2/media/{media_id}`. (v0.53.0)
+
+#### Request
+
+```
+GET /wp-draft-generator/v1/media/{blog_id}/{media_id}?user_id=<UUID>
+Authorization: Bearer <token>
+```
+
+#### Parametri
+
+| Posizione | Campo | Tipo | Obbligatorio | Descrizione |
+|---|---|---|---|---|
+| Path | `blog_id` | UUID | sì | UUID del blog |
+| Path | `media_id` | integer | sì | ID intero del media su WordPress |
+| Query | `user_id` | UUID | sì | UUID utente — verifica ownership del blog |
+
+#### Esempio
+
+```bash
+curl "https://tuoserver.com/wp-draft-generator/v1/media/BLOG_UUID/123?user_id=USER_UUID" \
+  -H "Authorization: Bearer <token>"
+```
+
+#### Response — 200 OK
+
+```json
+{
+  "media_id": 123,
+  "source_url": "https://miosito.com/wp-content/uploads/2026/05/carbonara-copertina.png",
+  "title": "Copertina articolo carbonara",
+  "alt_text": "Copertina articolo carbonara",
+  "mime_type": "image/png"
+}
+```
+
+#### Codici di errore
+
+| Codice | `error` | Causa |
+|---|---|---|
+| `400` | `MissingParameter` | `user_id` assente |
+| `400` | `InvalidParameter` | `blog_id` o `user_id` non UUID valido |
+| `401` | — | Token assente o non valido |
+| `404` | `WordPressError` | Media non trovato su WP (HTTP 404 da WP REST) |
+| `502` | `WordPressError` | Errore connessione/HTTP con WordPress |
 
 ---
 
@@ -1782,7 +2041,8 @@ Authorization: Bearer <API_AUTH_TOKEN>
   "total_tokens": 12500,
   "gemini_model": "gemini-2.5-flash",
   "gemini_api_key": "****abcd",
-  "created_at": "2024-01-10T08:00:00+00:00"
+  "created_at": "2024-01-10T08:00:00+00:00",
+  "last_seen_at": "2026-05-25T09:15:00+00:00"
 }
 ```
 
@@ -1799,6 +2059,7 @@ Authorization: Bearer <API_AUTH_TOKEN>
 | `gemini_model` | Override modello Gemini, `null` se non impostato (v0.32.0) |
 | `gemini_api_key` | Override chiave API Gemini, **mascherato** (`****xxxx`), `null` se non impostato (v0.32.0) |
 | `created_at` | Data primo accesso |
+| `last_seen_at` | Ultimo accesso applicativo reale (v0.56.0); `null` se mai aperto dopo il deploy della feature |
 
 #### Risposte di errore
 
@@ -1841,6 +2102,7 @@ Content-Type: application/json
 | `email` | `string` | Nuovo indirizzo email (normalizzato in lowercase) |
 | `gemini_model` | `string` | Override modello Gemini (v0.32.0) |
 | `gemini_api_key` | `string` | Override chiave API Gemini (v0.32.0) |
+| `format_prompt` | `string\|null` | Schema JSON formato output; `null` esplicito = reset al default |
 
 #### Response 200
 
@@ -1848,11 +2110,22 @@ Content-Type: application/json
 {
   "message": "Profilo aggiornato con successo",
   "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "chat_id": "123456789",
   "username": "mario_rossi_new",
   "email": "mario.nuovo@esempio.com",
-  "role": "user"
+  "status": "active",
+  "role": "user",
+  "plan": "basic",
+  "total_tokens": 12500,
+  "gemini_model": "gemini-2.5-flash",
+  "gemini_api_key": "****abcd",
+  "format_prompt": null,
+  "created_at": "2024-01-10T08:00:00+00:00",
+  "last_seen_at": "2026-05-25T09:15:00+00:00"
 }
 ```
+
+> Risposta identica a `GET /profile/{user_id}` con l'aggiunta del campo `message`. `last_seen_at` viene aggiornato a NOW() prima della risposta (v0.56.0).
 
 #### Risposte di errore
 
@@ -2359,12 +2632,22 @@ X-Admin-User-Id: <uuid-admin>   # opzionale (audit admin cross-user)
       "message_count": 6,
       "last_message_at": "2026-03-26T10:30:00Z",
       "model": "gemini-2.5-flash",
-      "created_at": "2026-03-26T09:55:00Z"
+      "created_at": "2026-03-26T09:55:00Z",
+      "published_at": "2026-03-26T11:00:00Z",
+      "published_blog_id": "550e8400-e29b-41d4-a716-446655440001",
+      "published_wp_post_id": 42,
+      "published_featured_media_id": 123,
+      "published_image_title": "Tramonto sull'Adriatico",
+      "published_image_filename": "tramonto-adriatico.png"
     }
   ],
   "count": 1
 }
 ```
+
+> **v0.53.0+** — I campi `published_*` sono presenti in tutte le sessioni e valgono `null` se il post non è ancora stato pubblicato.  
+> `published_wp_post_id` è la chiave per chiamare `PATCH /send/{blog_id}/{post_id}`.  
+> **v0.54.0** — Aggiunti `published_image_title` e `published_image_filename` (alt text e nome file dell'immagine featured usata alla pubblicazione).
 
 #### Risposte di errore
 
@@ -2414,7 +2697,13 @@ Authorization: Bearer <API_AUTH_TOKEN>
     "model": "gemini-2.5-flash",
     "is_archived": false,
     "created_at": "2026-03-26T09:55:00Z",
-    "updated_at": "2026-03-26T10:30:00Z"
+    "updated_at": "2026-03-26T10:30:00Z",
+    "published_at": "2026-03-26T11:00:00Z",
+    "published_blog_id": "550e8400-e29b-41d4-a716-446655440001",
+    "published_wp_post_id": 42,
+    "published_featured_media_id": 123,
+    "published_image_title": "Tramonto sull'Adriatico",
+    "published_image_filename": "tramonto-adriatico.png"
   },
   "messages": [
     {
@@ -2564,17 +2853,23 @@ Lista tutti gli utenti con filtri opzionali.
       "plan": "basic",
       "created_at": "2025-01-15T10:30:00Z",
       "sessions_count": 12,
-      "last_login": "2026-04-26T18:42:11Z"
+      "carousel_count": 3,
+      "last_login": "2026-04-26T18:42:11Z",
+      "last_seen_at": "2026-05-25T09:15:00Z"
     }
   ],
   "count": 1
 }
 ```
 
-> **v0.41.0** — la risposta include `sessions_count` (sessioni chat non
-> archiviate, conteggio su `generations_sessions`) e `last_login`
-> (`MAX(created_at)` su `generations_user_sessions` con `is_used=true`,
-> oppure `null` se l'utente non ha mai effettuato il login).
+| Campo calcolato | Fonte | Note |
+|---|---|---|
+| `sessions_count` | `generations_sessions` (is_archived=false) | Sessioni chat attive; `0` se nessuna |
+| `carousel_count` | `generations_carousel` | Totale caroselli creati; `0` se nessuno (v0.56.1) |
+| `last_login` | `MAX(created_at)` su `generations_user_sessions` (is_used=true) | Ultimo OTP verificato; `null` se mai loggato |
+| `last_seen_at` | `generations_user.last_seen_at` | Ultimo accesso reale (touch su GET/PATCH /profile); `null` se mai aperto dopo deploy (v0.56.0) |
+
+> I campi calcolati usano batch query con filtro `IN` su tutti gli utenti della risposta — nessuna query N+1.
 
 #### Esempio curl
 
@@ -2602,21 +2897,23 @@ Crea un nuovo utente.
 
 | Campo | Tipo | Richiesto | Default | Valori |
 |-------|------|-----------|---------|--------|
-| `chat_id` | `string` | sì | — | ID chat Telegram (unico) |
-| `username` | `string` | no | `null` | qualsiasi stringa |
-| `email` | `string` | no | `null` | indirizzo email valido |
+| `chat_id` | `string` | no* | `null` | ID chat Telegram (unico) |
+| `username` | `string` | no* | `null` | qualsiasi stringa |
+| `email` | `string` | no* | `null` | indirizzo email valido |
 | `role` | `string` | no | `"user"` | `"user"` \| `"admin"` |
 | `plan` | `string` | no | `"basic"` | `"basic"` \| `"personal"` \| `"pro"` |
 | `status` | `string` | no | `"active"` | `"active"` \| `"inactive"` |
 | `gemini_model` | `string` | no | `null` | Override modello Gemini (v0.32.0) |
 | `gemini_api_key` | `string` | no | `null` | Override chiave API Gemini (v0.32.0) |
 
+> **\*** Se `chat_id` è assente, `username` ed `email` diventano entrambi obbligatori.
+
 #### Risposta 201 Created
 
 ```json
 {
   "id": "550e8400-e29b-41d4-a716-446655440000",
-  "chat_id": "123456789",
+  "chat_id": null,
   "username": "mario_rossi",
   "email": "mario@esempio.com",
   "status": "active",
@@ -2630,13 +2927,28 @@ Crea un nuovo utente.
 
 | Codice | Causa |
 |--------|-------|
-| `400 Bad Request` | Validazione fallita, `chat_id` vuoto o email non valida |
+| `400 Bad Request` | Validazione fallita; o `chat_id` assente senza `email`+`username` |
 | `401 Unauthorized` | Bearer token assente o non valido |
 | `403 Forbidden` | `X-Admin-User-Id` mancante o utente non admin |
 | `409 Conflict` | `chat_id` già registrato |
 | `500 Internal Server Error` | Errore Supabase |
 
-#### Esempio curl
+#### Esempio curl — senza Telegram
+
+```bash
+curl -X POST "https://chat.mavida.com/wp-draft-generator/v1/users" \
+  -H "Authorization: Bearer <API_AUTH_TOKEN>" \
+  -H "X-Admin-User-Id: <uuid-admin>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "mario_rossi",
+    "email": "mario@esempio.com",
+    "role": "user",
+    "plan": "basic"
+  }'
+```
+
+#### Esempio curl — con Telegram
 
 ```bash
 curl -X POST "https://chat.mavida.com/wp-draft-generator/v1/users" \
@@ -2803,6 +3115,663 @@ curl -X DELETE "https://chat.mavida.com/wp-draft-generator/v1/users/550e8400-e29
   -H "Authorization: Bearer <API_AUTH_TOKEN>" \
   -H "X-Admin-User-Id: <uuid-admin>"
 ```
+
+---
+
+## Admin — Tool per utente
+
+Endpoint per leggere e sovrascrivere i tool accessibili da un singolo utente, calcolati come unione dei tool del suo piano più eventuali override manuali.
+
+---
+
+### GET /admin/users/{user_id}/tools
+
+Restituisce i tool effettivi di un utente: piano base, override admin e lista risultante.
+
+**URL:** `GET /wp-draft-generator/v1/admin/users/{user_id}/tools`
+
+#### Parametri path
+
+| Parametro | Tipo | Descrizione |
+|-----------|------|-------------|
+| `user_id` | UUID | ID utente (`generations_user.id`) |
+
+#### Headers
+
+| Header | Valore |
+|--------|--------|
+| `Authorization` | `Bearer <API_AUTH_TOKEN>` |
+| `X-Admin-User-Id` | `<uuid-admin>` |
+
+#### Risposta 200 OK
+
+```json
+{
+  "plan_tools": [
+    {"id": "uuid", "key": "wandly", "label": "Wandly", "icon": "FileText"}
+  ],
+  "overrides": [
+    {
+      "tool_id": "uuid",
+      "granted": true,
+      "note": "accesso beta",
+      "tool": {"id": "uuid", "key": "carousel", "label": "Carousel Generator", "icon": "Layout"}
+    }
+  ],
+  "effective_tools": [
+    {"id": "uuid", "key": "wandly",   "label": "Wandly",              "icon": "FileText"},
+    {"id": "uuid", "key": "carousel", "label": "Carousel Generator",  "icon": "Layout"}
+  ]
+}
+```
+
+> `effective_tools` = (tool del piano) ∪ (override `granted=true`) \ (override `granted=false`)
+
+#### Risposte di errore
+
+| Codice | Causa |
+|--------|-------|
+| `400 Bad Request` | `user_id` non è un UUID valido |
+| `401 Unauthorized` | Bearer token assente o non valido |
+| `403 Forbidden` | `X-Admin-User-Id` mancante o utente non admin |
+
+#### Esempio curl
+
+```bash
+curl "https://chat.mavida.com/wp-draft-generator/v1/admin/users/550e8400-e29b-41d4-a716-446655440000/tools" \
+  -H "Authorization: Bearer <API_AUTH_TOKEN>" \
+  -H "X-Admin-User-Id: <uuid-admin>"
+```
+
+---
+
+### PUT /admin/users/{user_id}/tools
+
+Imposta override tool per un utente. Sovrascrive gli override esistenti solo per i tool esplicitamente menzionati; quelli non citati rimangono invariati.
+
+**URL:** `PUT /wp-draft-generator/v1/admin/users/{user_id}/tools`
+
+#### Parametri path
+
+| Parametro | Tipo | Descrizione |
+|-----------|------|-------------|
+| `user_id` | UUID | ID utente (`generations_user.id`) |
+
+#### Headers
+
+| Header | Valore |
+|--------|--------|
+| `Authorization` | `Bearer <API_AUTH_TOKEN>` |
+| `X-Admin-User-Id` | `<uuid-admin>` |
+
+#### Body JSON
+
+| Campo | Tipo | Richiesto | Descrizione |
+|-------|------|-----------|-------------|
+| `grants` | `list[UUID]` | no | Tool da concedere extra rispetto al piano (`granted=true`) |
+| `revokes` | `list[UUID]` | no | Tool da revocare (`granted=false`) |
+| `note` | `string` | no | Nota admin (es. `"accesso beta"`) |
+
+Almeno uno tra `grants` e `revokes` deve essere non vuoto.
+
+#### Risposta 200 OK
+
+```json
+{
+  "success": true,
+  "grants":  ["uuid-tool-A"],
+  "revokes": ["uuid-tool-B"]
+}
+```
+
+#### Risposte di errore
+
+| Codice | Causa |
+|--------|-------|
+| `400 Bad Request` | `user_id` non valido o body non conforme (es. entrambi vuoti) |
+| `401 Unauthorized` | Bearer token assente o non valido |
+| `403 Forbidden` | `X-Admin-User-Id` mancante o utente non admin |
+| `500 Internal Server Error` | Errore Supabase |
+
+#### Esempio curl
+
+```bash
+# Concedi accesso a carousel, revoca accesso a wandly
+curl -X PUT "https://chat.mavida.com/wp-draft-generator/v1/admin/users/550e8400-e29b-41d4-a716-446655440000/tools" \
+  -H "Authorization: Bearer <API_AUTH_TOKEN>" \
+  -H "X-Admin-User-Id: <uuid-admin>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "grants":  ["uuid-carousel"],
+    "revokes": ["uuid-wandly"],
+    "note": "accesso beta carousel"
+  }'
+```
+
+---
+
+## Admin — Catalogo Tool
+
+Endpoint per la gestione del catalogo strumenti Mavida (`generations_tools`). I tool rappresentano le singole applicazioni dell'ecosistema (Wandly, Carousel Generator, ecc.) e vengono associati ai piani commerciali.
+
+---
+
+### GET /admin/tools
+
+Restituisce il catalogo dei tool.
+
+**URL:** `GET /wp-draft-generator/v1/admin/tools`
+
+#### Query params
+
+| Parametro | Tipo | Descrizione |
+|-----------|------|-------------|
+| `include_inactive` | `"1"` \| `"true"` | Includi tool disattivati (default: solo attivi) |
+
+#### Risposta 200 OK
+
+```json
+{
+  "tools": [
+    {
+      "id":          "uuid",
+      "key":         "wandly",
+      "label":       "Wandly",
+      "description": "Generatore articoli WordPress",
+      "icon":        "FileText",
+      "is_active":   true,
+      "created_at":  "2025-01-01T00:00:00Z",
+      "updated_at":  "2025-01-01T00:00:00Z"
+    }
+  ],
+  "count": 1
+}
+```
+
+#### Esempio curl
+
+```bash
+curl "https://chat.mavida.com/wp-draft-generator/v1/admin/tools" \
+  -H "Authorization: Bearer <API_AUTH_TOKEN>" \
+  -H "X-Admin-User-Id: <uuid-admin>"
+```
+
+---
+
+### POST /admin/tools
+
+Crea un nuovo tool nel catalogo.
+
+**URL:** `POST /wp-draft-generator/v1/admin/tools`
+
+#### Body JSON
+
+| Campo | Tipo | Richiesto | Descrizione |
+|-------|------|-----------|-------------|
+| `key` | `string` | sì | Chiave univoca (es. `"wandly"`) |
+| `label` | `string` | sì | Etichetta leggibile |
+| `description` | `string` | no | Breve descrizione |
+| `icon` | `string` | no | Nome icona lucide-react |
+
+#### Risposta 201 Created
+
+Restituisce il record creato (stesso formato di un elemento di `GET /admin/tools`).
+
+#### Risposte di errore
+
+| Codice | Causa |
+|--------|-------|
+| `400 Bad Request` | Validazione fallita |
+| `401 Unauthorized` | Bearer token assente o non valido |
+| `403 Forbidden` | `X-Admin-User-Id` mancante o utente non admin |
+| `409 Conflict` | `key` già registrata |
+| `500 Internal Server Error` | Errore Supabase |
+
+#### Esempio curl
+
+```bash
+curl -X POST "https://chat.mavida.com/wp-draft-generator/v1/admin/tools" \
+  -H "Authorization: Bearer <API_AUTH_TOKEN>" \
+  -H "X-Admin-User-Id: <uuid-admin>" \
+  -H "Content-Type: application/json" \
+  -d '{"key": "social-planner", "label": "Social Planner", "icon": "Calendar"}'
+```
+
+---
+
+### PATCH /admin/tools/{tool_id}
+
+Aggiorna uno o più campi di un tool.
+
+**URL:** `PATCH /wp-draft-generator/v1/admin/tools/{tool_id}`
+
+#### Parametri path
+
+| Parametro | Tipo | Descrizione |
+|-----------|------|-------------|
+| `tool_id` | UUID | ID tool (`generations_tools.id`) |
+
+#### Body JSON (almeno un campo)
+
+| Campo | Tipo | Descrizione |
+|-------|------|-------------|
+| `key` | `string` | Nuova chiave univoca |
+| `label` | `string` | Nuova etichetta |
+| `description` | `string` | Nuova descrizione |
+| `icon` | `string` | Nuovo nome icona |
+| `is_active` | `boolean` | Attiva/disattiva il tool |
+
+#### Risposta 200 OK
+
+```json
+{"success": true}
+```
+
+#### Risposte di errore
+
+| Codice | Causa |
+|--------|-------|
+| `400 Bad Request` | UUID non valido o body vuoto |
+| `401 Unauthorized` | Bearer token assente o non valido |
+| `403 Forbidden` | `X-Admin-User-Id` mancante o utente non admin |
+| `404 Not Found` | Tool non trovato |
+
+---
+
+### DELETE /admin/tools/{tool_id}
+
+Soft delete del tool: imposta `is_active=false`. Il record rimane nel DB.
+
+**URL:** `DELETE /wp-draft-generator/v1/admin/tools/{tool_id}`
+
+#### Parametri path
+
+| Parametro | Tipo | Descrizione |
+|-----------|------|-------------|
+| `tool_id` | UUID | ID tool (`generations_tools.id`) |
+
+#### Risposta 200 OK
+
+```json
+{"success": true, "tool_id": "uuid"}
+```
+
+#### Risposte di errore
+
+| Codice | Causa |
+|--------|-------|
+| `400 Bad Request` | UUID non valido |
+| `401 Unauthorized` | Bearer token assente o non valido |
+| `403 Forbidden` | `X-Admin-User-Id` mancante o utente non admin |
+| `404 Not Found` | Tool non trovato |
+
+---
+
+## Admin — Piani Commerciali
+
+Endpoint per la gestione del catalogo piani (`generations_plans`) e dell'associazione piano ↔ tool (`generations_plan_tools`).
+
+---
+
+### GET /admin/plans
+
+Restituisce la lista dei piani con i tool inclusi per ciascuno.
+
+**URL:** `GET /wp-draft-generator/v1/admin/plans`
+
+#### Query params
+
+| Parametro | Tipo | Descrizione |
+|-----------|------|-------------|
+| `include_inactive` | `"1"` \| `"true"` | Includi piani disattivati (default: solo attivi) |
+
+#### Risposta 200 OK
+
+```json
+{
+  "plans": [
+    {
+      "id":            "uuid",
+      "code":          "basic",
+      "label":         "Basic",
+      "monthly_price": 0.0,
+      "config":        {"max_sessions": 10, "max_messages_per_session": 50},
+      "sort_order":    0,
+      "is_active":     true,
+      "created_at":    "2025-01-01T00:00:00Z",
+      "updated_at":    "2025-01-01T00:00:00Z",
+      "tools": [
+        {"id": "uuid", "key": "wandly", "label": "Wandly", "icon": "FileText"}
+      ]
+    }
+  ],
+  "count": 1
+}
+```
+
+#### Esempio curl
+
+```bash
+curl "https://chat.mavida.com/wp-draft-generator/v1/admin/plans" \
+  -H "Authorization: Bearer <API_AUTH_TOKEN>" \
+  -H "X-Admin-User-Id: <uuid-admin>"
+```
+
+---
+
+### POST /admin/plans
+
+Crea un nuovo piano commerciale.
+
+**URL:** `POST /wp-draft-generator/v1/admin/plans`
+
+#### Body JSON
+
+| Campo | Tipo | Richiesto | Default | Descrizione |
+|-------|------|-----------|---------|-------------|
+| `code` | `string` | sì | — | Codice univoco (es. `"basic"`) |
+| `label` | `string` | sì | — | Etichetta leggibile (es. `"Basic"`) |
+| `monthly_price` | `float` | no | `0.0` | Prezzo mensile in EUR |
+| `config` | `object` | no | `null` | Caratteristiche numeriche del piano (es. `max_sessions`) |
+| `sort_order` | `int` | no | `0` | Ordine di visualizzazione |
+
+#### Risposta 201 Created
+
+Restituisce il record creato (stesso formato di un elemento di `GET /admin/plans`, senza `tools`).
+
+#### Risposte di errore
+
+| Codice | Causa |
+|--------|-------|
+| `400 Bad Request` | Validazione fallita |
+| `401 Unauthorized` | Bearer token assente o non valido |
+| `403 Forbidden` | `X-Admin-User-Id` mancante o utente non admin |
+| `409 Conflict` | `code` già registrato |
+| `500 Internal Server Error` | Errore Supabase |
+
+#### Esempio curl
+
+```bash
+curl -X POST "https://chat.mavida.com/wp-draft-generator/v1/admin/plans" \
+  -H "Authorization: Bearer <API_AUTH_TOKEN>" \
+  -H "X-Admin-User-Id: <uuid-admin>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "code": "pro",
+    "label": "Pro",
+    "monthly_price": 29.90,
+    "config": {"max_sessions": 100, "max_messages_per_session": 200},
+    "sort_order": 2
+  }'
+```
+
+---
+
+### PATCH /admin/plans/{plan_id}
+
+Aggiorna uno o più campi di un piano.
+
+**URL:** `PATCH /wp-draft-generator/v1/admin/plans/{plan_id}`
+
+#### Parametri path
+
+| Parametro | Tipo | Descrizione |
+|-----------|------|-------------|
+| `plan_id` | UUID | ID piano (`generations_plans.id`) |
+
+#### Body JSON (almeno un campo)
+
+| Campo | Tipo | Note |
+|-------|------|------|
+| `label` | `string` | |
+| `monthly_price` | `float` | |
+| `config` | `object` \| `null` | `null` azzera la configurazione |
+| `sort_order` | `int` | |
+| `is_active` | `boolean` | |
+
+#### Risposta 200 OK
+
+```json
+{"success": true}
+```
+
+#### Risposte di errore
+
+| Codice | Causa |
+|--------|-------|
+| `400 Bad Request` | UUID non valido o body vuoto |
+| `401 Unauthorized` | Bearer token assente o non valido |
+| `403 Forbidden` | `X-Admin-User-Id` mancante o utente non admin |
+| `404 Not Found` | Piano non trovato |
+
+---
+
+### DELETE /admin/plans/{plan_id}
+
+Soft delete del piano: imposta `is_active=false`. Reversibile via `PATCH`.
+
+**URL:** `DELETE /wp-draft-generator/v1/admin/plans/{plan_id}`
+
+#### Parametri path
+
+| Parametro | Tipo | Descrizione |
+|-----------|------|-------------|
+| `plan_id` | UUID | ID piano (`generations_plans.id`) |
+
+#### Risposta 200 OK
+
+```json
+{"success": true, "plan_id": "uuid"}
+```
+
+#### Risposte di errore
+
+| Codice | Causa |
+|--------|-------|
+| `400 Bad Request` | UUID non valido |
+| `401 Unauthorized` | Bearer token assente o non valido |
+| `403 Forbidden` | `X-Admin-User-Id` mancante o utente non admin |
+| `404 Not Found` | Piano non trovato |
+
+---
+
+### PUT /admin/plans/{plan_id}/tools
+
+Sostituisce i tool inclusi in un piano. Operazione atomica: cancella tutte le associazioni esistenti e reinserisce quelle indicate. Lista vuota = nessun tool nel piano.
+
+**URL:** `PUT /wp-draft-generator/v1/admin/plans/{plan_id}/tools`
+
+#### Parametri path
+
+| Parametro | Tipo | Descrizione |
+|-----------|------|-------------|
+| `plan_id` | UUID | ID piano (`generations_plans.id`) |
+
+#### Body JSON
+
+| Campo | Tipo | Richiesto | Descrizione |
+|-------|------|-----------|-------------|
+| `tool_ids` | `list[UUID]` | sì | UUID dei tool da associare al piano. Lista vuota = reset |
+
+#### Risposta 200 OK
+
+```json
+{
+  "success":  true,
+  "tool_ids": ["uuid-wandly", "uuid-carousel"]
+}
+```
+
+#### Risposte di errore
+
+| Codice | Causa |
+|--------|-------|
+| `400 Bad Request` | UUID piano non valido o body non conforme |
+| `401 Unauthorized` | Bearer token assente o non valido |
+| `403 Forbidden` | `X-Admin-User-Id` mancante o utente non admin |
+| `500 Internal Server Error` | Errore Supabase |
+
+#### Esempio curl
+
+```bash
+curl -X PUT "https://chat.mavida.com/wp-draft-generator/v1/admin/plans/uuid-basic/tools" \
+  -H "Authorization: Bearer <API_AUTH_TOKEN>" \
+  -H "X-Admin-User-Id: <uuid-admin>" \
+  -H "Content-Type: application/json" \
+  -d '{"tool_ids": ["uuid-wandly"]}'
+```
+
+---
+
+## Admin — Statistiche
+
+Endpoint per le statistiche aggregate della dashboard admin. Tutti gli endpoint sono in sola lettura.
+
+---
+
+### GET /admin/stats/overview
+
+KPI globali e per periodo (ultimi 7, 30, 60 giorni).
+
+**URL:** `GET /wp-draft-generator/v1/admin/stats/overview`
+
+#### Risposta 200 OK
+
+```json
+{
+  "users_total":     150,
+  "sessions_total":  1240,
+  "messages_total":  8900,
+  "carousels_total": 430,
+  "last_7_days": {
+    "users":     5,
+    "sessions":  80,
+    "messages":  620,
+    "carousels": 30
+  },
+  "last_30_days": {
+    "users":     22,
+    "sessions":  340,
+    "messages":  2500,
+    "carousels": 110
+  },
+  "last_60_days": {
+    "users":     45,
+    "sessions":  700,
+    "messages":  5100,
+    "carousels": 210
+  }
+}
+```
+
+#### Esempio curl
+
+```bash
+curl "https://chat.mavida.com/wp-draft-generator/v1/admin/stats/overview" \
+  -H "Authorization: Bearer <API_AUTH_TOKEN>" \
+  -H "X-Admin-User-Id: <uuid-admin>"
+```
+
+---
+
+### GET /admin/stats/timeseries
+
+Serie temporale giornaliera per grafici andamento.
+
+**URL:** `GET /wp-draft-generator/v1/admin/stats/timeseries`
+
+#### Query params
+
+| Parametro | Valori | Default | Descrizione |
+|-----------|--------|---------|-------------|
+| `metric` | `sessions` \| `messages` \| `users` \| `carousels` | `sessions` | Metrica da tracciare |
+| `days` | intero (max 90) | `30` | Numero di giorni passati |
+
+#### Risposta 200 OK
+
+```json
+[
+  {"day": "2026-05-01", "count": 12},
+  {"day": "2026-05-02", "count": 18}
+]
+```
+
+#### Esempio curl
+
+```bash
+curl "https://chat.mavida.com/wp-draft-generator/v1/admin/stats/timeseries?metric=messages&days=14" \
+  -H "Authorization: Bearer <API_AUTH_TOKEN>" \
+  -H "X-Admin-User-Id: <uuid-admin>"
+```
+
+---
+
+### GET /admin/stats/top-users
+
+Utenti più attivi per messaggi o sessioni.
+
+**URL:** `GET /wp-draft-generator/v1/admin/stats/top-users`
+
+#### Query params
+
+| Parametro | Valori | Default | Descrizione |
+|-----------|--------|---------|-------------|
+| `limit` | intero (max 50) | `10` | Numero massimo di utenti restituiti |
+| `order_by` | `messages` \| `sessions` | `messages` | Criterio di ordinamento |
+
+#### Risposta 200 OK
+
+```json
+[
+  {"user_id": "uuid", "email": "mario@esempio.com", "username": "mario_rossi", "count": 430}
+]
+```
+
+---
+
+### GET /admin/stats/recent-logins
+
+Ultimi accessi completati (OTP verificato con successo).
+
+**URL:** `GET /wp-draft-generator/v1/admin/stats/recent-logins`
+
+#### Query params
+
+| Parametro | Valori | Default |
+|-----------|--------|---------|
+| `limit` | intero (max 50) | `10` |
+
+#### Risposta 200 OK
+
+```json
+[
+  {"user_id": "uuid", "email": "mario@esempio.com", "username": "mario_rossi", "logged_at": "2026-05-21T14:32:00Z"}
+]
+```
+
+---
+
+### GET /admin/stats/recent-signups
+
+Ultime registrazioni utente.
+
+**URL:** `GET /wp-draft-generator/v1/admin/stats/recent-signups`
+
+#### Query params
+
+| Parametro | Valori | Default |
+|-----------|--------|---------|
+| `limit` | intero (max 50) | `10` |
+
+#### Risposta 200 OK
+
+```json
+[
+  {"user_id": "uuid", "email": "nuovo@esempio.com", "username": "nuovo_utente", "created_at": "2026-05-20T09:15:00Z"}
+]
+```
+
+> Tutti gli endpoint `/admin/stats/*` restituiscono `401` se manca il Bearer token e `403` se `X-Admin-User-Id` è assente o non admin.
 
 ---
 
@@ -3110,4 +4079,472 @@ curl -X DELETE "https://chat.mavida.com/wp-draft-generator/v1/carousel/550e8400.
 | `MAX_CAROUSEL_PAYLOAD_MB` | `15` | Dimensione massima payload JSON (MB) |
 | `MAX_THUMBNAIL_KB` | `200` | Dimensione max thumbnail decodificata (KB) |
 | `RATE_LIMIT_CAROUSEL_PER_MIN` | `30` | Rate limit per token, condiviso fra tutti gli endpoint `/carousel/*` |
+
+---
+
+## Image Generation
+
+Endpoint per la generazione on-demand di immagini tramite Gemini Image Model. Le immagini vengono salvate su disco, il record è persistito in `generations_images` e l'URL è servito da un endpoint dedicato all'interno del namespace v1.
+
+> Documentazione dettagliata: `docs/images-endpoints.md`
+
+---
+
+### POST /wp-draft-generator/v1/images
+
+Genera un'immagine a partire da un prompt testuale usando `GEMINI_IMAGE_MODEL`. Richiede autenticazione Bearer token.
+
+#### Headers
+
+```
+Authorization: Bearer <API_AUTH_TOKEN>
+Content-Type: application/json
+```
+
+#### Request Body
+
+```json
+{
+  "user_id":      "UUID utente (obbligatorio)",
+  "prompt":       "Testo del prompt (obbligatorio, max 4000 caratteri)",
+  "session_id":   "UUID sessione chat da associare (opzionale)",
+  "aspect_ratio": "es. '16:9', '1:1', '4:3' (opzionale)",
+  "width":        768,
+  "height":       432
+}
+```
+
+`aspect_ratio`, `width` e `height` sono iniettati come direttive testuali nel prompt inviato a Gemini (l'SDK non accetta parametri dimensionali espliciti per il modello immagine).
+
+#### Response 200
+
+```json
+{
+  "image_url":    "https://api.example.com/wp-draft-generator/v1/images/550e8400-e29b-41d4-a716-446655440000",
+  "filename":     "550e8400-e29b-41d4-a716-446655440000.png",
+  "prompt":       "Un gatto astronauta su Marte",
+  "model":        "gemini-2.5-flash-image",
+  "session_id":   null,
+  "width":        1024,
+  "height":       576,
+  "aspect_ratio": "16:9",
+  "created_at":   "2026-05-21T10:30:00+00:00"
+}
+```
+
+#### Errors
+
+| Codice | Causa |
+|--------|-------|
+| `400 Bad Request` | Validazione payload fallita (prompt vuoto, UUID non valido, ecc.) |
+| `401 Unauthorized` | Bearer token assente o non valido |
+| `429 Too Many Requests` | Rate limit IP superato (`RATE_LIMIT_IMAGES_PER_MIN`) |
+| `500 Internal Server Error` | Configurazione mancante o errore Gemini |
+| `502 Bad Gateway` | Gemini non ha restituito un'immagine (`ImageGenerationError`) |
+
+#### Esempio curl
+
+```bash
+curl -X POST "https://api.example.com/wp-draft-generator/v1/images" \
+  -H "Authorization: Bearer <API_AUTH_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "user_id": "660e8400-e29b-41d4-a716-446655440000",
+    "prompt": "Un gatto astronauta su Marte, stile cinematografico",
+    "aspect_ratio": "16:9"
+  }'
+```
+
+---
+
+### GET /wp-draft-generator/v1/images
+
+Restituisce la lista delle immagini di un utente, in ordine cronologico inverso. Filtro opzionale per sessione. Richiede autenticazione Bearer token.
+
+#### Query Parameters
+
+| Parametro | Tipo | Obbligatorio | Descrizione |
+|-----------|------|--------------|-------------|
+| `user_id` | UUID | sì | Filtra per utente |
+| `session_id` | UUID | no | Filtra per sessione chat (AND con user_id) |
+| `limit` | int | no | Numero max di risultati (default 20, max 100) |
+
+#### Response 200
+
+```json
+{
+  "images": [
+    {
+      "id": 42,
+      "prompt": "Un gatto astronauta...",
+      "image_filename": "550e8400-....png",
+      "image_url": "https://api.example.com/wp-draft-generator/v1/images/550e8400-...",
+      "model": "gemini-2.5-flash-image",
+      "width": 1024,
+      "height": 576,
+      "aspect_ratio": "16:9",
+      "file_size_bytes": 204800,
+      "session_id": null,
+      "created_at": "2026-05-21T10:30:00+00:00",
+      "expires_at": "2026-06-20T10:30:00+00:00",
+      "alt_text": "Tramonto sull'Adriatico",
+      "custom_filename": "tramonto-adriatico.png"
+    }
+  ],
+  "count": 1
+}
+```
+
+> **v0.54.0** — `alt_text` e `custom_filename` sono `null` se non ancora impostati. Vengono popolati automaticamente quando l'immagine è caricata su WordPress via `POST /send` o `POST /media` con `image_title`/`image_filename`, oppure esplicitamente tramite `PATCH /images/{image_id}`.
+```
+
+#### Errors
+
+| Codice | Causa |
+|--------|-------|
+| `400 Bad Request` | `user_id` o `session_id` mancante/non UUID valido |
+| `401 Unauthorized` | Bearer token assente o non valido |
+
+#### Esempio curl
+
+```bash
+# Tutte le immagini di un utente
+curl "https://api.example.com/wp-draft-generator/v1/images?user_id=660e8400-..." \
+  -H "Authorization: Bearer <API_AUTH_TOKEN>"
+
+# Filtra per sessione
+curl "https://api.example.com/wp-draft-generator/v1/images?user_id=660e8400-...&session_id=770e8400-..." \
+  -H "Authorization: Bearer <API_AUTH_TOKEN>"
+```
+
+---
+
+### GET /wp-draft-generator/v1/images/{image_id}
+
+Serve il file immagine identificato dall'UUID del filename (senza estensione). **Nessuna autenticazione richiesta** — la sicurezza si basa sulla non-prevedibilità dell'UUID (pattern signed URL), il che consente l'uso diretto in `<img src>` nei browser.
+
+#### Path Parameters
+
+| Parametro | Tipo | Descrizione |
+|-----------|------|-------------|
+| `image_id` | UUID v4 | UUID del filename senza estensione (es. `550e8400-e29b-41d4-a716-446655440000`) |
+
+#### Response
+
+- **200**: file immagine (`image/png` o altro) con `Cache-Control: max-age=86400`
+- **400**: `image_id` non è un UUID v4 valido
+- **404**: immagine non trovata nel DB
+- **410 Gone**: immagine scaduta (`expires_at <= NOW()`)
+
+#### Errors
+
+| Codice | Causa |
+|--------|-------|
+| `400 Bad Request` | `image_id` non è un UUID v4 |
+| `404 Not Found` | Record non trovato in `generations_images` |
+| `410 Gone` | Immagine scaduta (record esiste, `expires_at` superato) |
+
+#### Esempio
+
+```html
+<!-- Uso diretto in HTML (nessun token richiesto) -->
+<img src="https://api.example.com/wp-draft-generator/v1/images/550e8400-e29b-41d4-a716-446655440000"
+     alt="Immagine generata">
+```
+
+```bash
+curl "https://api.example.com/wp-draft-generator/v1/images/550e8400-e29b-41d4-a716-446655440000" \
+  --output immagine.png
+```
+
+---
+
+### PATCH /wp-draft-generator/v1/images/{image_id}
+
+Aggiorna `alt_text` e/o `custom_filename` di un'immagine già generata. Richiede autenticazione Bearer token. Almeno uno dei due campi deve essere fornito.
+
+```
+PATCH /wp-draft-generator/v1/images/<image_id>
+Content-Type: application/json
+Authorization: Bearer <API_AUTH_TOKEN>
+```
+
+#### Path Parameters
+
+| Parametro | Tipo | Descrizione |
+|-----------|------|-------------|
+| `image_id` | UUID v4 | UUID dell'immagine (parte finale di `image_url`) |
+
+#### Body JSON
+
+| Campo | Tipo | Req | Descrizione |
+|-------|------|:---:|-------------|
+| `user_id` | UUID | **sì** | Utente proprietario dell'immagine |
+| `alt_text` | string | no* | Alt text / title del media su WordPress (max 200 caratteri) |
+| `custom_filename` | string | no* | Nome file personalizzato (es. `tramonto.png`). Estensioni: `.png/.jpg/.jpeg/.webp`, no path traversal |
+
+\* Almeno uno tra `alt_text` e `custom_filename` è obbligatorio.
+
+#### Response 200
+
+```json
+{
+  "image_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+  "alt_text": "Tramonto sull'Adriatico",
+  "custom_filename": "tramonto-adriatico.png",
+  "updated": true
+}
+```
+
+> I campi `alt_text` e `custom_filename` nella response rispecchiano i valori passati (non i valori precedenti). Per leggere lo stato completo dell'immagine usare `GET /images?user_id=...`.
+
+#### Errors
+
+| Codice | `error` | Causa |
+|--------|---------|-------|
+| `400 Bad Request` | `InvalidParameter` | `image_id` non UUID v4 |
+| `400 Bad Request` | `ValidationError` | Nessun campo fornito, `custom_filename` non valido |
+| `401 Unauthorized` | — | Token assente o non valido |
+| `403 Forbidden` | `Forbidden` | Immagine appartenente a un altro utente |
+| `404 Not Found` | `NotFound` | Immagine non trovata in `generations_images` |
+
+#### Esempio curl
+
+```bash
+curl -X PATCH "https://api.example.com/wp-draft-generator/v1/images/7c9e6679-7425-40de-944b-e07fc1f90ae7" \
+  -H "Authorization: Bearer <API_AUTH_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "user_id":         "550e8400-e29b-41d4-a716-446655440000",
+    "alt_text":        "Tramonto sull'\''Adriatico al tramonto",
+    "custom_filename": "tramonto-adriatico.png"
+  }'
+```
+
+---
+
+### Variabili d'ambiente images
+
+| Variabile | Default | Descrizione |
+|-----------|---------|-------------|
+| `IMAGE_STORAGE_DIR` | `./images` | Cartella su disco per il salvataggio dei file immagine |
+| `IMAGE_BASE_URL` | `""` (derivato da `request.host_url`) | Dominio base per costruire `image_url` nella risposta POST (utile dietro reverse proxy) |
+| `RATE_LIMIT_IMAGES_PER_MIN` | `5` | Max richieste per IP al minuto sull'endpoint `POST /images` |
+| `IMAGE_RETENTION_DAYS` | `30` | Giorni di retention (0 = nessuna scadenza); popola `expires_at` al momento della generazione |
+
+---
+
+## Uploads — Gestione file su Supabase Storage
+
+Endpoint per caricare, elencare e recuperare file di vario tipo. I file vengono salvati su **Supabase Storage** (bucket pubblico configurato in `MEDIA_STORAGE_BUCKET`). I record sono persistiti nella tabella `generations_uploads`.
+
+**Tipi MIME supportati:** `image/jpeg`, `image/png`, `image/gif`, `image/webp`, `application/pdf`, `text/plain`, `text/markdown`
+
+**Dimensione massima:** configurabile via `MAX_UPLOAD_MB` (default 20 MB)
+
+---
+
+> **Sicurezza nomi file**: il nome nel bucket è sempre generato dal backend con 24 caratteri alfanumerici casuali (CSPRNG via `secrets`). Il nome originale è conservato solo nel DB come metadato. Questo rende l'enumerazione dei file praticamente impossibile anche con bucket pubblico.
+
+### POST /uploads
+
+Carica un file su Supabase Storage.
+
+```
+POST /wp-draft-generator/v1/uploads
+Authorization: Bearer <API_AUTH_TOKEN>
+Content-Type: multipart/form-data
+```
+
+#### Request (form-data)
+
+| Campo | Tipo | Richiesto | Descrizione |
+|-------|------|-----------|-------------|
+| `file` | file | sì | File da caricare |
+| `user_id` | string (UUID) | sì | UUID utente proprietario |
+| `title` | string | no | Titolo display (max 255 caratteri) |
+| `description` | string | no | Descrizione/note (max 1000 caratteri) |
+| `is_public` | string | no | `"true"` o `"1"` per file pubblico (default: falso) |
+
+#### Response 201 Created
+
+```json
+{
+  "id": 42,
+  "original_filename": "documento.pdf",
+  "public_url": "https://<project>.supabase.co/storage/v1/object/public/media-uploads/<user_id>/<uuid>.pdf",
+  "mime_type": "application/pdf",
+  "file_size_bytes": 102400,
+  "title": "Contratto Q1",
+  "description": null,
+  "is_public": false,
+  "created_at": "2026-05-27T10:00:00+00:00"
+}
+```
+
+#### Risposte di errore
+
+| Codice | Cause |
+|--------|-------|
+| `400 Bad Request` | `user_id` mancante/non UUID, `title`/`description` troppo lunghi |
+| `413 Request Entity Too Large` | File supera `MAX_UPLOAD_MB` |
+| `415 Unsupported Media Type` | Tipo MIME non supportato |
+| `429 Too Many Requests` | Rate limit IP superato |
+| `500 Internal Server Error` | `MEDIA_STORAGE_BUCKET` non configurato, errore Storage o DB |
+
+#### Esempio curl
+
+```bash
+curl -X POST "https://chat.mavida.com/wp-draft-generator/v1/uploads" \
+  -H "Authorization: Bearer <API_AUTH_TOKEN>" \
+  -F "file=@/path/to/documento.pdf" \
+  -F "user_id=3fa85f64-5717-4562-b3fc-2c963f66afa6" \
+  -F "title=Contratto Q1"
+```
+
+---
+
+### GET /uploads
+
+Lista i file in base al contesto di accesso.
+
+| Scenario | Auth | Risultato |
+|----------|------|-----------|
+| Senza `user_id` | Non richiesta | Solo file pubblici (`is_public=true`) |
+| Con `user_id` | Obbligatoria | File dell'utente + file pubblici |
+
+```
+GET /wp-draft-generator/v1/uploads[?user_id=<uuid>][&limit=20][&type=pdf]
+Authorization: Bearer <API_AUTH_TOKEN>  (richiesto solo con user_id)
+```
+
+#### Query Parameters
+
+| Parametro | Tipo | Default | Descrizione |
+|-----------|------|---------|-------------|
+| `user_id` | UUID | opzionale | Se assente → solo file pubblici (no auth) |
+| `limit` | integer | `20` | Max risultati (max 100) |
+| `type` | string | — | Filtro tipo: `image` \| `pdf` \| `text` |
+
+#### Response 200 OK
+
+```json
+{
+  "uploads": [
+    {
+      "id": 42,
+      "user_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      "original_filename": "documento.pdf",
+      "storage_path": "3fa85f64-5717-4562-b3fc-2c963f66afa6/7c9e6679-7425-40de-944b-e07fc1f90ae7.pdf",
+      "public_url": "https://<project>.supabase.co/storage/v1/object/public/media-uploads/...",
+      "mime_type": "application/pdf",
+      "file_size_bytes": 102400,
+      "title": "Contratto Q1",
+      "description": null,
+      "created_at": "2026-05-27T10:00:00+00:00",
+      "expires_at": null
+    }
+  ],
+  "count": 1
+}
+```
+
+---
+
+### GET /uploads/{id}
+
+Restituisce i metadati e il `public_url` di un singolo file.
+
+| Scenario | Auth | Comportamento |
+|----------|------|--------------|
+| File `is_public=true` | Non richiesta | Restituisce record |
+| File `is_public=false` + `user_id` corretto | Obbligatoria | Restituisce record |
+| File privato senza `user_id` | — | 401 |
+| File privato con `user_id` errato | — | 404 (no information leakage) |
+
+```
+GET /wp-draft-generator/v1/uploads/<id>[?user_id=<uuid>]
+Authorization: Bearer <API_AUTH_TOKEN>  (richiesto solo per file privati)
+```
+
+#### Path Parameter
+
+| Parametro | Tipo | Descrizione |
+|-----------|------|-------------|
+| `id` | integer | ID del file (`generations_uploads.id`) |
+
+#### Query Parameter
+
+| Parametro | Tipo | Descrizione |
+|-----------|------|-------------|
+| `user_id` | UUID | UUID utente — richiesto per file privati, ignorato per pubblici |
+
+#### Response 200 OK
+
+Record completo (stesso schema di GET /uploads), include `is_public`.
+
+#### Risposte di errore
+
+| Codice | Causa |
+|--------|-------|
+| `400 Bad Request` | `user_id` fornito ma non UUID valido |
+| `404 Not Found` | File non trovato o non appartiene all'utente |
+
+---
+
+### PATCH /uploads/{id}
+
+Aggiorna `title` e/o `description` di un file caricato.
+
+```
+PATCH /wp-draft-generator/v1/uploads/<id>
+Authorization: Bearer <API_AUTH_TOKEN>
+Content-Type: application/json
+```
+
+#### Path Parameter
+
+| Parametro | Tipo | Descrizione |
+|-----------|------|-------------|
+| `id` | integer | ID del file |
+
+#### Body JSON
+
+| Campo | Tipo | Descrizione |
+|-------|------|-------------|
+| `user_id` | UUID | obbligatorio — verifica ownership |
+| `title` | string | Nuovo titolo (max 255 caratteri) |
+| `description` | string | Nuova descrizione (max 1000 caratteri) |
+
+> Almeno uno tra `title` e `description` deve essere presente.
+
+#### Response 200 OK
+
+```json
+{
+  "upload_id": 42,
+  "title": "Contratto Q1 aggiornato",
+  "description": "Versione revisionata",
+  "updated": true
+}
+```
+
+#### Esempio curl
+
+```bash
+curl -X PATCH "https://chat.mavida.com/wp-draft-generator/v1/uploads/42" \
+  -H "Authorization: Bearer <API_AUTH_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{"user_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6", "title": "Contratto Q1 aggiornato"}'
+```
+
+---
+
+### Variabili d'ambiente uploads
+
+| Variabile | Default | Descrizione |
+|-----------|---------|-------------|
+| `MEDIA_STORAGE_BUCKET` | — (obbligatorio) | Nome bucket Supabase Storage (deve essere pubblico) |
+| `RATE_LIMIT_UPLOADS_PER_MIN` | `10` | Max upload per IP al minuto su `POST /uploads` |
+| `MAX_UPLOAD_MB` | `20` | Dimensione massima file in MB |
 

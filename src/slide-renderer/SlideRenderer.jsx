@@ -54,7 +54,7 @@ export function SlideRenderer({ slide, theme, total, mode = 'preview', fontPrevi
       {bgImage && <BackgroundImageLayer bgImage={bgImage} theme={effectiveTheme} />}
       <div className="slide__content">
         {isBlank
-          ? <BlankSlide slide={slide} />
+          ? <BlankSlide slide={slide} theme={effectiveTheme} />
           : <TemplateComponent slide={slide} theme={effectiveTheme} total={total} mode={mode} />
         }
       </div>

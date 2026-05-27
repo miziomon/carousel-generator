@@ -4,6 +4,7 @@ import { EditorialStandardSlide } from './EditorialStandardSlide.jsx'
 import { EditorialDividerSlide }  from './EditorialDividerSlide.jsx'
 import { EditorialCtaSlide }      from './EditorialCtaSlide.jsx'
 import { EditorialQuoteSlide }    from './EditorialQuoteSlide.jsx'
+import { SwipeArrow }             from '../_shared/SwipeArrow.jsx'
 
 // Router del template: smista per slide.type e avvolge tutto nel container .editorial
 export function EditorialMark({ slide, theme, total, mode }) {
@@ -51,6 +52,13 @@ export function EditorialMark({ slide, theme, total, mode }) {
   return (
     <div className="editorial" style={containerStyle}>
       <SlideContent slide={slide} theme={theme} total={total} mode={mode} calib={calib} />
+      <SwipeArrow
+        slide={slide}
+        total={total}
+        theme={theme}
+        label="SCORRI →"
+        className="editorial__swipe-mini"
+      />
     </div>
   )
 }

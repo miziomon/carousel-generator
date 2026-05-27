@@ -45,6 +45,15 @@ function normalizeTheme(theme) {
     if (builtin) basePalette = builtin.colors
   }
 
+  // Merge footer preservando il campo swipe (presente solo nella versione >= 1.29)
+  const defaultSwipe = dt.footer.swipe ?? { enabled: false, scope: 'cover', position_y: 130, font_size: 14 }
+  const inputFooter  = theme.footer || {}
+  const mergedFooter = {
+    ...dt.footer,
+    ...inputFooter,
+    swipe: { ...defaultSwipe, ...(inputFooter.swipe || {}) },
+  }
+
   const normalized = {
     // format e template_id vengono preservati dall'input o cadono al default.
     // Senza questa riga, migrateCarousel li sovrascriveva sempre con 'square'.
@@ -53,7 +62,7 @@ function normalizeTheme(theme) {
     palette_id:  theme.palette_id  ?? dt.palette_id,
     palette:     { ...basePalette, ...(theme.palette || {}) },
     header:      { ...dt.header,   ...(theme.header  || {}) },
-    footer:      { ...dt.footer,   ...(theme.footer  || {}) },
+    footer:      mergedFooter,
     fonts:       { ...dt.fonts,    ...(theme.fonts   || {}) },
   }
   // Propaga background_image globale se presente (null = forzato assente, object = immagine)
@@ -101,7 +110,8 @@ function normalizeSlide(slide, index) {
     return {
       ...base,
       size: 'cover',
-      show_swipe_arrow: slide.show_swipe_arrow ?? true,
+      // show_swipe_arrow era per-slide in versioni precedenti alla 1.29.
+      // Viene eliminato qui; la migrazione a theme.footer.swipe avviene in normalizeMinimalCarousel.
     }
   }
 
@@ -154,11 +164,28 @@ export function normalizeMinimalCarousel(raw) {
   if (!Array.isArray(raw.slides)) return raw
 
   try {
+    const normalizedTheme  = normalizeTheme(raw.theme)
+    const normalizedSlides = raw.slides.map((s, i) => normalizeSlide(s, i))
+
+    // Migrazione da show_swipe_arrow per-slide (pre-1.29) a theme.footer.swipe.
+    // Se almeno una cover aveva show_swipe_arrow: true e il campo swipe non era
+    // già configurato dall'utente, attiva la freccia a livello tema.
+    const hadSwipeArrow = raw.slides.some(
+      (s) => s && s.type === 'cover' && s.show_swipe_arrow === true
+    )
+    if (hadSwipeArrow && !normalizedTheme.footer.swipe?.enabled) {
+      normalizedTheme.footer.swipe = {
+        ...normalizedTheme.footer.swipe,
+        enabled: true,
+        scope:   'cover',
+      }
+    }
+
     const out = {
       ...raw,
-      theme:  normalizeTheme(raw.theme),
+      theme:  normalizedTheme,
       title:  typeof raw.title === 'string' ? raw.title : (defaultCarousel.title || ''),
-      slides: raw.slides.map((s, i) => normalizeSlide(s, i)),
+      slides: normalizedSlides,
     }
     return out
   } catch {

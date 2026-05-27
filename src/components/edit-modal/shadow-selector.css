@@ -1,0 +1,49 @@
+.shadow-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.shadow-selector__row {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+/* Pulsante preset: quadrato con "Aa" animato dall'ombra del preset */
+.shadow-selector__preset {
+  width: 40px;
+  height: 40px;
+  border-radius: 6px;
+  border: 2px solid transparent;
+  background: #1a1e2a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+  padding: 0;
+}
+
+.shadow-selector__preset:hover {
+  border-color: rgba(255, 255, 255, 0.25);
+  background: #23293a;
+}
+
+.shadow-selector__preset--active {
+  border-color: #00ffaa;
+  background: rgba(0, 255, 170, 0.08);
+}
+
+.shadow-selector__preview-text {
+  font-size: 15px;
+  font-weight: 700;
+  color: #e8e8e8;
+  line-height: 1;
+  user-select: none;
+  pointer-events: none;
+}
+
+.shadow-selector__color {
+  padding-top: 4px;
+}

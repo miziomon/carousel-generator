@@ -28,6 +28,12 @@ export const defaultCarousel = {
       name: 'Maurizio Pelizzone',
       show_separator_line: true,
       show_meta_number: true,
+      swipe: {
+        enabled:    true,
+        scope:      'cover',
+        position_y: 130,
+        font_size:  14,
+      },
     },
     fonts: {
       primary: 'Archivo Black',
@@ -43,7 +49,6 @@ export const defaultCarousel = {
       font: 'primary',
       size: 'cover',
       lines: ['Il titolo della puntata'],
-      show_swipe_arrow: true,
       _note_autore: 'Slide di copertina — modifica il testo sopra',
     },
     {

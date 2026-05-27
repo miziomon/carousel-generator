@@ -74,6 +74,12 @@ const ThemeSchema = z.object({
     name:                 z.string(),
     show_separator_line:  z.boolean(),
     show_meta_number:     z.boolean(),
+    swipe: z.object({
+      enabled:    z.boolean().default(false),
+      scope:      z.enum(['all', 'all-but-last', 'cover']).default('cover'),
+      position_y: z.number().min(0).max(400).default(130),
+      font_size:  z.number().min(8).max(48).default(14),
+    }).default({ enabled: false, scope: 'cover', position_y: 130, font_size: 14 }),
   }),
   fonts: z.object({
     primary:   z.enum(FONT_IDS),
@@ -107,6 +113,13 @@ const SlideBaseFields = {
   font_id_override:    z.enum(FONT_IDS).optional(),
   font_size_override:  z.number().min(8).max(120).optional(),
   line_height_override: z.number().min(0.6).max(2.5).optional(),
+  // Colore corpo testo (hex/rgba). assente = eredita --slide-fg.
+  color_override:      z.string().optional(),
+  // Ombreggiatura testo. assente = nessuna ombra.
+  text_shadow: z.object({
+    preset: z.enum(['none', 'soft', 'soft-lg', 'drop', 'hard-thin', 'hard-bold']).default('none'),
+    color:  z.string().default('#000000'),
+  }).optional(),
   _note_autore:     z.string().optional(),
   // undefined = eredita da theme.background_image; null = forza nessuno sfondo; object = override.
   // data può essere assente: la slide usa allora il data del tema (evita duplicazione base64).
@@ -120,10 +133,9 @@ const SlideBaseFields = {
 
 const CoverSlideSchema = z.object({
   ...SlideBaseFields,
-  type:             z.literal('cover'),
-  size:             z.literal('cover'),
-  lines:            z.array(z.string()),
-  show_swipe_arrow: z.boolean().optional(),
+  type:  z.literal('cover'),
+  size:  z.literal('cover'),
+  lines: z.array(z.string()),
 })
 
 const StandardSlideSchema = z.object({

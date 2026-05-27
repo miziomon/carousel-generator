@@ -1,6 +1,6 @@
 {
   "name": "carosello-builder",
-  "version": "1.28.0",
+  "version": "1.29.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -42,6 +42,7 @@
     "eslint-plugin-react-hooks": "^5.2.0",
     "globals": "^16.1.0",
     "jsdom": "^26.1.0",
+    "playwright": "^1.60.0",
     "postcss": "^8.5.3",
     "prettier": "^3.5.3",
     "tailwindcss": "^3.4.17",

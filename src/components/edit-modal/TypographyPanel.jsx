@@ -1,5 +1,7 @@
 import { FONTS } from '../../lib/fonts/registry.js'
 import { RadioGroup } from './FieldGroup.jsx'
+import { ColorPicker } from '../theme-tab/ColorPicker.jsx'
+import { ShadowSelector } from './ShadowSelector.jsx'
 import './typography-panel.css'
 
 const FONT_OPTIONS = [
@@ -13,8 +15,8 @@ const MAX_SIZE = 120
 
 /**
  * Pannello tipografia per-slide nell'EditModal.
- * Permette di scegliere slot, font specifico e dimensione,
- * sovrascrivendo le impostazioni globali del tema per questa sola slide.
+ * Permette di scegliere slot, font specifico, dimensione, interlinea,
+ * colore body e ombreggiatura, sovrascrivendo le impostazioni globali del tema.
  */
 export function TypographyPanel({ draft, theme, set }) {
   const sizes = theme.fonts?.sizes ?? { primary: 68, secondary: 68, mono: 18 }
@@ -72,6 +74,8 @@ export function TypographyPanel({ draft, theme, set }) {
       set('line_height_override', Math.round(clamped * 100) / 100)
     }
   }
+
+  const hasColorOverride = !!draft.color_override
 
   return (
     <div className="typography-panel">
@@ -191,6 +195,46 @@ export function TypographyPanel({ draft, theme, set }) {
             Dal tema: {globalSize}px (slot {activeSlot})
           </p>
         )}
+      </div>
+
+      {/* Colore body (override) */}
+      <div className="typography-panel__group">
+        <label className="typography-panel__label">
+          Colore testo
+          <span className="typography-panel__badge">override</span>
+        </label>
+        <div className="typography-panel__size-toggle">
+          <label className="typography-panel__check-label">
+            <input
+              type="checkbox"
+              checked={hasColorOverride}
+              onChange={(e) => {
+                if (!e.target.checked) set('color_override', undefined)
+                else set('color_override', '#e8e8e8')
+              }}
+            />
+            Personalizza colore body
+          </label>
+        </div>
+        {hasColorOverride ? (
+          <ColorPicker
+            value={draft.color_override}
+            onChange={(v) => set('color_override', v)}
+          />
+        ) : (
+          <p className="typography-panel__inherited">
+            Dal tema: --slide-fg (palette)
+          </p>
+        )}
+      </div>
+
+      {/* Ombreggiatura testo */}
+      <div className="typography-panel__group">
+        <label className="typography-panel__label">Ombreggiatura testo</label>
+        <ShadowSelector
+          value={draft.text_shadow}
+          onChange={(v) => set('text_shadow', v)}
+        />
       </div>
     </div>
   )

@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.29.0] — 2026-05-27
+
+### Added
+- **Freccia scorri globale** (sidebar → sezione Footer): il toggle "Mostra freccia scorri" è stato spostato da opzione per-slide della cover a impostazione globale del tema. Nuovi controlli: select "Mostra su" (Solo cover / Tutte tranne l'ultima / Tutte le slide), slider posizione Y (0–400 px), slider dimensione font (8–48 px). Migrazione automatica dei JSON esistenti con `show_swipe_arrow: true`
+- **Colore testo per-slide** (EditModal → tab Tipografia): checkbox "Personalizza colore body" + `ColorPicker` che sovrascrive `--slide-fg` solo sul testo principale (header, footer e kicker restano sulla palette del tema)
+- **Ombreggiatura testo per-slide** (EditModal → tab Tipografia): selettore a 6 preset visivi ("Aa") — Nessuna, Soft, Soft ampia, Drop, Hard sottile, Hard marcata — con color picker dedicato per il colore dell'ombra. Rimuovere con preset "Nessuna"
+- **Tipografia funzionante nella slide Blank**: font, dimensione, interlinea, colore body e ombra ora vengono applicati correttamente alla didascalia della slide blank (prima erano ignorati)
+
+### Changed
+- **Helper condivisi** `src/slide-renderer/templates/_shared/`: estratta la logica duplicata presente in tutti i 10 componenti slide (`bodyFont.js`, `bodyStyle.js`, `textShadowPresets.js`, `SwipeArrow.jsx`). I nuovi template potranno riusare questi helper senza duplicare codice
+- **`BlankSlide`**: riceve ora anche `theme` da `SlideRenderer` e usa `resolveSlideFont` + `buildBodyStyle` per applicare tutti gli override per-slide
+- **Schema**: `theme.footer.swipe` (oggetto con `enabled`, `scope`, `position_y`, `font_size`) sostituisce il campo `show_swipe_arrow` per-slide; `SlideBaseFields` aggiunge `color_override` (stringa hex/rgba, opzionale) e `text_shadow` (oggetto `{ preset, color }`, opzionale)
+
+### Removed
+- Campo `show_swipe_arrow` dalle slide di tipo `cover` (migrato automaticamente a `theme.footer.swipe`)
+
 ## [1.28.0] — 2026-05-27
 
 ### Added

@@ -99,6 +99,8 @@
   line-height: var(--bold-body-line-height);
   text-transform: var(--font-text-transform, none);
   font-variation-settings: var(--font-variation-settings, normal);
+  color: var(--slide-body-color, var(--slide-fg));
+  text-shadow: var(--slide-body-text-shadow, none);
   margin-top: auto;
   margin-bottom: auto;
 }

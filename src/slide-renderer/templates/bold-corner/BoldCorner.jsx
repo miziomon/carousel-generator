@@ -4,6 +4,7 @@ import { BoldStandardSlide } from './BoldStandardSlide.jsx'
 import { BoldDividerSlide }  from './BoldDividerSlide.jsx'
 import { BoldCtaSlide }      from './BoldCtaSlide.jsx'
 import { BoldQuoteSlide }    from './BoldQuoteSlide.jsx'
+import { SwipeArrow }        from '../_shared/SwipeArrow.jsx'
 
 export function BoldCorner({ slide, theme, total, mode }) {
   const calib = BOLD_CALIBRATIONS[theme?.format] ?? BOLD_CALIBRATIONS.square
@@ -51,6 +52,13 @@ export function BoldCorner({ slide, theme, total, mode }) {
   return (
     <div className="bold" style={containerStyle}>
       <SlideContent slide={slide} theme={theme} total={total} mode={mode} calib={calib} />
+      <SwipeArrow
+        slide={slide}
+        total={total}
+        theme={theme}
+        label="→ SWIPE"
+        className="bold__swipe-mini"
+      />
     </div>
   )
 }

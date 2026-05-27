@@ -8,9 +8,15 @@
 }
 
 .blank-slide__caption {
-  color: var(--slide-fg);
-  font-size: 72px;
-  line-height: 1.15;
+  font-family: var(--font-family, inherit);
+  font-weight: var(--font-weight, inherit);
+  letter-spacing: var(--font-letter-spacing, normal);
+  text-transform: var(--font-text-transform, none);
+  font-variation-settings: var(--font-variation-settings, normal);
+  font-size: var(--blank-body-size, 72px);
+  line-height: var(--blank-body-line-height, 1.15);
+  color: var(--slide-body-color, var(--slide-fg));
+  text-shadow: var(--slide-body-text-shadow, none);
   text-align: center;
   max-width: 900px;
   margin: 0;

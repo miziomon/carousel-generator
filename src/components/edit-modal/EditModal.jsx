@@ -119,7 +119,6 @@ function migrateToType(current, newType) {
     if (updated.source === undefined) updated.source = current.source ?? null
     delete updated.divider_number
     delete updated.divider_label
-    delete updated.show_swipe_arrow
   } else if (newType === 'cta') {
     updated.size = null
     if (current.type === 'blank') {
@@ -152,7 +151,6 @@ function migrateToType(current, newType) {
     delete updated.divider_number
     delete updated.divider_label
     delete updated.size
-    delete updated.show_swipe_arrow
     delete updated.author
     delete updated.source
   }
@@ -306,17 +304,6 @@ export function EditModal({ slide, theme, total, carousel, onSave, onCancel, use
                     value={draft.size}
                     onChange={(v) => set('size', v)}
                     options={SIZE_OPTIONS_STANDARD}
-                  />
-                </FieldGroup>
-              )}
-
-              {/* Campi cover */}
-              {isCover && (
-                <FieldGroup label="Freccia scorri">
-                  <Toggle
-                    checked={!!draft.show_swipe_arrow}
-                    onChange={(v) => set('show_swipe_arrow', v)}
-                    label='Mostra "SCORRI →"'
                   />
                 </FieldGroup>
               )}
