@@ -1,4 +1,4 @@
-import { useReducer, useCallback } from 'react'
+import { useReducer, useCallback, useEffect } from 'react'
 import { loadSession, saveSession, clearSession } from '../lib/auth/storage.js'
 import { getTier } from '../lib/auth/tier.js'
 
@@ -8,11 +8,24 @@ const initialState = {
   authStep: 'email',
   pendingEmail: '',
   isAuthLoading: false,
+  expiredLinkMessage: null,
 }
 
 function buildInitialState() {
   const session = loadSession()
   if (!session) return initialState
+
+  // Se la sessione agent-link è scaduta, non la ripristiniamo
+  if (session.authMethod === 'agent-link' && session.sessionExpiresAt) {
+    if (new Date(session.sessionExpiresAt) <= new Date()) {
+      clearSession()
+      return {
+        ...initialState,
+        expiredLinkMessage: 'Il link di accesso è scaduto. Richiedi un nuovo link all\'amministratore.',
+      }
+    }
+  }
+
   return { ...initialState, user: session, isLoggedIn: true }
 }
 
@@ -32,6 +45,13 @@ function authReducer(state, action) {
       saveSession(user)
       return { ...state, user }
     }
+
+    case 'LINK_EXPIRED':
+      clearSession()
+      return {
+        ...initialState,
+        expiredLinkMessage: 'Il link di accesso è scaduto. Richiedi un nuovo link all\'amministratore.',
+      }
 
     case 'LOGOUT':
       clearSession()
@@ -75,6 +95,25 @@ export function useAuth() {
     dispatch({ type: 'SET_AUTH_LOADING', loading })
   }, [])
 
+  const expireLink = useCallback(() => {
+    dispatch({ type: 'LINK_EXPIRED' })
+  }, [])
+
+  // Timer di scadenza automatica per sessioni agent-link
+  useEffect(() => {
+    const user = state.user
+    if (!user || user.authMethod !== 'agent-link' || !user.sessionExpiresAt) return
+
+    const msLeft = new Date(user.sessionExpiresAt).getTime() - Date.now()
+    if (msLeft <= 0) {
+      expireLink()
+      return
+    }
+
+    const timer = setTimeout(expireLink, msLeft)
+    return () => clearTimeout(timer)
+  }, [state.user, expireLink])
+
   const tier = getTier(state.user, state.isLoggedIn)
 
   return {
@@ -86,5 +125,6 @@ export function useAuth() {
     logout,
     resetToEmailStep,
     setAuthLoading,
+    expireLink,
   }
 }

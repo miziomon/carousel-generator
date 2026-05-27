@@ -176,3 +176,24 @@
 .auth__hint strong {
   color: rgba(232, 232, 232, 0.7);
 }
+
+/* ── Stato loading magic link ─────────────────────────────────────────────── */
+
+.auth__card--loading {
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+/* ── Banner errore magic link ─────────────────────────────────────────────── */
+
+.auth__link-error {
+  background: rgba(255, 80, 80, 0.1);
+  border: 1px solid rgba(255, 80, 80, 0.3);
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 0.85rem;
+  color: rgba(255, 140, 140, 0.95);
+  line-height: 1.5;
+  text-align: center;
+}

@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.27.0] — 2026-05-27
+
+### Added
+- **Magic link (Agent Session)**: login passwordless tramite link temporaneo generato dall'admin. Se l'URL contiene `#access_token=<token>`, l'app scambia automaticamente il token con il backend (`POST /access-links/exchange`), recupera il profilo utente e autentica la sessione senza OTP. Il flusso OTP esistente rimane invariato come alternativa
+- **Scadenza automatica sessione agent-link**: se la sessione agent-link è scaduta al momento del caricamento o durante l'uso, l'utente viene disconnesso automaticamente con un messaggio esplicativo
+- **Banner errore link**: se l'exchange fallisce (link non valido, revocato, servizio non disponibile), viene mostrato un banner rosso nella schermata di login con il messaggio d'errore specifico
+- **`src/lib/auth/agentSession.js`**: modulo dedicato con `exchangeAccessLink()`, `readAccessTokenFromUrl()` (priorità hash → query) e `stripAccessTokenFromUrl()` (rimozione sicura via `history.replaceState`)
+- **`src/hooks/useMagicLinkLogin.js`**: hook di bootstrap che orchestra il flusso di exchange all'avvio dell'app
+
+### Changed
+- **`useAuth`**: aggiunto stato `expiredLinkMessage`, azione `LINK_EXPIRED` e timer di scadenza automatica per sessioni agent-link
+- **`LoginScreen`**: accetta prop `linkError` e legge `auth.expiredLinkMessage` per mostrare il banner d'errore
+- **`App`**: mostra uno spinner "Accesso in corso…" durante l'exchange prima di decidere fra login e app autenticata
+
 ## [1.26.0] — 2026-05-20
 
 ### Fixed

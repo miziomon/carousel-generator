@@ -1,4 +1,5 @@
 import { useState, lazy, Suspense, useEffect } from 'react'
+import { useMagicLinkLogin } from './hooks/useMagicLinkLogin.js'
 import pkg from '../package.json'
 import { useAppTheme } from './hooks/useAppTheme.js'
 import { useCarouselStore } from './hooks/useCarouselStore.js'
@@ -36,15 +37,27 @@ import { ToastContainer, toast } from './components/ui/Toast.jsx'
 export default function App() {
   const auth = useAuth()
   const appTheme = useAppTheme()
+  const { isExchanging, linkError } = useMagicLinkLogin(auth)
 
   useEffect(() => {
     document.title = `SLIDE-ORAMA — v${pkg.version}`
   }, [])
 
+  if (isExchanging) {
+    return (
+      <div className="auth">
+        <div className="auth__card auth__card--loading">
+          <span className="auth__logo">Carousel Generator</span>
+          <p className="auth__tagline">Accesso in corso…</p>
+        </div>
+      </div>
+    )
+  }
+
   if (!auth.isLoggedIn) {
     return (
       <>
-        <LoginScreen auth={auth} />
+        <LoginScreen auth={auth} linkError={linkError} />
         <ToastContainer />
       </>
     )

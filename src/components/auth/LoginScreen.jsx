@@ -3,7 +3,9 @@ import { EmailStep } from './EmailStep.jsx'
 import { OtpStep } from './OtpStep.jsx'
 import pkg from '../../../package.json'
 
-export function LoginScreen({ auth }) {
+export function LoginScreen({ auth, linkError }) {
+  const errorMessage = linkError || auth.expiredLinkMessage
+
   return (
     <div className="auth">
       <div className="auth__card">
@@ -12,6 +14,12 @@ export function LoginScreen({ auth }) {
           <span className="auth__version">v{pkg.version}</span>
           <span className="auth__tagline">Accedi per creare e modificare caroselli</span>
         </div>
+
+        {errorMessage && (
+          <div className="auth__link-error" role="alert">
+            {errorMessage}
+          </div>
+        )}
 
         {auth.authStep === 'email' ? (
           <EmailStep auth={auth} />
