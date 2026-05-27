@@ -38,3 +38,48 @@ export async function processImageFile(file) {
 
   return canvas.toDataURL('image/jpeg', QUALITY)
 }
+
+/**
+ * Stessa pipeline di processImageFile (resize + compress JPEG),
+ * ma restituisce un File pronto per l'upload multipart invece del data URL.
+ *
+ * @param {File} file
+ * @returns {Promise<File>} File JPEG ottimizzato
+ */
+export async function processImageToBlob(file) {
+  if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+    throw new Error('Formato non supportato. Usa JPG, PNG o WebP.')
+  }
+  if (file.size > MAX_FILE_SIZE) {
+    throw new Error('File troppo grande. Massimo 10MB.')
+  }
+
+  const bitmap = await createImageBitmap(file)
+  const { width: srcW, height: srcH } = bitmap
+
+  let targetW = srcW
+  let targetH = srcH
+  if (Math.max(srcW, srcH) > MAX_DIMENSION) {
+    const ratio = MAX_DIMENSION / Math.max(srcW, srcH)
+    targetW = Math.round(srcW * ratio)
+    targetH = Math.round(srcH * ratio)
+  }
+
+  const canvas = document.createElement('canvas')
+  canvas.width = targetW
+  canvas.height = targetH
+  const ctx = canvas.getContext('2d')
+  ctx.drawImage(bitmap, 0, 0, targetW, targetH)
+  bitmap.close()
+
+  return new Promise((resolve, reject) => {
+    canvas.toBlob(
+      (blob) => {
+        if (!blob) { reject(new Error('Conversione immagine fallita.')); return }
+        resolve(new File([blob], file.name.replace(/\.[^.]+$/, '.jpg'), { type: 'image/jpeg' }))
+      },
+      'image/jpeg',
+      QUALITY,
+    )
+  })
+}

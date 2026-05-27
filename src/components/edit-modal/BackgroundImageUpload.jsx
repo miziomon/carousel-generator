@@ -5,7 +5,7 @@ import { processImageFile } from '../../lib/images/processImage.js'
  * Area di upload (stato "nessuna immagine"). Supporta click + drag & drop.
  * Chiama onUpload(dataUrl) con la data URL dell'immagine processata.
  */
-export function BackgroundImageUpload({ onUpload }) {
+export function BackgroundImageUpload({ onUpload, onBrowseLibrary }) {
   const inputRef = useRef(null)
   const [dragOver, setDragOver] = useState(false)
   const [error, setError] = useState(null)
@@ -64,6 +64,15 @@ export function BackgroundImageUpload({ onUpload }) {
         )}
       </div>
       {error && <p className="bg-image-upload__error">{error}</p>}
+      {onBrowseLibrary && (
+        <button
+          type="button"
+          className="bg-image-upload__library-btn"
+          onClick={onBrowseLibrary}
+        >
+          Sfoglia libreria
+        </button>
+      )}
       <input
         ref={inputRef}
         type="file"

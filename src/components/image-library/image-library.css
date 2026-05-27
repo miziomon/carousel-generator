@@ -1,0 +1,258 @@
+/* ── Image Library Panel ──────────────────────────────────────────────────── */
+
+.img-library {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  gap: 12px;
+}
+
+.img-library__toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.img-library__toolbar-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.img-library__search {
+  flex: 1;
+  background: rgba(var(--app-fg-rgb), 0.06);
+  border: 1px solid rgba(var(--app-fg-rgb), 0.12);
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 12px;
+  color: var(--app-fg);
+  outline: none;
+  transition: border-color 0.15s;
+  font-family: inherit;
+  min-width: 0;
+}
+
+.img-library__search::placeholder {
+  color: rgba(var(--app-fg-rgb), 0.35);
+}
+
+.img-library__search:focus {
+  border-color: rgba(var(--app-accent-rgb), 0.5);
+}
+
+.img-library__filters {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.img-library__filter-btn {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-family: 'JetBrains Mono', monospace;
+  border: 1px solid rgba(var(--app-fg-rgb), 0.15);
+  background: transparent;
+  color: rgba(var(--app-fg-rgb), 0.55);
+  cursor: pointer;
+  transition: all 0.12s;
+  white-space: nowrap;
+}
+
+.img-library__filter-btn:hover {
+  border-color: rgba(var(--app-fg-rgb), 0.3);
+  color: var(--app-fg);
+}
+
+.img-library__filter-btn--active {
+  background: rgba(var(--app-accent-rgb), 0.15);
+  border-color: rgba(var(--app-accent-rgb), 0.5);
+  color: var(--app-accent, rgb(var(--app-accent-rgb)));
+}
+
+.img-library__upload-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-family: inherit;
+  background: rgba(var(--app-accent-rgb), 0.12);
+  border: 1px solid rgba(var(--app-accent-rgb), 0.35);
+  color: var(--app-accent, rgb(var(--app-accent-rgb)));
+  cursor: pointer;
+  transition: all 0.12s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.img-library__upload-btn:hover:not(:disabled) {
+  background: rgba(var(--app-accent-rgb), 0.22);
+}
+
+.img-library__upload-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ── Griglia immagini ─────────────────────────────────────────────────────── */
+
+.img-library__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 8px;
+  overflow-y: auto;
+  flex: 1;
+  align-content: start;
+  padding-right: 2px;
+}
+
+.img-library__grid--compact {
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  gap: 6px;
+}
+
+.img-library__card {
+  position: relative;
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--app-bg-card);
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: border-color 0.12s, transform 0.1s;
+  aspect-ratio: 1;
+}
+
+.img-library__card:hover {
+  border-color: rgba(var(--app-accent-rgb), 0.5);
+  transform: scale(1.02);
+}
+
+.img-library__card--selected {
+  border-color: rgb(var(--app-accent-rgb));
+}
+
+.img-library__card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.img-library__card-title {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 4px 6px;
+  font-size: 10px;
+  font-family: 'JetBrains Mono', monospace;
+  color: #fff;
+  background: linear-gradient(transparent, rgba(0,0,0,0.7));
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.img-library__card:hover .img-library__card-title {
+  opacity: 1;
+}
+
+.img-library__card-badge {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  font-size: 9px;
+  font-family: 'JetBrains Mono', monospace;
+  padding: 1px 4px;
+  border-radius: 3px;
+  background: rgba(0,0,0,0.55);
+  color: rgba(255,255,255,0.8);
+  letter-spacing: 0.04em;
+}
+
+/* ── Stati empty / loading / error ─────────────────────────────────────────── */
+
+.img-library__state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex: 1;
+  color: rgba(var(--app-fg-rgb), 0.4);
+  font-size: 13px;
+  text-align: center;
+  padding: 24px;
+}
+
+.img-library__state-icon {
+  opacity: 0.35;
+}
+
+.img-library__error {
+  color: rgba(255, 100, 100, 0.85);
+  font-size: 12px;
+  padding: 8px 12px;
+  background: rgba(255, 60, 60, 0.08);
+  border-radius: 6px;
+  border: 1px solid rgba(255, 60, 60, 0.2);
+}
+
+.img-library__upload-progress {
+  font-size: 11px;
+  color: rgba(var(--app-fg-rgb), 0.5);
+  font-family: 'JetBrains Mono', monospace;
+  text-align: center;
+  padding: 4px 0;
+}
+
+/* ── Upload drop zone nella toolbar ─────────────────────────────────────────── */
+
+.img-library__drop-hint {
+  font-size: 11px;
+  color: rgba(var(--app-fg-rgb), 0.4);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* ── Panel header (usato nell'EditModal toggle) ─────────────────────────────── */
+
+.img-library__panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+
+.img-library__panel-title {
+  font-size: 11px;
+  font-family: 'JetBrains Mono', monospace;
+  color: rgba(var(--app-fg-rgb), 0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.img-library__back-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-family: inherit;
+  background: none;
+  border: none;
+  color: rgba(var(--app-fg-rgb), 0.5);
+  cursor: pointer;
+  padding: 3px 6px;
+  border-radius: 4px;
+  transition: color 0.12s, background 0.12s;
+}
+
+.img-library__back-btn:hover {
+  color: var(--app-fg);
+  background: rgba(var(--app-fg-rgb), 0.07);
+}

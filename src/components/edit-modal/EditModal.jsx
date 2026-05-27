@@ -5,11 +5,17 @@ import { LinesEditor } from './LinesEditor.jsx'
 import { CtaItemsEditor } from './CtaItemsEditor.jsx'
 import { BackgroundImageSection } from './BackgroundImageSection.jsx'
 import { TypographyPanel } from './TypographyPanel.jsx'
+import { ImageLibraryPanel } from '../image-library/ImageLibraryPanel.jsx'
 import { Button } from '../ui/Button.jsx'
 import { getFormat } from '../../lib/formats/registry.js'
 import './edit-modal.css'
 import './background-image-section.css'
 import './typography-panel.css'
+
+const DEFAULT_BG_IMAGE = {
+  data: '', opacity: 1, blur: 0, position: 'center',
+  overlay: { enabled: false, type: 'palette', intensity: 0.5 },
+}
 
 // Larghezza fissa dell'anteprima (px). L'altezza varia con il formato.
 const PREVIEW_W_PX = 389
@@ -163,9 +169,10 @@ function migrateToType(current, newType) {
 
 // ─── Componente principale ────────────────────────────────────────────────────
 
-export function EditModal({ slide, theme, total, carousel, onSave, onCancel }) {
+export function EditModal({ slide, theme, total, carousel, onSave, onCancel, userId }) {
   const [draft, setDraft] = useState(() => ({ ...slide }))
   const [activeTab, setActiveTab] = useState('contenuto')
+  const [showLibrary, setShowLibrary] = useState(false)
 
   // Calcola dimensioni anteprima in base al formato del carosello
   const format = getFormat(theme?.format)
@@ -193,6 +200,11 @@ export function EditModal({ slide, theme, total, carousel, onSave, onCancel }) {
     setDraft((prev) => ({ ...prev, [field]: value }))
   }, [])
 
+  function handleTabChange(tab) {
+    setActiveTab(tab)
+    if (tab !== 'immagine') setShowLibrary(false)
+  }
+
   function handleTypeChange(newType) {
     setDraft((prev) => migrateToType(prev, newType))
   }
@@ -207,6 +219,11 @@ export function EditModal({ slide, theme, total, carousel, onSave, onCancel }) {
       }
       return next
     })
+  }
+
+  function handleLibrarySelect(upload) {
+    handleBgImageChange({ ...DEFAULT_BG_IMAGE, data: upload.public_url })
+    setShowLibrary(false)
   }
 
   const isBlank   = draft.type === 'blank'
@@ -228,21 +245,21 @@ export function EditModal({ slide, theme, total, carousel, onSave, onCancel }) {
             <button
               type="button"
               className={`edit-modal__tab${activeTab === 'contenuto' ? ' edit-modal__tab--active' : ''}`}
-              onClick={() => setActiveTab('contenuto')}
+              onClick={() => handleTabChange('contenuto')}
             >
               Contenuto
             </button>
             <button
               type="button"
               className={`edit-modal__tab${activeTab === 'immagine' ? ' edit-modal__tab--active' : ''}`}
-              onClick={() => setActiveTab('immagine')}
+              onClick={() => handleTabChange('immagine')}
             >
               Sfondo
             </button>
             <button
               type="button"
               className={`edit-modal__tab${activeTab === 'tipografia' ? ' edit-modal__tab--active' : ''}`}
-              onClick={() => setActiveTab('tipografia')}
+              onClick={() => handleTabChange('tipografia')}
             >
               Tipografia
             </button>
@@ -437,30 +454,42 @@ export function EditModal({ slide, theme, total, carousel, onSave, onCancel }) {
                 format={format}
                 carousel={carousel}
                 onChange={handleBgImageChange}
+                onBrowseLibrary={userId ? () => setShowLibrary(true) : undefined}
               />
             </div>
           )}
         </div>
 
-        {/* ── ANTEPRIMA LIVE (destra 42%) — rispetta l'aspect ratio del formato ── */}
+        {/* ── PANNELLO DESTRA (42%) — anteprima o libreria immagini ── */}
         <div className="edit-modal__preview">
-          <span className="edit-modal__preview-label">Anteprima live</span>
-          <div
-            className="edit-modal__preview-wrap"
-            style={{ width: PREVIEW_W_PX, height: previewH }}
-          >
-            <div style={{
-              transform: `scale(${previewScale})`,
-              transformOrigin: 'top left',
-              width: format.width,
-              height: format.height,
-            }}>
-              <SlideRenderer slide={draft} theme={theme} total={total} mode="preview" />
-            </div>
-          </div>
-          <p className="text-[10px] font-mono text-slate-600 text-center">
-            Ctrl+Enter per salvare · Esc per annullare
-          </p>
+          {showLibrary && userId ? (
+            <ImageLibraryPanel
+              userId={userId}
+              onSelect={handleLibrarySelect}
+              compact
+              onClose={() => setShowLibrary(false)}
+            />
+          ) : (
+            <>
+              <span className="edit-modal__preview-label">Anteprima live</span>
+              <div
+                className="edit-modal__preview-wrap"
+                style={{ width: PREVIEW_W_PX, height: previewH }}
+              >
+                <div style={{
+                  transform: `scale(${previewScale})`,
+                  transformOrigin: 'top left',
+                  width: format.width,
+                  height: format.height,
+                }}>
+                  <SlideRenderer slide={draft} theme={theme} total={total} mode="preview" />
+                </div>
+              </div>
+              <p className="text-[10px] font-mono text-slate-600 text-center">
+                Ctrl+Enter per salvare · Esc per annullare
+              </p>
+            </>
+          )}
         </div>
       </div>
 

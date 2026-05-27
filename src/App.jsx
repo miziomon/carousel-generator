@@ -344,6 +344,7 @@ function AuthenticatedApp({ auth, appTheme }) {
           applyFontSize={store.applyFontSize}
           setCustomCss={store.setCustomCss}
           applyThemeBgImage={store.applyThemeBgImage}
+          userId={userId}
         />
 
         <div className="flex flex-col flex-1 overflow-hidden">
@@ -385,6 +386,7 @@ function AuthenticatedApp({ auth, appTheme }) {
             carousel={store.carousel}
             onSave={handleSaveSlide}
             onCancel={store.closeEditModal}
+            userId={userId}
           />
         </Modal>
       )}

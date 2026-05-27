@@ -23,7 +23,7 @@ const DEFAULT_BG_IMAGE = {
  *   - bgImage?.data → editor
  *   - altrimenti → upload
  */
-export function BackgroundImageSection({ bgImage, theme, format, carousel, onChange, isGlobal = false }) {
+export function BackgroundImageSection({ bgImage, theme, format, carousel, onChange, isGlobal = false, onBrowseLibrary }) {
   const hasImage = !!bgImage?.data
   const isForceNone = !isGlobal && bgImage === null
   const globalImage = !isGlobal ? theme?.background_image : null
@@ -71,6 +71,7 @@ export function BackgroundImageSection({ bgImage, theme, format, carousel, onCha
         onChange={handleChange}
         onReplace={handleReplace}
         onRemove={handleRemove}
+        onBrowseLibrary={onBrowseLibrary}
       />
     )
   }
@@ -88,6 +89,7 @@ export function BackgroundImageSection({ bgImage, theme, format, carousel, onCha
         onChange={handleChange}
         onReplace={handleReplace}
         onRemove={handleRemoveSettingsOverride}
+        onBrowseLibrary={onBrowseLibrary}
       />
     )
   }
@@ -149,5 +151,5 @@ export function BackgroundImageSection({ bgImage, theme, format, carousel, onCha
   }
 
   // ── Stato default: nessuna immagine → upload ──────────────────────────────
-  return <BackgroundImageUpload onUpload={handleUpload} />
+  return <BackgroundImageUpload onUpload={handleUpload} onBrowseLibrary={onBrowseLibrary} />
 }

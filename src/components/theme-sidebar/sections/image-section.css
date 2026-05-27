@@ -8,3 +8,24 @@
   line-height: 1.4;
   margin: 0 0 10px;
 }
+
+.image-section__library-btn {
+  display: block;
+  width: 100%;
+  padding: 7px 10px;
+  margin-bottom: 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-family: inherit;
+  text-align: center;
+  background: rgba(var(--app-accent-rgb), 0.08);
+  border: 1px solid rgba(var(--app-accent-rgb), 0.25);
+  color: var(--app-accent, rgb(var(--app-accent-rgb)));
+  cursor: pointer;
+  transition: background 0.12s, border-color 0.12s;
+}
+
+.image-section__library-btn:hover {
+  background: rgba(var(--app-accent-rgb), 0.16);
+  border-color: rgba(var(--app-accent-rgb), 0.45);
+}

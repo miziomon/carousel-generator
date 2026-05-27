@@ -1,5 +1,25 @@
 # Changelog
 
+## [1.28.0] — 2026-05-27
+
+### Added
+- **Libreria immagini**: sistema di gestione immagini remoto basato sull'endpoint `/uploads` del backend (Supabase Storage). Le immagini caricate vengono salvate sul server e referenziate tramite `public_url` remoto nel JSON del carosello (niente più base64 per le nuove immagini)
+- **`src/lib/uploads/api.js`**: client API per `POST /uploads` (upload multipart), `GET /uploads` (lista con filtro utente + pubbliche), `PATCH /uploads/{id}` (aggiornamento metadati)
+- **`src/components/image-library/ImageLibraryPanel.jsx`**: pannello libreria riutilizzabile con toolbar (upload, filtro Tutte/Mie/Pubbliche, ricerca per titolo), griglia thumbnail lazy, stati loading/empty/error e cache TTL 15s
+- **`src/components/image-library/ImageLibraryModal.jsx`**: wrapper modale standalone per la libreria (usato dalla sidebar)
+- **Pulsante "Sfoglia libreria" nella sidebar** (sezione Immagine globale): apre la modale libreria; la selezione applica l'immagine come sfondo globale del carosello
+- **Toggle libreria nella tab Sfondo dell'EditModal**: cliccando "Sfoglia libreria" la colonna anteprima destra (42%) si trasforma in pannello libreria compatto; la selezione applica lo sfondo alla slide e ripristina l'anteprima
+- **`processImageToBlob()`** in `processImage.js`: variante della pipeline resize/compress (max 1080px, JPEG q0.85) che restituisce un `File` per l'upload multipart invece del data URL
+
+### Changed
+- **`BackgroundImageUpload`** e **`BackgroundImageEditor`**: accettano prop opzionale `onBrowseLibrary` per mostrare il pulsante "Sfoglia libreria" quando integrati in un contesto con libreria disponibile
+- **`BackgroundImageSection`**: propaga `onBrowseLibrary` ai componenti figli
+- **`EditModal`**: aggiunta prop `userId` e stato `showLibrary` per il toggle pannello; cambio tab chiude la libreria se aperta
+- **`ThemeSidebar`** e **`ImageSection`**: aggiunta prop `userId` per abilitare la libreria immagini
+
+### Retrocompatibilità
+- I caroselli esistenti con immagini base64 continuano a funzionare senza modifiche: il renderer `BackgroundImageLayer` tratta `bgImage.data` come `url(...)` sia per base64 sia per URL remoti
+
 ## [1.27.0] — 2026-05-27
 
 ### Added

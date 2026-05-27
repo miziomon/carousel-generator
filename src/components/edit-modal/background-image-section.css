@@ -44,6 +44,27 @@
   margin: 4px 12px 8px;
 }
 
+.bg-image-upload__library-btn {
+  display: block;
+  width: calc(100% - 24px);
+  margin: 4px 12px 8px;
+  padding: 7px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-family: inherit;
+  text-align: center;
+  background: rgba(var(--app-accent-rgb), 0.08);
+  border: 1px solid rgba(var(--app-accent-rgb), 0.25);
+  color: var(--app-accent, rgb(var(--app-accent-rgb)));
+  cursor: pointer;
+  transition: background 0.12s, border-color 0.12s;
+}
+
+.bg-image-upload__library-btn:hover {
+  background: rgba(var(--app-accent-rgb), 0.16);
+  border-color: rgba(var(--app-accent-rgb), 0.45);
+}
+
 .bg-image-upload__spinner {
   width: 20px;
   height: 20px;
@@ -79,6 +100,7 @@
 }
 
 .bg-image-editor__replace-btn,
+.bg-image-editor__library-btn,
 .bg-image-editor__remove-btn {
   font-size: 11px;
   padding: 7px 12px;
@@ -95,6 +117,18 @@
 .bg-image-editor__replace-btn:hover {
   background: rgba(var(--app-fg-rgb), 0.13);
   border-color: rgba(var(--app-fg-rgb), 0.35);
+}
+
+.bg-image-editor__library-btn {
+  color: var(--app-accent, rgb(var(--app-accent-rgb)));
+  border-color: rgba(var(--app-accent-rgb), 0.25);
+  background: rgba(var(--app-accent-rgb), 0.07);
+}
+
+.bg-image-editor__library-btn:hover {
+  background: rgba(var(--app-accent-rgb), 0.15);
+  border-color: rgba(var(--app-accent-rgb), 0.45);
+  color: var(--app-accent, rgb(var(--app-accent-rgb)));
 }
 
 .bg-image-editor__remove-btn {

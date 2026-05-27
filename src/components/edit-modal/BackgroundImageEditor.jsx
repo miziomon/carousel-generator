@@ -21,7 +21,7 @@ const OVERLAY_TYPES = [
  *   onChange(patch) — chiama con il campo da aggiornare { opacity: 0.8 } ecc.
  *   onReplace(dataUrl) — nuovo file caricato
  */
-export function BackgroundImageEditor({ bgImage, theme, format, carousel, onChange, onReplace, onRemove }) {
+export function BackgroundImageEditor({ bgImage, theme, format, carousel, onChange, onReplace, onRemove, onBrowseLibrary }) {
   const inputRef = useRef(null)
 
   async function handleReplaceFile(e) {
@@ -62,6 +62,15 @@ export function BackgroundImageEditor({ bgImage, theme, format, carousel, onChan
           >
             Sostituisci immagine
           </button>
+          {onBrowseLibrary && (
+            <button
+              type="button"
+              className="bg-image-editor__library-btn"
+              onClick={onBrowseLibrary}
+            >
+              Sfoglia libreria
+            </button>
+          )}
           {onRemove && (
             <button
               type="button"

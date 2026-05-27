@@ -47,6 +47,7 @@ export function ThemeSidebar({
   applyFontSize,
   setCustomCss,
   applyThemeBgImage,
+  userId,
 }) {
   const sections = uiPrefs?.sidebarSections ?? {}
 
@@ -124,6 +125,7 @@ export function ThemeSidebar({
           theme={theme}
           carousel={carousel}
           applyThemeBgImage={applyThemeBgImage}
+          userId={userId}
         />
         <CustomCssSection
           isOpen={sections.customCss ?? false}
