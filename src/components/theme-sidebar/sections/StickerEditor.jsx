@@ -162,7 +162,7 @@ export function StickerEditor({ sticker, onChange, onRemove }) {
       </div>
 
       {/* Posizione */}
-      <div className="sticker-editor__row sticker-editor__row--col">
+      <div className="sticker-editor__row sticker-editor__row--top">
         <label className="sticker-editor__label">Posizione</label>
         <StickerPositionGrid
           value={sticker.position}

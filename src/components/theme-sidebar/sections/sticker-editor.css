@@ -109,10 +109,8 @@
   margin-bottom: 8px;
 }
 
-.sticker-editor__row--col {
-  flex-direction: column;
-  align-items: stretch;
-  gap: 5px;
+.sticker-editor__row--top {
+  align-items: flex-start;
 }
 
 .sticker-editor__label {
@@ -120,10 +118,7 @@
   color: rgba(var(--app-fg-rgb), 0.55);
   flex-shrink: 0;
   width: 62px;
-}
-
-.sticker-editor__row--col .sticker-editor__label {
-  width: auto;
+  padding-top: 4px;
 }
 
 .sticker-editor__slider-wrap {
