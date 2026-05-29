@@ -9,35 +9,36 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 4px;
-  padding: 18px 12px;
-  border: 1.5px dashed var(--color-border, #d0d0d0);
+  gap: 6px;
+  padding: 28px 20px;
+  border: 1.5px dashed rgba(var(--app-fg-rgb), 0.25);
   border-radius: 8px;
   cursor: pointer;
-  background: var(--color-bg-alt, #f8f8f8);
-  color: var(--color-text-muted, #888);
-  transition: border-color 0.12s, background 0.12s;
+  transition: border-color 0.15s, background 0.15s;
+  color: rgba(var(--app-fg-rgb), 0.5);
   text-align: center;
 }
 
 .sticker-editor__upload:hover {
-  border-color: rgba(var(--app-accent-rgb), 0.5);
-  background: rgba(var(--app-accent-rgb), 0.04);
+  border-color: rgba(var(--app-accent-rgb), 0.6);
+  background: rgba(var(--app-accent-rgb), 0.05);
+  color: rgba(var(--app-fg-rgb), 0.7);
 }
 
 .sticker-editor__upload-icon {
-  opacity: 0.45;
+  flex-shrink: 0;
+  opacity: 0.6;
 }
 
 .sticker-editor__upload-text {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 500;
-  color: var(--color-text, #333);
+  color: rgba(var(--app-fg-rgb), 0.85);
 }
 
 .sticker-editor__upload-hint {
-  font-size: 10px;
-  color: var(--color-text-muted, #999);
+  font-size: 11px;
+  color: rgba(var(--app-fg-rgb), 0.5);
 }
 
 /* ── Anteprima ──────────────────────────────────────────────────────────────── */
@@ -79,13 +80,13 @@
 }
 
 .sticker-editor__btn--secondary {
-  background: var(--color-bg-alt, #f0f0f0);
-  border-color: var(--color-border, #e0e0e0);
-  color: var(--color-text, #333);
+  background: rgba(var(--app-fg-rgb), 0.08);
+  border-color: rgba(var(--app-fg-rgb), 0.2);
+  color: rgba(var(--app-fg-rgb), 0.85);
 }
 
 .sticker-editor__btn--secondary:hover {
-  background: var(--color-bg-hover, #e4e4e4);
+  background: rgba(var(--app-fg-rgb), 0.14);
 }
 
 .sticker-editor__btn--danger {
@@ -116,7 +117,7 @@
 
 .sticker-editor__label {
   font-size: 11px;
-  color: var(--color-text-muted, #666);
+  color: rgba(var(--app-fg-rgb), 0.55);
   flex-shrink: 0;
   width: 62px;
 }
@@ -136,12 +137,12 @@
   flex: 1;
   height: 4px;
   cursor: pointer;
-  accent-color: var(--color-accent, #0066cc);
+  accent-color: var(--app-accent, rgb(var(--app-accent-rgb)));
 }
 
 .sticker-editor__val {
   font-size: 10px;
-  color: var(--color-text-muted, #888);
+  color: rgba(var(--app-fg-rgb), 0.5);
   min-width: 34px;
   text-align: right;
   flex-shrink: 0;

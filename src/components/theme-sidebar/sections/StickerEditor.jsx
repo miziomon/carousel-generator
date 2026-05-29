@@ -1,5 +1,5 @@
 import { useRef } from 'react'
-import { processImageFile } from '../../../lib/images/processImage.js'
+import { processImageFilePreserveAlpha } from '../../../lib/images/processImage.js'
 import { StickerPositionGrid } from './StickerPositionGrid.jsx'
 import './sticker-editor.css'
 
@@ -25,7 +25,7 @@ export function StickerEditor({ sticker, onChange, onRemove }) {
   async function handleFile(file) {
     if (!file) return
     try {
-      const dataUrl = await processImageFile(file)
+      const dataUrl = await processImageFilePreserveAlpha(file)
       onChange({ ...DEFAULT_STICKER, data: dataUrl })
     } catch {
       // errore silenzioso — processImageFile lancia solo per tipo/dim non validi

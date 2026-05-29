@@ -8,20 +8,20 @@
 
 .sticker-pos-grid__cell {
   aspect-ratio: 1;
-  border-radius: 3px;
-  background: var(--color-bg-alt, #f0f0f0);
-  border: 1px solid var(--color-border, #e0e0e0);
+  border-radius: 4px;
+  border: 1px solid rgba(var(--app-fg-rgb), 0.3);
+  background: rgba(var(--app-fg-rgb), 0.14);
   cursor: pointer;
-  transition: background 0.1s, border-color 0.1s;
+  transition: background 0.12s, border-color 0.12s;
   padding: 0;
 }
 
 .sticker-pos-grid__cell:hover {
-  background: rgba(var(--app-accent-rgb), 0.18);
-  border-color: rgba(var(--app-accent-rgb), 0.45);
+  background: rgba(var(--app-accent-rgb), 0.15);
+  border-color: rgba(var(--app-accent-rgb), 0.4);
 }
 
 .sticker-pos-grid__cell--active {
-  background: var(--app-accent, rgb(var(--app-accent-rgb)));
-  border-color: var(--app-accent, rgb(var(--app-accent-rgb)));
+  background: rgba(var(--app-accent-rgb), 0.35);
+  border-color: var(--app-accent);
 }
