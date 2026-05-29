@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.30.2] — 2026-05-29
+
+### Added
+- **Sistema di deploy** (`deploy.sh`, `scripts/run-deploy.js`): script bash con guardie git (branch main/master, working tree pulito, allineamento con origin), creazione tag annotato `v<version>` da `package.json`, build di produzione, scrittura `dist/version.json` con versione/tag/commit/data, upload via `sshpass+rsync` → fallback `pscp/plink` (PuTTY) → fallback interattivo. Wrapper Node `scripts/run-deploy.js` per trovare Git Bash su Windows. Aggiornati `package.json` (`deploy`, `deploy:skip-build`) e `.env.example` con le variabili `DEPLOY_*`
+
 ## [1.30.1] — 2026-05-29
 
 ### Changed
