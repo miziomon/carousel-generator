@@ -31,6 +31,8 @@ Lo stato ha 4 sezioni: `carousel` (dati), `ui` (tab attiva, slide in edit), `his
 
 `injectIds()` aggiunge `id` a ogni slide al momento del caricamento. `renumber()` ricalcola `num` dopo ogni operazione strutturale (add/delete/duplicate/reorder).
 
+**Sticker globali**: `theme.global_stickers` è un array di oggetti `StickerSchema`. Ogni sticker ha un `id` runtime (nanoid, non persistito) usato come key React e dai dispatcher. Le quattro action dello store sono `ADD_THEME_STICKER`, `UPDATE_THEME_STICKER` (patch parziale), `REMOVE_THEME_STICKER`, `REORDER_THEME_STICKER`. `normalizeMinimal.js` migra automaticamente il campo legacy `global_sticker` (singolare) verso l'array. L'array viene renderizzato in ordine inverso (`[...stickers].reverse()`) così lo Sticker 1 è sempre il layer più in alto visivamente.
+
 ### Rendering slide: `SlideRenderer`
 
 `src/slide-renderer/SlideRenderer.jsx` è il cuore visivo. Renderizza sempre a **1080×1080px nativi** — il caller applica `transform: scale(N)` su un wrapper per ridimensionare (es. preview card a 280px).
@@ -55,7 +57,7 @@ Le variabili CSS della palette (`--slide-bg`, `--slide-fg`, `--slide-accent`, `-
 
 ### Auto-save
 
-`src/hooks/useAutoSave.js` — debounce 800ms, chiave localStorage `carosello.draft.v1`. Il draft viene salvato **senza** i campi `id` runtime. Al caricamento, `buildInitialState()` tenta prima il draft, poi cade su `defaultCarousel`.
+`src/hooks/useAutoSave.js` — debounce 800ms, chiave localStorage `carosello.draft.v1`. Il draft viene salvato **senza** i campi `id` runtime: né quelli delle slide né quelli degli sticker (`theme.global_stickers[].id`). Al caricamento, `buildInitialState()` tenta prima il draft, poi cade su `defaultCarousel`.
 
 ### Convenzioni CSS
 
@@ -71,5 +73,5 @@ Le variabili CSS della palette (`--slide-bg`, `--slide-fg`, `--slide-accent`, `-
 
 | Chiave | Contenuto |
 |--------|-----------|
-| `carosello.draft.v1` | Carousel completo senza `id` — bump la versione se cambia lo schema |
+| `carosello.draft.v1` | Carousel completo senza `id` runtime (né slide né sticker) — bump la versione se cambia lo schema |
 | `carosello.ui-preferences` | Stato sidebar (aperta/chiusa, sezioni espanse) — gestito da `useUiPreferences.js` |

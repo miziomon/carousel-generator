@@ -3,14 +3,21 @@
 ## [Unreleased]
 
 ### Added
-- **Sticker globale** (sidebar → sezione "Sticker globale"): nuova sezione del tema per applicare un'immagine in sovraimpressione sopra il contenuto di tutte le slide. Controlli: dimensione 25–250 px (default 150 px, lato maggiore con aspect ratio preservato), rotazione −180°/+180°, opacità 0–100%, posizione tramite slider X/Y 0–100% e area interattiva cliccabile/trascinabile che rispetta l'aspect ratio del formato slide corrente. Selezione immagine via drag & drop / upload diretto (base64, trasparenza PNG preservata) o dalla libreria immagini remota. Il layer sticker (`z-index: 3`) è renderizzato sopra testo e overlay. Il campo `theme.global_sticker` è predisposto per futuri override per-slide senza migrazioni distruttive
+- **Sticker globali multipli** (sidebar → sezione "Sticker globali"): la sezione ora gestisce un array di sticker applicati a tutte le slide. Ogni sticker ha i controlli precedenti (dimensione 25–250 px, rotazione −180°/+180°, opacità 0–100%, posizione X/Y con picker interattivo) più upload diretto / drag & drop / selezione dalla libreria immagini per-sticker
+- **`StickerRow`** (`src/components/theme-sidebar/sections/StickerRow.jsx`): componente accordion per singolo sticker — header con thumbnail 32 px (o icona placeholder), label "Sticker N", frecce su/giù per il riordino, pulsante di rimozione; corpo espanso con `StickerEditor`
+- **Accordion esclusivo**: un solo `StickerRow` può essere espanso alla volta; aprirne uno chiude automaticamente il precedente
+- **Pulsante "+ Aggiungi sticker"**: crea un nuovo sticker vuoto e lo apre automaticamente in accordi
+- **`processImageFilePreserveAlpha()`** in `processImage.js`: utility per upload immagini che preserva la trasparenza PNG (usata da `StickerEditor`)
 
 ### Changed
-- **`processImage.js`** — nuova utility `processImageFilePreserveAlpha()` per upload immagini che preserva la trasparenza PNG (usata dallo `StickerEditor`)
-- **Schema** — aggiunti `StickerSchema` e `StickerPositionSchema` in `src/lib/schema.js`; `ThemeSchema` espone `global_sticker: StickerSchema.nullable().optional()`
-- **Store** — nuova action `APPLY_THEME_STICKER` in `useCarouselStore.js` con dispatcher `applyThemeSticker(sticker)` (oggetto = imposta, `null` = forza nessuno, `undefined` = rimuovi il campo dal theme)
-- **Migrazioni** — `normalizeMinimal.js` propaga `theme.global_sticker` applicando i default ai campi mancanti (`size: 150`, `rotation: 0`, `opacity: 1`, `position: { x: 50, y: 50 }`)
-- **Renderer** — nuovo `StickerLayer` (`src/slide-renderer/StickerLayer.jsx`) montato in `SlideRenderer` dopo il contenuto della slide; regole CSS `.slide__sticker` aggiunte a `slide-renderer.css`
+- **Schema** — `StickerSchema` aggiunge campo `id: string` (opzionale, runtime) e rende `data` opzionale (sticker appena creato, in attesa di upload); `ThemeSchema` sostituisce `global_sticker: StickerSchema.nullable().optional()` con `global_stickers: z.array(StickerSchema).default([])`
+- **Store** — le action `ADD_THEME_STICKER`, `UPDATE_THEME_STICKER`, `REMOVE_THEME_STICKER`, `REORDER_THEME_STICKER` sostituiscono `APPLY_THEME_STICKER`; tutti e quattro i dispatcher sono esposti dal hook
+- **Migrazioni** — `normalizeMinimal.js` migra automaticamente JSON legacy con `theme.global_sticker` (oggetto singolo) verso `theme.global_stickers: [{ ...defaults, id }]`; i JSON già con `global_stickers` ricevono gli eventuali `id` mancanti
+- **Renderer** — `SlideRenderer` itera su `global_stickers[]` renderizzando un `StickerLayer` per ciascuno; l'array viene invertito prima del render così lo Sticker 1 (primo in lista) è sempre il layer più in alto visivamente
+- **`StickerEditor`** — `onChange` emette ora patch parziali (non più l'oggetto completo); il pulsante "Sfoglia libreria" è spostato dentro l'editor (per-sticker) e non più nella sezione esterna; "Rimuovi immagine" cancella solo il `data`, mantenendo lo sticker con i suoi parametri
+- **`StickerSection`** — completamente riscritta come lista di `StickerRow` con stato locale `expandedId`
+- **`useAutoSave`** e **`exportZip`** — strippano il campo `id` runtime dagli sticker al salvataggio/export (stesso pattern delle slide)
+- **ESLint config** — aggiunto `varsIgnorePattern: "^_"` alla regola `no-unused-vars` per il pattern `{ id: _id, ...rest }` già usato in tutto il progetto
 
 ## [1.29.1] — 2026-05-29
 

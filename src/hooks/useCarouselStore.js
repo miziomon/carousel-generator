@@ -424,20 +424,45 @@ function reducer(state, action) {
       }
     }
 
-    // ── Sticker globale theme ─────────────────────────────────────────────────
+    // ── Sticker globali theme ─────────────────────────────────────────────────
 
-    case 'APPLY_THEME_STICKER': {
-      const theme = action.payload === undefined
-        // undefined = rimuovi il campo completamente
-        ? (() => { const t = { ...state.carousel.theme }; delete t.global_sticker; return t })()
-        : { ...state.carousel.theme, global_sticker: action.payload }
+    case 'ADD_THEME_STICKER': {
+      const stickers = [...(state.carousel.theme.global_stickers ?? []), action.payload]
+      const theme    = { ...state.carousel.theme, global_stickers: stickers }
       const carousel = { ...state.carousel, theme }
-      return {
-        ...state,
-        carousel,
-        history: pushHistory(state.history, state.carousel),
-        meta: { ...state.meta, isDirty: true },
-      }
+      return { ...state, carousel, history: pushHistory(state.history, state.carousel), meta: { ...state.meta, isDirty: true } }
+    }
+
+    case 'UPDATE_THEME_STICKER': {
+      const { id, patch } = action.payload
+      const stickers = (state.carousel.theme.global_stickers ?? []).map(
+        (s) => s.id === id ? { ...s, ...patch } : s
+      )
+      const theme    = { ...state.carousel.theme, global_stickers: stickers }
+      const carousel = { ...state.carousel, theme }
+      return { ...state, carousel, history: pushHistory(state.history, state.carousel), meta: { ...state.meta, isDirty: true } }
+    }
+
+    case 'REMOVE_THEME_STICKER': {
+      const stickers = (state.carousel.theme.global_stickers ?? []).filter(
+        (s) => s.id !== action.payload.id
+      )
+      const theme    = { ...state.carousel.theme, global_stickers: stickers }
+      const carousel = { ...state.carousel, theme }
+      return { ...state, carousel, history: pushHistory(state.history, state.carousel), meta: { ...state.meta, isDirty: true } }
+    }
+
+    case 'REORDER_THEME_STICKER': {
+      const { id, direction } = action.payload
+      const arr = [...(state.carousel.theme.global_stickers ?? [])]
+      const idx = arr.findIndex((s) => s.id === id)
+      if (idx === -1) return state
+      const swapIdx = direction === 'up' ? idx - 1 : idx + 1
+      if (swapIdx < 0 || swapIdx >= arr.length) return state
+      ;[arr[idx], arr[swapIdx]] = [arr[swapIdx], arr[idx]]
+      const theme    = { ...state.carousel.theme, global_stickers: arr }
+      const carousel = { ...state.carousel, theme }
+      return { ...state, carousel, history: pushHistory(state.history, state.carousel), meta: { ...state.meta, isDirty: true } }
     }
 
     // ── Azioni libreria palette (Fase 3) ─────────────────────────────────────
@@ -668,9 +693,13 @@ export function useCarouselStore() {
 
   // ── Immagine globale theme ────────────────────────────────────────────────────
   // bgImage: oggetto BackgroundImage | null (forza nessuno) | undefined (rimuovi campo)
-  const applyThemeBgImage  = useCallback((bgImage)        => dispatch({ type: 'APPLY_THEME_BG_IMAGE',  payload: bgImage }),           [])
-  // sticker: oggetto Sticker | null (forza nessuno) | undefined (rimuovi campo)
-  const applyThemeSticker  = useCallback((sticker)        => dispatch({ type: 'APPLY_THEME_STICKER',   payload: sticker }),           [])
+  const applyThemeBgImage      = useCallback((bgImage)          => dispatch({ type: 'APPLY_THEME_BG_IMAGE',    payload: bgImage }),              [])
+
+  // ── Sticker globali theme ─────────────────────────────────────────────────────
+  const addThemeSticker        = useCallback((sticker)          => dispatch({ type: 'ADD_THEME_STICKER',       payload: sticker }),              [])
+  const updateThemeSticker     = useCallback((id, patch)        => dispatch({ type: 'UPDATE_THEME_STICKER',    payload: { id, patch } }),        [])
+  const removeThemeSticker     = useCallback((id)               => dispatch({ type: 'REMOVE_THEME_STICKER',    payload: { id } }),               [])
+  const reorderThemeSticker    = useCallback((id, direction)    => dispatch({ type: 'REORDER_THEME_STICKER',   payload: { id, direction } }),    [])
 
   // ── Azione AI ────────────────────────────────────────────────────────────────
   const replaceCarouselFromAi = useCallback((generated, meta)   => dispatch({ type: 'REPLACE_CAROUSEL_FROM_AI', payload: { generated, meta } }), [])
@@ -709,8 +738,8 @@ export function useCarouselStore() {
     applyFont, applyFontPreset, previewFontChange, clearFontPreview, applyFontSize, setCustomCss,
     // Immagine globale theme
     applyThemeBgImage,
-    // Sticker globale theme
-    applyThemeSticker,
+    // Sticker globali theme
+    addThemeSticker, updateThemeSticker, removeThemeSticker, reorderThemeSticker,
     // Azione AI
     replaceCarouselFromAi,
     // Azioni persistenza DB

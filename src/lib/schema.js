@@ -62,7 +62,10 @@ export const StickerPositionSchema = z.object({
 }).default({ x: 50, y: 50 })
 
 export const StickerSchema = z.object({
-  data:     z.string().min(1),
+  // id runtime (nanoid): non persistito in JSON/localStorage, usato solo come key React.
+  id:       z.string().optional(),
+  // data assente = sticker appena aggiunto, in attesa di upload.
+  data:     z.string().optional(),
   size:     z.number().min(25).max(250).default(150),
   rotation: z.number().min(-180).max(180).default(0),
   opacity:  z.number().min(0).max(1).default(1),
@@ -115,9 +118,9 @@ const ThemeSchema = z.object({
   // Immagine di sfondo globale: applicata a tutte le slide che non la sovrascrivono.
   // undefined/null = nessuna immagine globale.
   background_image: BackgroundImageSchema.nullable().optional(),
-  // Sticker globale: immagine in sovraimpressione sopra il testo.
-  // undefined/null = nessuno sticker.
-  global_sticker: StickerSchema.nullable().optional(),
+  // Sticker globali: array di immagini in sovraimpressione sopra il testo.
+  // Array vuoto = nessuno sticker.
+  global_stickers: z.array(StickerSchema).default([]),
 })
 
 // ─── Base fields comuni a tutti i tipi ───────────────────────────────────────

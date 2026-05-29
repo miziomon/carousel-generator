@@ -1,33 +1,31 @@
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import { processImageFilePreserveAlpha } from '../../../lib/images/processImage.js'
+import { ImageLibraryModal } from '../../image-library/ImageLibraryModal.jsx'
 import { StickerPositionPicker } from './StickerPositionPicker.jsx'
 import './sticker-editor.css'
 
-const DEFAULT_STICKER = {
-  size:     150,
-  rotation: 0,
-  opacity:  1,
-  position: { x: 50, y: 50 },
-}
-
 /**
- * Editor dello sticker globale nella sidebar.
- * Stato vuoto: zona upload + drag & drop.
- * Stato pieno: anteprima + slider dimensione/rotazione/opacità + griglia posizione.
+ * Editor di uno sticker nella sidebar.
+ * Stato senza immagine: zona upload + drag & drop.
+ * Stato con immagine: anteprima + slider dimensione/rotazione/opacità + picker posizione.
  *
- * @param {object|null|undefined} sticker    - Sticker corrente dal theme.
- * @param {function}              onChange   - Callback con il nuovo oggetto sticker.
- * @param {function}              [onRemove] - Callback per rimuovere lo sticker (payload undefined).
- * @param {string}                [formatId] - ID del formato slide corrente (per l'area di posizionamento).
+ * Il parametro onChange riceve sempre un **patch parziale** (non l'oggetto completo):
+ * es. `{ data: '...' }` oppure `{ size: 200 }`.
+ *
+ * @param {object}   sticker           - Sticker corrente (sempre non-null).
+ * @param {function} onChange          - Callback con patch parziale da applicare allo sticker.
+ * @param {string}   [userId]          - ID utente (abilita Sfoglia libreria).
+ * @param {string}   [formatId]        - ID formato slide corrente (per position picker).
  */
-export function StickerEditor({ sticker, onChange, onRemove, formatId }) {
+export function StickerEditor({ sticker, onChange, userId, formatId }) {
   const inputRef = useRef(null)
+  const [libraryOpen, setLibraryOpen] = useState(false)
 
   async function handleFile(file) {
     if (!file) return
     try {
       const dataUrl = await processImageFilePreserveAlpha(file)
-      onChange({ ...DEFAULT_STICKER, data: dataUrl })
+      onChange({ data: dataUrl })
     } catch {
       // errore silenzioso — processImageFile lancia solo per tipo/dim non validi
     }
@@ -44,13 +42,27 @@ export function StickerEditor({ sticker, onChange, onRemove, formatId }) {
   }
 
   function patch(fields) {
-    onChange({ ...sticker, ...fields })
+    onChange(fields)
   }
 
-  // ── Stato vuoto: zona upload ──────────────────────────────────────────────
-  if (!sticker) {
+  function handleLibrarySelect(upload) {
+    onChange({ data: upload.public_url })
+    setLibraryOpen(false)
+  }
+
+  // ── Stato senza immagine: zona upload ─────────────────────────────────────
+  if (!sticker?.data) {
     return (
       <div className="sticker-editor">
+        {userId && (
+          <button
+            type="button"
+            className="sticker-editor__library-btn"
+            onClick={() => setLibraryOpen(true)}
+          >
+            Sfoglia libreria
+          </button>
+        )}
         <div
           className="sticker-editor__upload"
           onClick={() => inputRef.current?.click()}
@@ -76,11 +88,19 @@ export function StickerEditor({ sticker, onChange, onRemove, formatId }) {
           style={{ display: 'none' }}
           onChange={handleInputChange}
         />
+        {userId && (
+          <ImageLibraryModal
+            open={libraryOpen}
+            onClose={() => setLibraryOpen(false)}
+            userId={userId}
+            onSelect={handleLibrarySelect}
+          />
+        )}
       </div>
     )
   }
 
-  // ── Stato pieno: anteprima + controlli ────────────────────────────────────
+  // ── Stato con immagine: anteprima + controlli ─────────────────────────────
   const opacityPct = Math.round(sticker.opacity * 100)
 
   return (
@@ -90,21 +110,30 @@ export function StickerEditor({ sticker, onChange, onRemove, formatId }) {
         <img src={sticker.data} alt="Anteprima sticker" className="sticker-editor__preview-img" />
       </div>
 
-      {/* Sostituisci / Rimuovi */}
+      {/* Sostituisci / Sfoglia / Rimuovi immagine */}
       <div className="sticker-editor__actions">
         <button
           type="button"
           className="sticker-editor__btn sticker-editor__btn--secondary"
           onClick={() => inputRef.current?.click()}
         >
-          Sostituisci immagine
+          Sostituisci
         </button>
+        {userId && (
+          <button
+            type="button"
+            className="sticker-editor__btn sticker-editor__btn--secondary"
+            onClick={() => setLibraryOpen(true)}
+          >
+            Libreria
+          </button>
+        )}
         <button
           type="button"
           className="sticker-editor__btn sticker-editor__btn--danger"
-          onClick={onRemove}
+          onClick={() => onChange({ data: undefined })}
         >
-          Rimuovi immagine
+          Rimuovi
         </button>
       </div>
 
@@ -179,6 +208,14 @@ export function StickerEditor({ sticker, onChange, onRemove, formatId }) {
         style={{ display: 'none' }}
         onChange={handleInputChange}
       />
+      {userId && (
+        <ImageLibraryModal
+          open={libraryOpen}
+          onClose={() => setLibraryOpen(false)}
+          userId={userId}
+          onSelect={handleLibrarySelect}
+        />
+      )}
     </div>
   )
 }

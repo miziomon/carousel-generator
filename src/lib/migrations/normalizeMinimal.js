@@ -16,6 +16,7 @@
  */
 import { defaultCarousel } from '../defaultCarousel.js'
 import { getBuiltinPalette } from '../palettes/builtinPalettes.js'
+import { nanoid } from 'nanoid'
 
 // Clone profondo del theme di default (evita strutture condivise tra import diversi)
 function cloneDefaultTheme() {
@@ -69,15 +70,19 @@ function normalizeTheme(theme) {
   if (theme.background_image !== undefined) {
     normalized.background_image = theme.background_image
   }
-  // Propaga global_sticker se presente; applica i default ai campi mancanti
-  if (theme.global_sticker !== undefined) {
-    normalized.global_sticker = theme.global_sticker === null ? null : {
-      size:     150,
-      rotation: 0,
-      opacity:  1,
-      position: { x: 50, y: 50 },
-      ...theme.global_sticker,
-    }
+  // Normalizza global_stickers (nuovo) e migra global_sticker legacy (singolare → array)
+  const STICKER_DEFAULTS = { size: 150, rotation: 0, opacity: 1, position: { x: 50, y: 50 } }
+  if (Array.isArray(theme.global_stickers)) {
+    normalized.global_stickers = theme.global_stickers.map((s) => ({
+      ...STICKER_DEFAULTS,
+      ...s,
+      id: s.id ?? nanoid(8),
+    }))
+  } else if (theme.global_sticker && typeof theme.global_sticker === 'object') {
+    // Migrazione da formato legacy (oggetto singolo) ad array
+    normalized.global_stickers = [{ ...STICKER_DEFAULTS, ...theme.global_sticker, id: nanoid(8) }]
+  } else {
+    normalized.global_stickers = []
   }
   return normalized
 }

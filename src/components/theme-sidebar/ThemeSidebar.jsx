@@ -48,7 +48,10 @@ export function ThemeSidebar({
   applyFontSize,
   setCustomCss,
   applyThemeBgImage,
-  applyThemeSticker,
+  addThemeSticker,
+  updateThemeSticker,
+  removeThemeSticker,
+  reorderThemeSticker,
   userId,
 }) {
   const sections = uiPrefs?.sidebarSections ?? {}
@@ -133,7 +136,10 @@ export function ThemeSidebar({
           isOpen={sections.sticker ?? false}
           onToggle={handleToggleSection}
           theme={theme}
-          applyThemeSticker={applyThemeSticker}
+          addThemeSticker={addThemeSticker}
+          updateThemeSticker={updateThemeSticker}
+          removeThemeSticker={removeThemeSticker}
+          reorderThemeSticker={reorderThemeSticker}
           userId={userId}
         />
         <CustomCssSection

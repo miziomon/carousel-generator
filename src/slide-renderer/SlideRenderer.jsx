@@ -40,12 +40,8 @@ export function SlideRenderer({ slide, theme, total, mode = 'preview', fontPrevi
     ? { ...rawBgImage, data: effectiveTheme.background_image.data }
     : rawBgImage
 
-  const isBlank = slide.type === 'blank'
-
-  // null = forza nessuno sticker; undefined = eredita dal tema; object = override slide (futuro)
-  const sticker = slide.global_sticker === null
-    ? null
-    : (slide.global_sticker ?? effectiveTheme.global_sticker)
+  const isBlank  = slide.type === 'blank'
+  const stickers = effectiveTheme.global_stickers ?? []
 
   return (
     <div
@@ -64,7 +60,7 @@ export function SlideRenderer({ slide, theme, total, mode = 'preview', fontPrevi
           : <TemplateComponent slide={slide} theme={effectiveTheme} total={total} mode={mode} />
         }
       </div>
-      <StickerLayer sticker={sticker} />
+      {[...stickers].reverse().map((s) => <StickerLayer key={s.id} sticker={s} />)}
     </div>
   )
 }

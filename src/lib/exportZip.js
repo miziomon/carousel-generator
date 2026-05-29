@@ -29,8 +29,11 @@ export async function exportCarouselZip(carousel, onProgress) {
   }
 
   // Aggiunge il JSON pulito (senza id runtime), nome basato sul titolo del progetto
+  const cleanTheme = carousel.theme?.global_stickers?.length
+    ? { ...carousel.theme, global_stickers: carousel.theme.global_stickers.map(({ id: _id, ...rest }) => rest) }
+    : carousel.theme
   const cleanJson = JSON.stringify(
-    { ...carousel, slides: carousel.slides.map(({ id: _id, ...rest }) => rest) },
+    { ...carousel, theme: cleanTheme, slides: carousel.slides.map(({ id: _id, ...rest }) => rest) },
     null,
     2
   )

@@ -30,6 +30,8 @@ export default [
       ...reactHooks.configs.recommended.rules,
       'react/react-in-jsx-scope': 'off',
       'react/prop-types': 'off',
+      // Variabili prefissate con _ sono intenzionalmente ignorate (es. { id: _id, ...rest })
+      'no-unused-vars': ['error', { varsIgnorePattern: '^_', argsIgnorePattern: '^_', caughtErrorsIgnorePattern: '^_' }],
     },
   },
   {
