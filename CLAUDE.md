@@ -31,6 +31,16 @@ Lo stato ha 4 sezioni: `carousel` (dati), `ui` (tab attiva, slide in edit), `his
 
 `injectIds()` aggiunge `id` a ogni slide al momento del caricamento. `renumber()` ricalcola `num` dopo ogni operazione strutturale (add/delete/duplicate/reorder).
 
+**Sticker globali**: `theme.global_stickers` è un array di oggetti `StickerSchema`. Ogni sticker ha un `id` nanoid stabile che **viene persistito** nel localStorage (a differenza degli id slide) — serve come chiave di riferimento per il sistema di override per-slide. Le quattro action per il tema sono `ADD_THEME_STICKER`, `UPDATE_THEME_STICKER` (patch parziale), `REMOVE_THEME_STICKER`, `REORDER_THEME_STICKER`. `normalizeMinimal.js` migra automaticamente il campo legacy `global_sticker` (singolare) verso l'array. `injectGlobalStickerIds()` nello store assicura che i draft vecchi (salvati prima che gli id venissero preservati) ricevano id al caricamento. L'array viene renderizzato in ordine inverso (`[...stickers].reverse()`) così lo Sticker 1 è sempre il layer più in alto visivamente.
+
+**Sticker per-slide**: ogni slide può sovrascrivere o estendere la lista globale tramite quattro campi opzionali in `SlideBaseFields`:
+- `stickers` — array di sticker locali alla slide (id `local-xxx` stabile, persiste nel JSON e nel draft).
+- `sticker_overrides` — `{ [globalStickerId]: StickerSchema.partial() }` — patch parziali applicate agli sticker globali solo in questa slide.
+- `hidden_stickers` — `string[]` — id di sticker globali nascosti solo in questa slide.
+- `sticker_order` — `string[]` — ordine custom dell'intera pila (globali visibili + locali); assente = ordine default.
+
+La logica di risoluzione è centralizzata in `src/lib/resolveSlideStickers.js` (`resolveSlideStickers(slide, theme)`) — selettore puro usato sia da `SlideRenderer` che da `SlideStickerPanel`. `REMOVE_THEME_STICKER` pulisce automaticamente i riferimenti orfani in tutte le slide. Le sei action per-slide sono `ADD/UPDATE/REMOVE/REORDER_SLIDE_STICKER`, `RESET_SLIDE_STICKER_OVERRIDE`, `RESTORE_SLIDE_STICKER`. La UI è nel tab "Sticker" dell'`EditModal` (`src/components/edit-modal/SlideStickerPanel.jsx`) — opera sul draft locale, committato solo al salvataggio.
+
 ### Rendering slide: `SlideRenderer`
 
 `src/slide-renderer/SlideRenderer.jsx` è il cuore visivo. Renderizza sempre a **1080×1080px nativi** — il caller applica `transform: scale(N)` su un wrapper per ridimensionare (es. preview card a 280px).
@@ -55,7 +65,7 @@ Le variabili CSS della palette (`--slide-bg`, `--slide-fg`, `--slide-accent`, `-
 
 ### Auto-save
 
-`src/hooks/useAutoSave.js` — debounce 800ms, chiave localStorage `carosello.draft.v1`. Il draft viene salvato **senza** i campi `id` runtime. Al caricamento, `buildInitialState()` tenta prima il draft, poi cade su `defaultCarousel`.
+`src/hooks/useAutoSave.js` — debounce 800ms, chiave localStorage `carosello.draft.v1`. Il draft viene salvato rimuovendo gli `id` runtime delle **slide** (top-level `slide.id`). Gli id degli sticker globali (`theme.global_stickers[].id`) vengono **preservati** nel draft perché servono come chiavi stabili per `sticker_overrides` e `sticker_order` per-slide. Gli id degli sticker locali per-slide (`slide.stickers[].id`, prefisso `local-xxx`) sono anchessi stabili e vengono preservati. Al caricamento, `buildInitialState()` tenta prima il draft, poi cade su `defaultCarousel`; `injectGlobalStickerIds()` assicura che eventuali sticker senza id ricevano un nanoid.
 
 ### Convenzioni CSS
 
@@ -71,5 +81,5 @@ Le variabili CSS della palette (`--slide-bg`, `--slide-fg`, `--slide-accent`, `-
 
 | Chiave | Contenuto |
 |--------|-----------|
-| `carosello.draft.v1` | Carousel completo senza `id` — bump la versione se cambia lo schema |
+| `carosello.draft.v1` | Carousel completo senza `id` runtime delle slide; gli id sticker (globali e locali) **sono** inclusi perché servono come chiavi stabili per il sistema override per-slide — bump la versione se cambia lo schema |
 | `carosello.ui-preferences` | Stato sidebar (aperta/chiusa, sezioni espanse) — gestito da `useUiPreferences.js` |

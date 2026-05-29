@@ -9,6 +9,7 @@ import { HeaderSection }   from './sections/HeaderSection.jsx'
 import { FooterSection }   from './sections/FooterSection.jsx'
 import { FontsSection }    from './sections/FontsSection.jsx'
 import { ImageSection }     from './sections/ImageSection.jsx'
+import { StickerSection }   from './sections/StickerSection.jsx'
 import { CustomCssSection } from './sections/CustomCssSection.jsx'
 import { ResetSection }     from './sections/ResetSection.jsx'
 import './theme-sidebar.css'
@@ -47,6 +48,10 @@ export function ThemeSidebar({
   applyFontSize,
   setCustomCss,
   applyThemeBgImage,
+  addThemeSticker,
+  updateThemeSticker,
+  removeThemeSticker,
+  reorderThemeSticker,
   userId,
 }) {
   const sections = uiPrefs?.sidebarSections ?? {}
@@ -125,6 +130,16 @@ export function ThemeSidebar({
           theme={theme}
           carousel={carousel}
           applyThemeBgImage={applyThemeBgImage}
+          userId={userId}
+        />
+        <StickerSection
+          isOpen={sections.sticker ?? false}
+          onToggle={handleToggleSection}
+          theme={theme}
+          addThemeSticker={addThemeSticker}
+          updateThemeSticker={updateThemeSticker}
+          removeThemeSticker={removeThemeSticker}
+          reorderThemeSticker={reorderThemeSticker}
           userId={userId}
         />
         <CustomCssSection

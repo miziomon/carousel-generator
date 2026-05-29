@@ -1,0 +1,125 @@
+.sticker-row {
+  border-top: 1px solid rgba(var(--app-fg-rgb), 0.08);
+}
+
+.sticker-row:first-child {
+  border-top: none;
+}
+
+/* ── Header ──────────────────────────────────────────────────────────────────── */
+
+.sticker-row__header {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 0;
+}
+
+.sticker-row__toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+  padding: 4px 2px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: rgba(var(--app-fg-rgb), 0.85);
+  border-radius: 4px;
+  text-align: left;
+  transition: background 0.1s;
+}
+
+.sticker-row__toggle:hover {
+  background: rgba(var(--app-fg-rgb), 0.05);
+}
+
+.sticker-row__chevron {
+  flex-shrink: 0;
+  color: rgba(var(--app-fg-rgb), 0.4);
+}
+
+/* ── Thumbnail 32×32 ─────────────────────────────────────────────────────────── */
+
+.sticker-row__thumb-wrap {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  overflow: hidden;
+  background: repeating-conic-gradient(#e0e0e0 0% 25%, #f8f8f8 0% 50%) 0 0 / 8px 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sticker-row__thumb {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+}
+
+.sticker-row__thumb-placeholder {
+  color: rgba(var(--app-fg-rgb), 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── Label ───────────────────────────────────────────────────────────────────── */
+
+.sticker-row__label {
+  font-size: 12px;
+  font-weight: 500;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── Pulsanti azione (frecce + rimuovi) ──────────────────────────────────────── */
+
+.sticker-row__actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.sticker-row__action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: none;
+  background: none;
+  border-radius: 4px;
+  cursor: pointer;
+  color: rgba(var(--app-fg-rgb), 0.45);
+  transition: background 0.1s, color 0.1s;
+}
+
+.sticker-row__action-btn:hover:not(:disabled) {
+  background: rgba(var(--app-fg-rgb), 0.08);
+  color: rgba(var(--app-fg-rgb), 0.85);
+}
+
+.sticker-row__action-btn:disabled {
+  opacity: 0.25;
+  cursor: default;
+}
+
+.sticker-row__action-btn--remove:hover:not(:disabled) {
+  background: rgba(220, 38, 38, 0.1);
+  color: #dc2626;
+}
+
+/* ── Corpo accordion ─────────────────────────────────────────────────────────── */
+
+.sticker-row__body {
+  padding: 4px 0 8px 2px;
+}

@@ -13,7 +13,8 @@ export function useAutoSave(carousel, isDirty, markSaved, delayMs = 800) {
 
     clearTimeout(timerRef.current)
     timerRef.current = setTimeout(() => {
-      // Rimuove gli id runtime prima di salvare (JSON "pulito" senza id interni)
+      // Rimuove solo gli id runtime delle slide (non degli sticker globali:
+      // servono come chiavi stabili per sticker_order e sticker_overrides per-slide).
       const toSave = {
         ...carousel,
         slides: carousel.slides.map(({ id: _id, ...rest }) => rest),

@@ -54,6 +54,24 @@ export const SlideBackgroundImageSchema = BackgroundImageSchema.extend({
   data: z.string().startsWith('data:image/').optional(),
 })
 
+// ─── Sticker ──────────────────────────────────────────────────────────────────
+// Immagine sovrapposta al contenuto della slide (sopra il testo).
+export const StickerPositionSchema = z.object({
+  x: z.number().min(0).max(100).default(50),
+  y: z.number().min(0).max(100).default(50),
+}).default({ x: 50, y: 50 })
+
+export const StickerSchema = z.object({
+  // id runtime (nanoid): non persistito in JSON/localStorage, usato solo come key React.
+  id:       z.string().optional(),
+  // data assente = sticker appena aggiunto, in attesa di upload.
+  data:     z.string().optional(),
+  size:     z.number().min(25).max(250).default(150),
+  rotation: z.number().min(-180).max(180).default(0),
+  opacity:  z.number().min(0).max(1).default(1),
+  position: StickerPositionSchema,
+})
+
 // ─── Theme ────────────────────────────────────────────────────────────────────
 const ThemeSchema = z.object({
   // Formato del carosello. Sempre presente: la migrazione garantisce il valore.
@@ -100,6 +118,9 @@ const ThemeSchema = z.object({
   // Immagine di sfondo globale: applicata a tutte le slide che non la sovrascrivono.
   // undefined/null = nessuna immagine globale.
   background_image: BackgroundImageSchema.nullable().optional(),
+  // Sticker globali: array di immagini in sovraimpressione sopra il testo.
+  // Array vuoto = nessuno sticker.
+  global_stickers: z.array(StickerSchema).default([]),
 })
 
 // ─── Base fields comuni a tutti i tipi ───────────────────────────────────────
@@ -124,6 +145,14 @@ const SlideBaseFields = {
   // undefined = eredita da theme.background_image; null = forza nessuno sfondo; object = override.
   // data può essere assente: la slide usa allora il data del tema (evita duplicazione base64).
   background_image: SlideBackgroundImageSchema.nullable().optional(),
+  // Sticker solo per questa slide (local-xxx id stabile, persiste in JSON).
+  stickers:          z.array(StickerSchema).optional(),
+  // Patch parziali per sticker globali: { [globalStickerId]: StickerSchema.partial() }.
+  sticker_overrides: z.record(z.string(), StickerSchema.partial()).optional(),
+  // Id dei sticker globali nascosti solo in questa slide.
+  hidden_stickers:   z.array(z.string()).optional(),
+  // Ordine custom della pila sticker (globali visibili + locali); assente = ordine default.
+  sticker_order:     z.array(z.string()).optional(),
 }
 
 // ─── Schema per tipo (senza superRefine: discriminatedUnion lo richiede) ────

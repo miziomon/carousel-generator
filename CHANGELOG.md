@@ -1,5 +1,36 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+- **Tab "Sticker" per-slide** (EditModal → tab tra Sfondo e Tipografia): ogni slide può personalizzare la propria pila di sticker indipendentemente dal tema globale. Funzionalità disponibili: riordino up/down, override di uno sticker globale solo per quella slide (badge "Globale (modif.)" + pulsante ripristina), nascondi uno sticker globale solo per quella slide (sezione "Nascosti" con ripristino), aggiungi uno sticker locale visibile solo in quella slide (badge "Solo qui"). Le modifiche vivono nel draft locale dell'EditModal e vengono committate al salvataggio, senza effetto sulle altre slide
+- **`src/lib/resolveSlideStickers.js`**: selettore puro `resolveSlideStickers(slide, theme)` che calcola la pila effettiva di sticker per una slide applicando override (`sticker_overrides`), nascosti (`hidden_stickers`) e ordine custom (`sticker_order`). Esporta anche `materializeOrder(slide, theme)` per materializzare l'ordine al momento del primo riordino. Usato sia da `SlideRenderer` che da `SlideStickerPanel`
+- **`src/components/edit-modal/SlideStickerPanel.jsx`** + `slide-sticker-panel.css`: pannello tab per la gestione sticker per-slide. Accordion esclusivo, badge per tipo sticker (Globale / Globale modificato / Solo qui), riusa `StickerEditor` esistente per il corpo
+- **Quattro nuovi campi** in `SlideBaseFields` (`src/lib/schema.js`): `stickers` (array sticker locali), `sticker_overrides` (patch parziali per id globale), `hidden_stickers` (id globali nascosti in questa slide), `sticker_order` (ordine custom della pila)
+- **Sei nuove action store** in `useCarouselStore.js`: `ADD_SLIDE_STICKER`, `UPDATE_SLIDE_STICKER`, `REMOVE_SLIDE_STICKER`, `REORDER_SLIDE_STICKER`, `RESET_SLIDE_STICKER_OVERRIDE`, `RESTORE_SLIDE_STICKER` — con relativi action creator esposti dal hook
+- **22 nuovi test**: `src/__tests__/resolveSlideStickers.test.js` (12 test) e `src/__tests__/slideStickers.test.js` (10 test — campi schema + logica cleanup)
+- **Sticker globali multipli** (sidebar → sezione "Sticker globali"): la sezione ora gestisce un array di sticker applicati a tutte le slide. Ogni sticker ha i controlli precedenti (dimensione 25–250 px, rotazione −180°/+180°, opacità 0–100%, posizione X/Y con picker interattivo) più upload diretto / drag & drop / selezione dalla libreria immagini per-sticker
+- **`StickerRow`** (`src/components/theme-sidebar/sections/StickerRow.jsx`): componente accordion per singolo sticker — header con thumbnail 32 px (o icona placeholder), label "Sticker N", frecce su/giù per il riordino, pulsante di rimozione; corpo espanso con `StickerEditor`
+- **Accordion esclusivo**: un solo `StickerRow` può essere espanso alla volta; aprirne uno chiude automaticamente il precedente
+- **Pulsante "+ Aggiungi sticker"**: crea un nuovo sticker vuoto e lo apre automaticamente in accordion
+- **`processImageFilePreserveAlpha()`** in `processImage.js`: utility per upload immagini che preserva la trasparenza PNG (usata da `StickerEditor`)
+
+### Changed
+- **`REMOVE_THEME_STICKER`** (store) — ora ripulisce automaticamente `sticker_overrides`, `hidden_stickers` e `sticker_order` in tutte le slide quando un global sticker viene eliminato dal tema, evitando riferimenti orfani
+- **`SlideRenderer`** — usa `resolveSlideStickers(slide, effectiveTheme)` invece di leggere direttamente `effectiveTheme.global_stickers`; le slide con override/hide/locali mostrano la pila corretta in preview e in export
+- **`useAutoSave`** — gli id degli sticker globali vengono ora **preservati** nel draft (prima erano strippati). Necessario perché `sticker_overrides` e `sticker_order` per-slide li usano come chiavi stabili. Gli id slide (top-level) continuano a essere rimossi
+- **`normalizeMinimal.js`** — `normalizeSlide` propaga i nuovi campi sticker per-slide (`stickers`, `sticker_overrides`, `hidden_stickers`, `sticker_order`); inietta id `local-xxx` agli sticker locali privi di id. `STICKER_DEFAULTS` spostato a scope di modulo (condiviso tra `normalizeTheme` e `normalizeSlide`)
+- **Schema** — `StickerSchema` aggiunge campo `id: string` (opzionale, runtime) e rende `data` opzionale (sticker appena creato, in attesa di upload); `ThemeSchema` sostituisce `global_sticker: StickerSchema.nullable().optional()` con `global_stickers: z.array(StickerSchema).default([])`
+- **Store** — le action `ADD_THEME_STICKER`, `UPDATE_THEME_STICKER`, `REMOVE_THEME_STICKER`, `REORDER_THEME_STICKER` sostituiscono `APPLY_THEME_STICKER`; tutti e quattro i dispatcher sono esposti dal hook
+- **Migrazioni** — `normalizeMinimal.js` migra automaticamente JSON legacy con `theme.global_sticker` (oggetto singolo) verso `theme.global_stickers: [{ ...defaults, id }]`; i JSON già con `global_stickers` ricevono gli eventuali `id` mancanti
+- **Renderer** — `SlideRenderer` itera su `global_stickers[]` renderizzando un `StickerLayer` per ciascuno; l'array viene invertito prima del render così lo Sticker 1 (primo in lista) è sempre il layer più in alto visivamente
+- **`StickerEditor`** — `onChange` emette ora patch parziali (non più l'oggetto completo); il pulsante "Sfoglia libreria" è spostato dentro l'editor (per-sticker) e non più nella sezione esterna; "Rimuovi immagine" cancella solo il `data`, mantenendo lo sticker con i suoi parametri
+- **`StickerSection`** — completamente riscritta come lista di `StickerRow` con stato locale `expandedId`
+- **ESLint config** — aggiunto `varsIgnorePattern: "^_"` alla regola `no-unused-vars` per il pattern `{ id: _id, ...rest }` già usato in tutto il progetto
+
+### Fixed
+- **Riordino sticker bloccato su draft pre-esistenti** — `buildInitialState` e `LOAD_FROM_DB` ora chiamano `injectGlobalStickerIds(theme)` che assegna un nanoid a qualsiasi sticker globale privo di `id`. I draft salvati con il vecchio autosave (che strippava gli id) causavano `order.indexOf(undefined) = 0` per tutti gli sticker, rendendo impossibile il riordino e producendo visualizzazioni duplicate
+
 ## [1.29.1] — 2026-05-29
 
 ### Changed

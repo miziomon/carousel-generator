@@ -16,6 +16,7 @@
  */
 import { defaultCarousel } from '../defaultCarousel.js'
 import { getBuiltinPalette } from '../palettes/builtinPalettes.js'
+import { nanoid } from 'nanoid'
 
 // Clone profondo del theme di default (evita strutture condivise tra import diversi)
 function cloneDefaultTheme() {
@@ -30,6 +31,9 @@ function cloneDefaultTheme() {
     fonts:       { ...dt.fonts },
   }
 }
+
+// Defaults condivisi tra theme e slide sticker
+const STICKER_DEFAULTS = { size: 150, rotation: 0, opacity: 1, position: { x: 50, y: 50 } }
 
 function normalizeTheme(theme) {
   if (!theme || typeof theme !== 'object') return cloneDefaultTheme()
@@ -69,7 +73,41 @@ function normalizeTheme(theme) {
   if (theme.background_image !== undefined) {
     normalized.background_image = theme.background_image
   }
+  // Normalizza global_stickers (nuovo) e migra global_sticker legacy (singolare → array)
+  if (Array.isArray(theme.global_stickers)) {
+    normalized.global_stickers = theme.global_stickers.map((s) => ({
+      ...STICKER_DEFAULTS,
+      ...s,
+      id: s.id ?? nanoid(8),
+    }))
+  } else if (theme.global_sticker && typeof theme.global_sticker === 'object') {
+    // Migrazione da formato legacy (oggetto singolo) ad array
+    normalized.global_stickers = [{ ...STICKER_DEFAULTS, ...theme.global_sticker, id: nanoid(8) }]
+  } else {
+    normalized.global_stickers = []
+  }
   return normalized
+}
+
+// Propaga i campi sticker per-slide su un oggetto slide normalizzato
+function applyStickerFields(out, slide) {
+  if (Array.isArray(slide.stickers) && slide.stickers.length > 0) {
+    out.stickers = slide.stickers.map((s) => ({
+      ...STICKER_DEFAULTS,
+      ...s,
+      // id locale stabile (local-xxx): preservato se presente, altrimenti generato
+      id: s.id ?? `local-${nanoid(8)}`,
+    }))
+  }
+  if (slide.sticker_overrides && typeof slide.sticker_overrides === 'object') {
+    out.sticker_overrides = slide.sticker_overrides
+  }
+  if (Array.isArray(slide.hidden_stickers) && slide.hidden_stickers.length > 0) {
+    out.hidden_stickers = slide.hidden_stickers
+  }
+  if (Array.isArray(slide.sticker_order) && slide.sticker_order.length > 0) {
+    out.sticker_order = slide.sticker_order
+  }
 }
 
 function normalizeSlide(slide, index) {
@@ -90,6 +128,7 @@ function normalizeSlide(slide, index) {
     }
     if (slide._note_autore !== undefined) out._note_autore = slide._note_autore
     if (slide.background_image !== undefined) out.background_image = slide.background_image
+    applyStickerFields(out, slide)
     return out
   }
 
@@ -107,12 +146,14 @@ function normalizeSlide(slide, index) {
   if (slide.background_image !== undefined) base.background_image = slide.background_image
 
   if (type === 'cover') {
-    return {
+    const out = {
       ...base,
       size: 'cover',
       // show_swipe_arrow era per-slide in versioni precedenti alla 1.29.
       // Viene eliminato qui; la migrazione a theme.footer.swipe avviene in normalizeMinimalCarousel.
     }
+    applyStickerFields(out, slide)
+    return out
   }
 
   if (type === 'divider') {
@@ -122,16 +163,19 @@ function normalizeSlide(slide, index) {
       divider_label:  slide.divider_label ?? null,
     }
     if (slide.size !== undefined) out.size = slide.size
+    applyStickerFields(out, slide)
     return out
   }
 
   if (type === 'quote') {
-    return {
+    const out = {
       ...base,
       size:   slide.size ?? 'lg',
       author: slide.author ?? null,
       source: slide.source ?? null,
     }
+    applyStickerFields(out, slide)
+    return out
   }
 
   if (type === 'blank') {
@@ -145,11 +189,14 @@ function normalizeSlide(slide, index) {
     }
     if (slide.background_image !== undefined) out.background_image = slide.background_image
     if (slide._note_autore !== undefined) out._note_autore = slide._note_autore
+    applyStickerFields(out, slide)
     return out
   }
 
   // standard
-  return { ...base, size: slide.size ?? 'lg' }
+  const out = { ...base, size: slide.size ?? 'lg' }
+  applyStickerFields(out, slide)
+  return out
 }
 
 /**

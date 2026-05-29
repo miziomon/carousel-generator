@@ -1,0 +1,300 @@
+.slide-sticker-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* ── Stato vuoto ──────────────────────────────────────────────────────────────── */
+
+.slide-sticker-panel__empty {
+  font-size: 11px;
+  color: #64748b;
+  line-height: 1.5;
+  margin: 0 0 12px;
+}
+
+/* ── Lista sticker visibili ───────────────────────────────────────────────────── */
+
+.slide-sticker-panel__list {
+  margin-bottom: 8px;
+}
+
+/* ── Riga sticker ─────────────────────────────────────────────────────────────── */
+
+.slide-sticker-row {
+  border-top: 1px solid rgba(var(--app-fg-rgb), 0.08);
+}
+
+.slide-sticker-row:first-child {
+  border-top: none;
+}
+
+.slide-sticker-row__header {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 0;
+}
+
+.slide-sticker-row__toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+  padding: 4px 2px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: rgba(var(--app-fg-rgb), 0.85);
+  border-radius: 4px;
+  text-align: left;
+  transition: background 0.1s;
+}
+
+.slide-sticker-row__toggle:hover {
+  background: rgba(var(--app-fg-rgb), 0.05);
+}
+
+.slide-sticker-row__chevron {
+  flex-shrink: 0;
+  color: rgba(var(--app-fg-rgb), 0.4);
+}
+
+/* Thumbnail 32×32 */
+.slide-sticker-row__thumb-wrap {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  overflow: hidden;
+  background: repeating-conic-gradient(#e0e0e0 0% 25%, #f8f8f8 0% 50%) 0 0 / 8px 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.slide-sticker-row__thumb {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+}
+
+.slide-sticker-row__thumb-placeholder {
+  color: rgba(var(--app-fg-rgb), 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Label + badge */
+.slide-sticker-row__label {
+  font-size: 12px;
+  font-weight: 500;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.slide-sticker-row__badge {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  padding: 1px 5px;
+  border-radius: 3px;
+  background: rgba(var(--app-fg-rgb), 0.1);
+  color: rgba(var(--app-fg-rgb), 0.5);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.slide-sticker-row__badge--modified {
+  background: rgba(234, 179, 8, 0.15);
+  color: #92400e;
+}
+
+.slide-sticker-row__badge--local {
+  background: rgba(var(--app-accent-rgb), 0.12);
+  color: var(--app-accent, rgb(var(--app-accent-rgb)));
+}
+
+/* Pulsanti azione */
+.slide-sticker-row__actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.slide-sticker-row__action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: none;
+  background: none;
+  border-radius: 4px;
+  cursor: pointer;
+  color: rgba(var(--app-fg-rgb), 0.45);
+  transition: background 0.1s, color 0.1s;
+}
+
+.slide-sticker-row__action-btn:hover:not(:disabled) {
+  background: rgba(var(--app-fg-rgb), 0.08);
+  color: rgba(var(--app-fg-rgb), 0.85);
+}
+
+.slide-sticker-row__action-btn:disabled {
+  opacity: 0.25;
+  cursor: default;
+}
+
+.slide-sticker-row__action-btn--remove:hover:not(:disabled) {
+  background: rgba(220, 38, 38, 0.1);
+  color: #dc2626;
+}
+
+.slide-sticker-row__action-btn--hide:hover:not(:disabled) {
+  background: rgba(234, 179, 8, 0.1);
+  color: #b45309;
+}
+
+.slide-sticker-row__action-btn--reset:hover:not(:disabled) {
+  background: rgba(59, 130, 246, 0.1);
+  color: #2563eb;
+}
+
+/* Corpo accordion */
+.slide-sticker-row__body {
+  padding: 4px 0 8px 2px;
+}
+
+/* ── Pulsante aggiungi ────────────────────────────────────────────────────────── */
+
+.slide-sticker-panel__add-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  width: 100%;
+  padding: 7px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-family: inherit;
+  background: rgba(var(--app-fg-rgb), 0.05);
+  border: 1px dashed rgba(var(--app-fg-rgb), 0.2);
+  color: rgba(var(--app-fg-rgb), 0.65);
+  cursor: pointer;
+  transition: background 0.12s, border-color 0.12s, color 0.12s;
+  margin-bottom: 12px;
+}
+
+.slide-sticker-panel__add-btn:hover {
+  background: rgba(var(--app-accent-rgb), 0.07);
+  border-color: rgba(var(--app-accent-rgb), 0.35);
+  color: var(--app-accent, rgb(var(--app-accent-rgb)));
+}
+
+/* ── Sezione sticker nascosti ─────────────────────────────────────────────────── */
+
+.slide-sticker-panel__hidden-section {
+  border-top: 1px solid rgba(var(--app-fg-rgb), 0.08);
+  padding-top: 8px;
+}
+
+.slide-sticker-panel__hidden-toggle {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 11px;
+  color: rgba(var(--app-fg-rgb), 0.5);
+  padding: 2px 0;
+  transition: color 0.1s;
+  font-family: inherit;
+}
+
+.slide-sticker-panel__hidden-toggle:hover {
+  color: rgba(var(--app-fg-rgb), 0.8);
+}
+
+.slide-sticker-panel__hidden-list {
+  margin-top: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.slide-sticker-panel__hidden-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+}
+
+.slide-sticker-panel__hidden-thumb-wrap {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: 3px;
+  overflow: hidden;
+  background: repeating-conic-gradient(#e0e0e0 0% 25%, #f8f8f8 0% 50%) 0 0 / 6px 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.5;
+}
+
+.slide-sticker-panel__hidden-thumb {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
+
+.slide-sticker-panel__hidden-thumb-placeholder {
+  color: rgba(var(--app-fg-rgb), 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.slide-sticker-panel__hidden-label {
+  font-size: 11px;
+  color: rgba(var(--app-fg-rgb), 0.45);
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.slide-sticker-panel__restore-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-family: inherit;
+  background: rgba(var(--app-fg-rgb), 0.06);
+  border: 1px solid rgba(var(--app-fg-rgb), 0.12);
+  color: rgba(var(--app-fg-rgb), 0.6);
+  cursor: pointer;
+  transition: background 0.1s, color 0.1s;
+  flex-shrink: 0;
+}
+
+.slide-sticker-panel__restore-btn:hover {
+  background: rgba(var(--app-accent-rgb), 0.1);
+  border-color: rgba(var(--app-accent-rgb), 0.3);
+  color: var(--app-accent, rgb(var(--app-accent-rgb)));
+}

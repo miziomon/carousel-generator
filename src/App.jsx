@@ -344,6 +344,10 @@ function AuthenticatedApp({ auth, appTheme }) {
           applyFontSize={store.applyFontSize}
           setCustomCss={store.setCustomCss}
           applyThemeBgImage={store.applyThemeBgImage}
+          addThemeSticker={store.addThemeSticker}
+          updateThemeSticker={store.updateThemeSticker}
+          removeThemeSticker={store.removeThemeSticker}
+          reorderThemeSticker={store.reorderThemeSticker}
           userId={userId}
         />
 

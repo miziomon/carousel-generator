@@ -2,8 +2,10 @@ import './slide-renderer.css'
 import { getTemplate, DEFAULT_TEMPLATE_ID } from './templates/registry.js'
 import { getFormat } from '../lib/formats/registry.js'
 import { BackgroundImageLayer } from './BackgroundImageLayer.jsx'
+import { StickerLayer } from './StickerLayer.jsx'
 import { BlankSlide } from './BlankSlide.jsx'
 import { resolveFontVars, effectiveFonts } from '../lib/fonts/resolveFont.js'
+import { resolveSlideStickers } from '../lib/resolveSlideStickers.js'
 
 /**
  * Renderizza una singola slide a dimensioni native (1080×H px).
@@ -39,7 +41,8 @@ export function SlideRenderer({ slide, theme, total, mode = 'preview', fontPrevi
     ? { ...rawBgImage, data: effectiveTheme.background_image.data }
     : rawBgImage
 
-  const isBlank = slide.type === 'blank'
+  const isBlank  = slide.type === 'blank'
+  const stickers = resolveSlideStickers(slide, effectiveTheme)
 
   return (
     <div
@@ -58,6 +61,7 @@ export function SlideRenderer({ slide, theme, total, mode = 'preview', fontPrevi
           : <TemplateComponent slide={slide} theme={effectiveTheme} total={total} mode={mode} />
         }
       </div>
+      {[...stickers].reverse().map((s) => <StickerLayer key={s.id} sticker={s} />)}
     </div>
   )
 }

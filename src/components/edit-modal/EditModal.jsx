@@ -5,12 +5,14 @@ import { LinesEditor } from './LinesEditor.jsx'
 import { CtaItemsEditor } from './CtaItemsEditor.jsx'
 import { BackgroundImageSection } from './BackgroundImageSection.jsx'
 import { TypographyPanel } from './TypographyPanel.jsx'
+import { SlideStickerPanel } from './SlideStickerPanel.jsx'
 import { ImageLibraryPanel } from '../image-library/ImageLibraryPanel.jsx'
 import { Button } from '../ui/Button.jsx'
 import { getFormat } from '../../lib/formats/registry.js'
 import './edit-modal.css'
 import './background-image-section.css'
 import './typography-panel.css'
+import './slide-sticker-panel.css'
 
 const DEFAULT_BG_IMAGE = {
   data: '', opacity: 1, blur: 0, position: 'center',
@@ -201,6 +203,8 @@ export function EditModal({ slide, theme, total, carousel, onSave, onCancel, use
   function handleTabChange(tab) {
     setActiveTab(tab)
     if (tab !== 'immagine') setShowLibrary(false)
+    // la libreria sticker usa il proprio modal interno (ImageLibraryModal),
+    // non il pannello laterale — nessuna chiusura aggiuntiva necessaria
   }
 
   function handleTypeChange(newType) {
@@ -253,6 +257,13 @@ export function EditModal({ slide, theme, total, carousel, onSave, onCancel, use
               onClick={() => handleTabChange('immagine')}
             >
               Sfondo
+            </button>
+            <button
+              type="button"
+              className={`edit-modal__tab${activeTab === 'sticker' ? ' edit-modal__tab--active' : ''}`}
+              onClick={() => handleTabChange('sticker')}
+            >
+              Sticker
             </button>
             <button
               type="button"
@@ -425,7 +436,19 @@ export function EditModal({ slide, theme, total, carousel, onSave, onCancel, use
             </div>
           )}
 
-          {/* ── TAB 3: Tipografia per-slide ── */}
+          {/* ── TAB 3: Sticker per-slide ── */}
+          {activeTab === 'sticker' && (
+            <div className="edit-modal__tab-panel">
+              <SlideStickerPanel
+                draft={draft}
+                theme={theme}
+                set={set}
+                userId={userId}
+              />
+            </div>
+          )}
+
+          {/* ── TAB 4: Tipografia per-slide ── */}
           {activeTab === 'tipografia' && (
             <div className="edit-modal__tab-panel">
               <TypographyPanel draft={draft} theme={theme} set={set} />

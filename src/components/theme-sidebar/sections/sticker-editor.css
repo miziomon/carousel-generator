@@ -1,0 +1,167 @@
+.sticker-editor {
+  padding: 2px 0;
+}
+
+/* ── Pulsante libreria (sopra upload zone) ───────────────────────────────────── */
+
+.sticker-editor__library-btn {
+  display: block;
+  width: 100%;
+  padding: 6px 10px;
+  margin-bottom: 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-family: inherit;
+  text-align: center;
+  background: rgba(var(--app-accent-rgb), 0.08);
+  border: 1px solid rgba(var(--app-accent-rgb), 0.25);
+  color: var(--app-accent, rgb(var(--app-accent-rgb)));
+  cursor: pointer;
+  transition: background 0.12s, border-color 0.12s;
+}
+
+.sticker-editor__library-btn:hover {
+  background: rgba(var(--app-accent-rgb), 0.16);
+  border-color: rgba(var(--app-accent-rgb), 0.45);
+}
+
+/* ── Upload ─────────────────────────────────────────────────────────────────── */
+
+.sticker-editor__upload {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 28px 20px;
+  border: 1.5px dashed rgba(var(--app-fg-rgb), 0.25);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+  color: rgba(var(--app-fg-rgb), 0.5);
+  text-align: center;
+}
+
+.sticker-editor__upload:hover {
+  border-color: rgba(var(--app-accent-rgb), 0.6);
+  background: rgba(var(--app-accent-rgb), 0.05);
+  color: rgba(var(--app-fg-rgb), 0.7);
+}
+
+.sticker-editor__upload-icon {
+  flex-shrink: 0;
+  opacity: 0.6;
+}
+
+.sticker-editor__upload-text {
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(var(--app-fg-rgb), 0.85);
+}
+
+.sticker-editor__upload-hint {
+  font-size: 11px;
+  color: rgba(var(--app-fg-rgb), 0.5);
+}
+
+/* ── Anteprima ──────────────────────────────────────────────────────────────── */
+
+.sticker-editor__preview {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: repeating-conic-gradient(#e0e0e0 0% 25%, #f8f8f8 0% 50%) 0 0 / 12px 12px;
+  border-radius: 6px;
+  overflow: hidden;
+  height: 80px;
+  margin-bottom: 8px;
+}
+
+.sticker-editor__preview-img {
+  max-width: 100%;
+  max-height: 70px;
+  object-fit: contain;
+}
+
+/* ── Azioni ─────────────────────────────────────────────────────────────────── */
+
+.sticker-editor__actions {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.sticker-editor__btn {
+  flex: 1;
+  padding: 5px 6px;
+  border-radius: 5px;
+  font-size: 11px;
+  font-family: inherit;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: background 0.1s, border-color 0.1s;
+}
+
+.sticker-editor__btn--secondary {
+  background: rgba(var(--app-fg-rgb), 0.08);
+  border-color: rgba(var(--app-fg-rgb), 0.2);
+  color: rgba(var(--app-fg-rgb), 0.85);
+}
+
+.sticker-editor__btn--secondary:hover {
+  background: rgba(var(--app-fg-rgb), 0.14);
+}
+
+.sticker-editor__btn--danger {
+  background: rgba(220, 38, 38, 0.07);
+  border-color: rgba(220, 38, 38, 0.25);
+  color: #dc2626;
+}
+
+.sticker-editor__btn--danger:hover {
+  background: rgba(220, 38, 38, 0.14);
+  border-color: rgba(220, 38, 38, 0.45);
+}
+
+/* ── Slider rows ────────────────────────────────────────────────────────────── */
+
+.sticker-editor__row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.sticker-editor__row--top {
+  align-items: flex-start;
+}
+
+.sticker-editor__label {
+  font-size: 11px;
+  color: rgba(var(--app-fg-rgb), 0.55);
+  flex-shrink: 0;
+  width: 62px;
+  padding-top: 4px;
+}
+
+.sticker-editor__slider-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+}
+
+.sticker-editor__range {
+  flex: 1;
+  height: 4px;
+  cursor: pointer;
+  accent-color: var(--app-accent, rgb(var(--app-accent-rgb)));
+}
+
+.sticker-editor__val {
+  font-size: 10px;
+  color: rgba(var(--app-fg-rgb), 0.5);
+  min-width: 34px;
+  text-align: right;
+  flex-shrink: 0;
+}
