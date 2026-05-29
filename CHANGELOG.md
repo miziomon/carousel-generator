@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [1.30.0] — 2026-05-29
 
 ### Added
 - **Tab "Sticker" per-slide** (EditModal → tab tra Sfondo e Tipografia): ogni slide può personalizzare la propria pila di sticker indipendentemente dal tema globale. Funzionalità disponibili: riordino up/down, override di uno sticker globale solo per quella slide (badge "Globale (modif.)" + pulsante ripristina), nascondi uno sticker globale solo per quella slide (sezione "Nascosti" con ripristino), aggiungi uno sticker locale visibile solo in quella slide (badge "Solo qui"). Le modifiche vivono nel draft locale dell'EditModal e vengono committate al salvataggio, senza effetto sulle altre slide
