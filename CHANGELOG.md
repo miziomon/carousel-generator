@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.30.1] — 2026-05-29
+
+### Changed
+- **`exportPng.jsx`** — ridotto a thin wrapper su `renderSlideAsPng` (elimina la duplicazione della logica di render; `pixelRatio` fisso a 2 come prima)
+
+### Docs
+- **CLAUDE.md** — allineato allo stato reale del codice: fix dimensioni SlideRenderer (format-aware, non solo 1080×1080), aggiunta sezione Export PDF, documentata `renderSlideAsPng.jsx` come nucleo condiviso del render, aggiunta sezione `normalizeMinimal.js`, aggiunta tabella hook ausiliari
+
 ## [1.30.0] — 2026-05-29
 
 ### Added

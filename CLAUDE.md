@@ -43,11 +43,11 @@ La logica di risoluzione è centralizzata in `src/lib/resolveSlideStickers.js` (
 
 ### Rendering slide: `SlideRenderer`
 
-`src/slide-renderer/SlideRenderer.jsx` è il cuore visivo. Renderizza sempre a **1080×1080px nativi** — il caller applica `transform: scale(N)` su un wrapper per ridimensionare (es. preview card a 280px).
+`src/slide-renderer/SlideRenderer.jsx` è il cuore visivo. Renderizza a dimensioni native del formato scelto (1080×1080 square, 1080×1350 portrait, 1080×566 landscape) — il caller applica `transform: scale(N)` su un wrapper per ridimensionare (es. preview card a 280px).
 
 Le variabili CSS della palette (`--slide-bg`, `--slide-fg`, `--slide-accent`, `--slide-muted`, `--slide-line`) vengono iniettate come stile inline sulla radice `.slide`. **`slide-renderer.css` non va modificato**: contiene il CSS visivo verbatim dal brief.
 
-`mode="export"` è pensato per disabilitare animazioni durante l'export PNG; `mode="preview"` è il default.
+`mode="export"` è pensato per disabilitare animazioni durante l'export; `mode="preview"` è il default.
 
 ### Tag inline: `inlineTags.jsx`
 
@@ -57,11 +57,19 @@ Le variabili CSS della palette (`--slide-bg`, `--slide-fg`, `--slide-accent`, `-
 
 `src/lib/schema.js` — discriminatedUnion su `type`. Importante: i vincoli cross-campo (cover→1 riga, divider→1-2 righe) sono in `CarouselSchema.superRefine()`, **non** negli schemi individuali — questo perché `z.discriminatedUnion` richiede `ZodObject` puri, e `.superRefine()` restituisce `ZodEffects`.
 
-### Export PNG/ZIP
+### Normalizzazione e validazione JSON: `normalizeMinimal.js`
 
-`src/lib/exportPng.jsx` renderizza nel portal `#export-root` (off-screen in `index.html`), usa `flushSync` + `createRoot` per il render sincrono, poi `await document.fonts.ready` prima di `html-to-image.toPng({ pixelRatio: 2 })`. I font usano `font-display: block` in `src/index.css` per evitare FOUT durante l'export.
+`src/lib/migrations/normalizeMinimal.js` converte un JSON minimalista (solo i campi obbligatori) in un carosello completo con tutti i default. Fa parte del flusso di import/validazione in `validateJson.js`. Gestisce anche la migrazione del campo legacy `global_sticker` (singolare) → `global_stickers` (array). Da non confondere con `migrateCarousel.js` (step-based migrations per versioni del draft).
+
+### Export PNG / ZIP / PDF
+
+Il render per l'export è centralizzato in `src/lib/renderSlideAsPng.jsx` (`renderSlideAsPng(slide, theme, total, options)`): renderizza nel portal `#export-root` (off-screen in `index.html`), usa `flushSync` + `createRoot` per il render sincrono, poi `await document.fonts.ready` + doppio `requestAnimationFrame` prima di `html-to-image.toPng({ pixelRatio })`. I font usano `font-display: block` in `src/index.css` per evitare FOUT.
+
+`src/lib/exportPng.jsx` è un thin wrapper che chiama `renderSlideAsPng` con `pixelRatio: 2` (retina). Lo usano `SlideCard` (export singola slide) e `exportZip.js`.
 
 `src/lib/exportZip.js` chiama `exportSlideToPng` in loop seriale (non parallelo, per non sovraccaricare il DOM) e include `carosello.json` senza i campi `id`.
+
+`src/lib/exportPdf.js` chiama `renderSlideAsPng` con `pixelRatio: 1` (peso ridotto) e assembla un PDF multi-pagina con `jsPDF` ottimizzato per LinkedIn. L'`ExportPanel` mostra una barra di progresso con stima MB durante la generazione.
 
 ### Auto-save
 
@@ -72,6 +80,24 @@ Le variabili CSS della palette (`--slide-bg`, `--slide-fg`, `--slide-accent`, `-
 - **Tailwind**: solo per layout dell'app shell (flex, gap, overflow, padding).
 - **BEM con CSS dedicato per componente**: ogni componente ha il suo `.css` accanto al `.jsx`. L'identità visiva dei componenti non va mai espressa con classi Tailwind.
 - Il CSS delle slide (`slide-renderer.css`) è intoccabile.
+
+### Hook ausiliari
+
+Hook usati in `App.jsx` o nei componenti, non documentati altrove:
+
+| Hook | File | Scopo |
+|---|---|---|
+| `useAuth` | `src/hooks/useAuth.js` | Stato di autenticazione utente (token, userId) |
+| `useMagicLinkLogin` | `src/hooks/useMagicLinkLogin.js` | Flusso OTP / magic-link verso `wp-draft-generator` |
+| `useUndoRedo` | `src/hooks/useUndoRedo.js` | Espone `undo`/`redo` e `canUndo`/`canRedo` dallo history stack |
+| `useHotkeys` | `src/hooks/useHotkeys.js` | Bind tastiera (Ctrl+Z, Ctrl+Y, ecc.) |
+| `useMediaQuery` | `src/hooks/useMediaQuery.js` | Responsive breakpoints |
+| `useAppTheme` | `src/hooks/useAppTheme.js` | Tema UI (dark/light) |
+| `useCarouselCount` | `src/hooks/useCarouselCount.js` | Numero caroselli salvati sul server |
+| `useContrastCheck` | `src/hooks/useContrastCheck.js` | Verifica contrasto WCAG palette |
+| `useDebouncedCallback` | `src/hooks/useDebouncedCallback.js` | Utility debounce generico |
+| `usePaletteLibraryPersistence` | `src/hooks/usePaletteLibraryPersistence.js` | Salvataggio palette custom nel localStorage |
+| `useUiPreferences` | `src/hooks/useUiPreferences.js` | Stato sidebar (aperta/chiusa, sezioni espanse) |
 
 ### Lazy loading
 
