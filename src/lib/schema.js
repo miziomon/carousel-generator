@@ -145,6 +145,14 @@ const SlideBaseFields = {
   // undefined = eredita da theme.background_image; null = forza nessuno sfondo; object = override.
   // data può essere assente: la slide usa allora il data del tema (evita duplicazione base64).
   background_image: SlideBackgroundImageSchema.nullable().optional(),
+  // Sticker solo per questa slide (local-xxx id stabile, persiste in JSON).
+  stickers:          z.array(StickerSchema).optional(),
+  // Patch parziali per sticker globali: { [globalStickerId]: StickerSchema.partial() }.
+  sticker_overrides: z.record(z.string(), StickerSchema.partial()).optional(),
+  // Id dei sticker globali nascosti solo in questa slide.
+  hidden_stickers:   z.array(z.string()).optional(),
+  // Ordine custom della pila sticker (globali visibili + locali); assente = ordine default.
+  sticker_order:     z.array(z.string()).optional(),
 }
 
 // ─── Schema per tipo (senza superRefine: discriminatedUnion lo richiede) ────

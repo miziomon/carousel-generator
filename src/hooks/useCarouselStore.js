@@ -31,6 +31,15 @@ function injectIds(slides) {
   return slides.map((s) => (s.id ? s : { ...s, id: newId() }))
 }
 
+// Aggiunge id stabile agli sticker globali del theme che ne sono privi.
+// Necessario per draft salvati con il vecchio autosave (che strippava gli id)
+// e per carousel caricati da DB senza id sticker.
+function injectGlobalStickerIds(theme) {
+  if (!theme?.global_stickers?.some((s) => !s.id)) return theme
+  const global_stickers = theme.global_stickers.map((s) => s.id ? s : { ...s, id: nanoid(8) })
+  return { ...theme, global_stickers }
+}
+
 // Rinumera tutti i num da 1 a N in base all'ordine array
 function renumber(slides) {
   return slides.map((s, i) => ({ ...s, num: i + 1 }))
@@ -76,6 +85,7 @@ function buildInitialState() {
     carousel: {
       ...base,
       slides: renumber(injectIds(base.slides)),
+      theme:  injectGlobalStickerIds(base.theme),
     },
     paletteLibrary,
     fontPreview: null,
@@ -444,11 +454,26 @@ function reducer(state, action) {
     }
 
     case 'REMOVE_THEME_STICKER': {
-      const stickers = (state.carousel.theme.global_stickers ?? []).filter(
-        (s) => s.id !== action.payload.id
-      )
+      const { id } = action.payload
+      const stickers = (state.carousel.theme.global_stickers ?? []).filter((s) => s.id !== id)
       const theme    = { ...state.carousel.theme, global_stickers: stickers }
-      const carousel = { ...state.carousel, theme }
+      // Cleanup: rimuove riferimenti allo sticker eliminato da tutte le slide
+      const slides = state.carousel.slides.map((s) => {
+        const updates = {}
+        if (s.hidden_stickers?.includes(id)) {
+          updates.hidden_stickers = s.hidden_stickers.filter((x) => x !== id)
+        }
+        if (s.sticker_overrides?.[id]) {
+          const overrides = { ...s.sticker_overrides }
+          delete overrides[id]
+          updates.sticker_overrides = overrides
+        }
+        if (s.sticker_order?.includes(id)) {
+          updates.sticker_order = s.sticker_order.filter((x) => x !== id)
+        }
+        return Object.keys(updates).length > 0 ? { ...s, ...updates } : s
+      })
+      const carousel = { ...state.carousel, theme, slides }
       return { ...state, carousel, history: pushHistory(state.history, state.carousel), meta: { ...state.meta, isDirty: true } }
     }
 
@@ -462,6 +487,110 @@ function reducer(state, action) {
       ;[arr[idx], arr[swapIdx]] = [arr[swapIdx], arr[idx]]
       const theme    = { ...state.carousel.theme, global_stickers: arr }
       const carousel = { ...state.carousel, theme }
+      return { ...state, carousel, history: pushHistory(state.history, state.carousel), meta: { ...state.meta, isDirty: true } }
+    }
+
+    // ── Sticker per-slide ────────────────────────────────────────────────────
+
+    case 'ADD_SLIDE_STICKER': {
+      const { slideId, sticker } = action.payload
+      const slides = state.carousel.slides.map((s) => {
+        if (s.id !== slideId) return s
+        const stickers = [...(s.stickers ?? []), sticker]
+        // Aggiunge al fondo di sticker_order solo se già materializzato
+        if (s.sticker_order) {
+          return { ...s, stickers, sticker_order: [...s.sticker_order, sticker.id] }
+        }
+        return { ...s, stickers }
+      })
+      const carousel = { ...state.carousel, slides }
+      return { ...state, carousel, history: pushHistory(state.history, state.carousel), meta: { ...state.meta, isDirty: true } }
+    }
+
+    case 'UPDATE_SLIDE_STICKER': {
+      const { slideId, id, patch } = action.payload
+      const globalIds = new Set((state.carousel.theme.global_stickers ?? []).map((s) => s.id))
+      const slides = state.carousel.slides.map((s) => {
+        if (s.id !== slideId) return s
+        if (globalIds.has(id)) {
+          // Override parziale per sticker globale
+          const sticker_overrides = {
+            ...(s.sticker_overrides ?? {}),
+            [id]: { ...(s.sticker_overrides?.[id] ?? {}), ...patch },
+          }
+          return { ...s, sticker_overrides }
+        }
+        // Aggiornamento sticker locale
+        const stickers = (s.stickers ?? []).map((st) => st.id === id ? { ...st, ...patch } : st)
+        return { ...s, stickers }
+      })
+      const carousel = { ...state.carousel, slides }
+      return { ...state, carousel, history: pushHistory(state.history, state.carousel), meta: { ...state.meta, isDirty: true } }
+    }
+
+    case 'REMOVE_SLIDE_STICKER': {
+      const { slideId, id } = action.payload
+      const globalIds = new Set((state.carousel.theme.global_stickers ?? []).map((s) => s.id))
+      const slides = state.carousel.slides.map((s) => {
+        if (s.id !== slideId) return s
+        const sticker_order = s.sticker_order?.filter((x) => x !== id)
+        const orderPatch = sticker_order !== undefined ? { sticker_order } : {}
+        if (globalIds.has(id)) {
+          const hidden_stickers = [...(s.hidden_stickers ?? []), id]
+          return { ...s, hidden_stickers, ...orderPatch }
+        }
+        const stickers = (s.stickers ?? []).filter((st) => st.id !== id)
+        return { ...s, stickers, ...orderPatch }
+      })
+      const carousel = { ...state.carousel, slides }
+      return { ...state, carousel, history: pushHistory(state.history, state.carousel), meta: { ...state.meta, isDirty: true } }
+    }
+
+    case 'REORDER_SLIDE_STICKER': {
+      const { slideId, id, direction } = action.payload
+      const globalStickers = state.carousel.theme.global_stickers ?? []
+      const slides = state.carousel.slides.map((s) => {
+        if (s.id !== slideId) return s
+        // Materializza sticker_order se assente
+        let order = s.sticker_order
+        if (!order) {
+          const hidden  = new Set(s.hidden_stickers ?? [])
+          const globals = globalStickers.filter((g) => !hidden.has(g.id)).map((g) => g.id)
+          const locals  = (s.stickers ?? []).map((st) => st.id)
+          order = [...globals, ...locals]
+        }
+        const idx = order.indexOf(id)
+        if (idx === -1) return s
+        const swapIdx = direction === 'up' ? idx - 1 : idx + 1
+        if (swapIdx < 0 || swapIdx >= order.length) return s
+        const newOrder = [...order]
+        ;[newOrder[idx], newOrder[swapIdx]] = [newOrder[swapIdx], newOrder[idx]]
+        return { ...s, sticker_order: newOrder }
+      })
+      const carousel = { ...state.carousel, slides }
+      return { ...state, carousel, history: pushHistory(state.history, state.carousel), meta: { ...state.meta, isDirty: true } }
+    }
+
+    case 'RESET_SLIDE_STICKER_OVERRIDE': {
+      const { slideId, id } = action.payload
+      const slides = state.carousel.slides.map((s) => {
+        if (s.id !== slideId || !s.sticker_overrides?.[id]) return s
+        const sticker_overrides = { ...s.sticker_overrides }
+        delete sticker_overrides[id]
+        return { ...s, sticker_overrides }
+      })
+      const carousel = { ...state.carousel, slides }
+      return { ...state, carousel, history: pushHistory(state.history, state.carousel), meta: { ...state.meta, isDirty: true } }
+    }
+
+    case 'RESTORE_SLIDE_STICKER': {
+      const { slideId, id } = action.payload
+      const slides = state.carousel.slides.map((s) => {
+        if (s.id !== slideId) return s
+        const hidden_stickers = (s.hidden_stickers ?? []).filter((x) => x !== id)
+        return { ...s, hidden_stickers }
+      })
+      const carousel = { ...state.carousel, slides }
       return { ...state, carousel, history: pushHistory(state.history, state.carousel), meta: { ...state.meta, isDirty: true } }
     }
 
@@ -601,7 +730,11 @@ function reducer(state, action) {
       const migrated = migrateCarousel(dbCarousel)
       return {
         ...state,
-        carousel: { ...migrated, slides: renumber(injectIds(migrated.slides)) },
+        carousel: {
+          ...migrated,
+          slides: renumber(injectIds(migrated.slides)),
+          theme:  injectGlobalStickerIds(migrated.theme),
+        },
         history: { past: [], future: [] },
         meta: {
           ...state.meta,
@@ -701,6 +834,14 @@ export function useCarouselStore() {
   const removeThemeSticker     = useCallback((id)               => dispatch({ type: 'REMOVE_THEME_STICKER',    payload: { id } }),               [])
   const reorderThemeSticker    = useCallback((id, direction)    => dispatch({ type: 'REORDER_THEME_STICKER',   payload: { id, direction } }),    [])
 
+  // ── Sticker per-slide ─────────────────────────────────────────────────────────
+  const addSlideSticker               = useCallback((slideId, sticker)    => dispatch({ type: 'ADD_SLIDE_STICKER',              payload: { slideId, sticker } }),    [])
+  const updateSlideSticker            = useCallback((slideId, id, patch)  => dispatch({ type: 'UPDATE_SLIDE_STICKER',           payload: { slideId, id, patch } }),  [])
+  const removeSlideSticker            = useCallback((slideId, id)         => dispatch({ type: 'REMOVE_SLIDE_STICKER',           payload: { slideId, id } }),         [])
+  const reorderSlideSticker           = useCallback((slideId, id, dir)    => dispatch({ type: 'REORDER_SLIDE_STICKER',          payload: { slideId, id, direction: dir } }), [])
+  const resetSlideStickerOverride     = useCallback((slideId, id)         => dispatch({ type: 'RESET_SLIDE_STICKER_OVERRIDE',   payload: { slideId, id } }),         [])
+  const restoreSlideSticker           = useCallback((slideId, id)         => dispatch({ type: 'RESTORE_SLIDE_STICKER',          payload: { slideId, id } }),         [])
+
   // ── Azione AI ────────────────────────────────────────────────────────────────
   const replaceCarouselFromAi = useCallback((generated, meta)   => dispatch({ type: 'REPLACE_CAROUSEL_FROM_AI', payload: { generated, meta } }), [])
 
@@ -740,6 +881,9 @@ export function useCarouselStore() {
     applyThemeBgImage,
     // Sticker globali theme
     addThemeSticker, updateThemeSticker, removeThemeSticker, reorderThemeSticker,
+    // Sticker per-slide
+    addSlideSticker, updateSlideSticker, removeSlideSticker, reorderSlideSticker,
+    resetSlideStickerOverride, restoreSlideSticker,
     // Azione AI
     replaceCarouselFromAi,
     // Azioni persistenza DB

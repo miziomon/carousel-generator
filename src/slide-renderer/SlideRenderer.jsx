@@ -5,6 +5,7 @@ import { BackgroundImageLayer } from './BackgroundImageLayer.jsx'
 import { StickerLayer } from './StickerLayer.jsx'
 import { BlankSlide } from './BlankSlide.jsx'
 import { resolveFontVars, effectiveFonts } from '../lib/fonts/resolveFont.js'
+import { resolveSlideStickers } from '../lib/resolveSlideStickers.js'
 
 /**
  * Renderizza una singola slide a dimensioni native (1080×H px).
@@ -41,7 +42,7 @@ export function SlideRenderer({ slide, theme, total, mode = 'preview', fontPrevi
     : rawBgImage
 
   const isBlank  = slide.type === 'blank'
-  const stickers = effectiveTheme.global_stickers ?? []
+  const stickers = resolveSlideStickers(slide, effectiveTheme)
 
   return (
     <div
