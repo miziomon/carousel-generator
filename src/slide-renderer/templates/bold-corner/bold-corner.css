@@ -27,30 +27,17 @@
   pointer-events: none;
 }
 
-/* "// //" sovrapposto all'angolo, contrasto invertito rispetto al triangolo */
-.bold__slash {
+/* Numero slide nell'angolo, contrasto invertito rispetto al triangolo */
+.bold__corner-num {
   position: absolute;
   top: var(--bold-slash-top); right: 28px;
   font-family: 'JetBrains Mono', monospace;
   font-size: var(--bold-slash-size);
   font-weight: 700;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.05em;
   color: var(--slide-bg);
   pointer-events: none;
   z-index: 1;
-}
-
-/* === HEADER === */
-.bold__num-box {
-  display: inline-block;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: var(--bold-num-size);
-  font-weight: 700;
-  letter-spacing: 0.18em;
-  color: var(--slide-bg);
-  background: var(--slide-accent);
-  padding: var(--bold-num-padding);
-  align-self: flex-start;
 }
 
 .bold__kicker {

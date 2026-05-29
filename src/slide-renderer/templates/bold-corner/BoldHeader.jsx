@@ -1,4 +1,4 @@
-// Header Bold Corner: triangolo decorativo, "// //", box numerazione, kicker.
+// Header Bold Corner: triangolo decorativo, numerazione slide nell'angolo, kicker.
 // I toggle show_topline e show_dot del theme.header sono ignorati (sostituiti dall'angolo).
 export function BoldHeader({ theme, slide, total }) {
   const { kicker_default, show_meta_number } = theme.header
@@ -9,13 +9,10 @@ export function BoldHeader({ theme, slide, total }) {
     <>
       {/* Triangolo rettangolo decorativo in alto a destra */}
       <div className="bold__corner" aria-hidden="true" />
-      {/* "// //" sovrapposto all'angolo — contrasto invertito */}
-      <div className="bold__slash" aria-hidden="true">{'// //'}</div>
-      {/* Box numerazione in alto a sinistra */}
+      {/* Numero slide sovrapposto all'angolo — contrasto invertito, nessuno sfondo */}
       {showNum && (
-        <div className="bold__num-box">
-          {String(slide.num).padStart(2, '0')}
-          {total ? ` / ${String(total).padStart(2, '0')}` : ''}
+        <div className="bold__corner-num">
+          {slide.num}{total ? `/${total}` : ''}
         </div>
       )}
       {kicker && <div className="bold__kicker">{kicker}</div>}

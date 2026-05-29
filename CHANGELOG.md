@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.29.1] — 2026-05-29
+
+### Changed
+- **Template Bold Corner**: sostituiti il testo decorativo `// //` e il box numerazione con un numero slide diretto (`N/TOT`) sovrapposto al triangolo angolare (classe CSS `bold__corner-num`). Rimossi `.bold__slash` e `.bold__num-box` non più necessari
+
 ## [1.29.0] — 2026-05-27
 
 ### Added
