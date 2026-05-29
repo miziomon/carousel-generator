@@ -54,6 +54,21 @@ export const SlideBackgroundImageSchema = BackgroundImageSchema.extend({
   data: z.string().startsWith('data:image/').optional(),
 })
 
+// ─── Sticker ──────────────────────────────────────────────────────────────────
+// Immagine sovrapposta al contenuto della slide (sopra il testo).
+export const StickerPositionSchema = z.object({
+  x: z.number().min(0).max(100).default(50),
+  y: z.number().min(0).max(100).default(50),
+}).default({ x: 50, y: 50 })
+
+export const StickerSchema = z.object({
+  data:     z.string().min(1),
+  size:     z.number().min(25).max(250).default(150),
+  rotation: z.number().min(-180).max(180).default(0),
+  opacity:  z.number().min(0).max(1).default(1),
+  position: StickerPositionSchema,
+})
+
 // ─── Theme ────────────────────────────────────────────────────────────────────
 const ThemeSchema = z.object({
   // Formato del carosello. Sempre presente: la migrazione garantisce il valore.
@@ -100,6 +115,9 @@ const ThemeSchema = z.object({
   // Immagine di sfondo globale: applicata a tutte le slide che non la sovrascrivono.
   // undefined/null = nessuna immagine globale.
   background_image: BackgroundImageSchema.nullable().optional(),
+  // Sticker globale: immagine in sovraimpressione sopra il testo.
+  // undefined/null = nessuno sticker.
+  global_sticker: StickerSchema.nullable().optional(),
 })
 
 // ─── Base fields comuni a tutti i tipi ───────────────────────────────────────

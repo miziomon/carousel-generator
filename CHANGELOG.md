@@ -1,5 +1,10 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+- **Sticker globale** (sidebar → sezione "Sticker globale"): nuova sezione per applicare un'immagine in sovraimpressione sopra il contenuto di tutte le slide. Controlli: dimensione (25–250 px, default 150 px — lato maggiore, aspect ratio preservato), rotazione (−180°/+180°), opacità (0–100%), posizione tramite griglia interattiva 5×5. Selezione immagine via drag & drop/upload diretto (base64) o dalla libreria remota. Il layer sticker (z-index 3) è posizionato sopra testo e overlay. Il campo `theme.global_sticker` è predisposto per futuri override per-slide senza migrazioni distruttive
+
 ## [1.29.1] — 2026-05-29
 
 ### Changed

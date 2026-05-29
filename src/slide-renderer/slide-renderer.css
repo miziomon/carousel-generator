@@ -50,3 +50,13 @@
   width: 100%;
   height: 100%;
 }
+
+/* ── Layer sticker (sopra il testo) ─────────────────────────────────────── */
+.slide__sticker {
+  position: absolute;
+  z-index: 3;
+  width: auto;
+  height: auto;
+  pointer-events: none;
+  user-select: none;
+}

@@ -69,6 +69,16 @@ function normalizeTheme(theme) {
   if (theme.background_image !== undefined) {
     normalized.background_image = theme.background_image
   }
+  // Propaga global_sticker se presente; applica i default ai campi mancanti
+  if (theme.global_sticker !== undefined) {
+    normalized.global_sticker = theme.global_sticker === null ? null : {
+      size:     150,
+      rotation: 0,
+      opacity:  1,
+      position: { x: 50, y: 50 },
+      ...theme.global_sticker,
+    }
+  }
   return normalized
 }
 

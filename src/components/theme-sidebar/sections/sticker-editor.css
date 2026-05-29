@@ -1,0 +1,148 @@
+.sticker-editor {
+  padding: 2px 0;
+}
+
+/* ── Upload ─────────────────────────────────────────────────────────────────── */
+
+.sticker-editor__upload {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 18px 12px;
+  border: 1.5px dashed var(--color-border, #d0d0d0);
+  border-radius: 8px;
+  cursor: pointer;
+  background: var(--color-bg-alt, #f8f8f8);
+  color: var(--color-text-muted, #888);
+  transition: border-color 0.12s, background 0.12s;
+  text-align: center;
+}
+
+.sticker-editor__upload:hover {
+  border-color: rgba(var(--app-accent-rgb), 0.5);
+  background: rgba(var(--app-accent-rgb), 0.04);
+}
+
+.sticker-editor__upload-icon {
+  opacity: 0.45;
+}
+
+.sticker-editor__upload-text {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-text, #333);
+}
+
+.sticker-editor__upload-hint {
+  font-size: 10px;
+  color: var(--color-text-muted, #999);
+}
+
+/* ── Anteprima ──────────────────────────────────────────────────────────────── */
+
+.sticker-editor__preview {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: repeating-conic-gradient(#e0e0e0 0% 25%, #f8f8f8 0% 50%) 0 0 / 12px 12px;
+  border-radius: 6px;
+  overflow: hidden;
+  height: 80px;
+  margin-bottom: 8px;
+}
+
+.sticker-editor__preview-img {
+  max-width: 100%;
+  max-height: 70px;
+  object-fit: contain;
+}
+
+/* ── Azioni ─────────────────────────────────────────────────────────────────── */
+
+.sticker-editor__actions {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.sticker-editor__btn {
+  flex: 1;
+  padding: 5px 6px;
+  border-radius: 5px;
+  font-size: 11px;
+  font-family: inherit;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: background 0.1s, border-color 0.1s;
+}
+
+.sticker-editor__btn--secondary {
+  background: var(--color-bg-alt, #f0f0f0);
+  border-color: var(--color-border, #e0e0e0);
+  color: var(--color-text, #333);
+}
+
+.sticker-editor__btn--secondary:hover {
+  background: var(--color-bg-hover, #e4e4e4);
+}
+
+.sticker-editor__btn--danger {
+  background: rgba(220, 38, 38, 0.07);
+  border-color: rgba(220, 38, 38, 0.25);
+  color: #dc2626;
+}
+
+.sticker-editor__btn--danger:hover {
+  background: rgba(220, 38, 38, 0.14);
+  border-color: rgba(220, 38, 38, 0.45);
+}
+
+/* ── Slider rows ────────────────────────────────────────────────────────────── */
+
+.sticker-editor__row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.sticker-editor__row--col {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 5px;
+}
+
+.sticker-editor__label {
+  font-size: 11px;
+  color: var(--color-text-muted, #666);
+  flex-shrink: 0;
+  width: 62px;
+}
+
+.sticker-editor__row--col .sticker-editor__label {
+  width: auto;
+}
+
+.sticker-editor__slider-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+}
+
+.sticker-editor__range {
+  flex: 1;
+  height: 4px;
+  cursor: pointer;
+  accent-color: var(--color-accent, #0066cc);
+}
+
+.sticker-editor__val {
+  font-size: 10px;
+  color: var(--color-text-muted, #888);
+  min-width: 34px;
+  text-align: right;
+  flex-shrink: 0;
+}

@@ -2,6 +2,7 @@ import './slide-renderer.css'
 import { getTemplate, DEFAULT_TEMPLATE_ID } from './templates/registry.js'
 import { getFormat } from '../lib/formats/registry.js'
 import { BackgroundImageLayer } from './BackgroundImageLayer.jsx'
+import { StickerLayer } from './StickerLayer.jsx'
 import { BlankSlide } from './BlankSlide.jsx'
 import { resolveFontVars, effectiveFonts } from '../lib/fonts/resolveFont.js'
 
@@ -41,6 +42,11 @@ export function SlideRenderer({ slide, theme, total, mode = 'preview', fontPrevi
 
   const isBlank = slide.type === 'blank'
 
+  // null = forza nessuno sticker; undefined = eredita dal tema; object = override slide (futuro)
+  const sticker = slide.global_sticker === null
+    ? null
+    : (slide.global_sticker ?? effectiveTheme.global_sticker)
+
   return (
     <div
       className="slide"
@@ -58,6 +64,7 @@ export function SlideRenderer({ slide, theme, total, mode = 'preview', fontPrevi
           : <TemplateComponent slide={slide} theme={effectiveTheme} total={total} mode={mode} />
         }
       </div>
+      <StickerLayer sticker={sticker} />
     </div>
   )
 }

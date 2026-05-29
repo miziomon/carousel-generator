@@ -1,0 +1,27 @@
+.sticker-pos-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 3px;
+  width: 100%;
+  margin-top: 2px;
+}
+
+.sticker-pos-grid__cell {
+  aspect-ratio: 1;
+  border-radius: 3px;
+  background: var(--color-bg-alt, #f0f0f0);
+  border: 1px solid var(--color-border, #e0e0e0);
+  cursor: pointer;
+  transition: background 0.1s, border-color 0.1s;
+  padding: 0;
+}
+
+.sticker-pos-grid__cell:hover {
+  background: rgba(var(--app-accent-rgb), 0.18);
+  border-color: rgba(var(--app-accent-rgb), 0.45);
+}
+
+.sticker-pos-grid__cell--active {
+  background: var(--app-accent, rgb(var(--app-accent-rgb)));
+  border-color: var(--app-accent, rgb(var(--app-accent-rgb)));
+}
