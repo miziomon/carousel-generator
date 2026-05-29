@@ -3,7 +3,14 @@
 ## [Unreleased]
 
 ### Added
-- **Sticker globale** (sidebar → sezione "Sticker globale"): nuova sezione per applicare un'immagine in sovraimpressione sopra il contenuto di tutte le slide. Controlli: dimensione (25–250 px, default 150 px — lato maggiore, aspect ratio preservato), rotazione (−180°/+180°), opacità (0–100%), posizione tramite griglia interattiva 5×5. Selezione immagine via drag & drop/upload diretto (base64) o dalla libreria remota. Il layer sticker (z-index 3) è posizionato sopra testo e overlay. Il campo `theme.global_sticker` è predisposto per futuri override per-slide senza migrazioni distruttive
+- **Sticker globale** (sidebar → sezione "Sticker globale"): nuova sezione del tema per applicare un'immagine in sovraimpressione sopra il contenuto di tutte le slide. Controlli: dimensione 25–250 px (default 150 px, lato maggiore con aspect ratio preservato), rotazione −180°/+180°, opacità 0–100%, posizione tramite slider X/Y 0–100% e area interattiva cliccabile/trascinabile che rispetta l'aspect ratio del formato slide corrente. Selezione immagine via drag & drop / upload diretto (base64, trasparenza PNG preservata) o dalla libreria immagini remota. Il layer sticker (`z-index: 3`) è renderizzato sopra testo e overlay. Il campo `theme.global_sticker` è predisposto per futuri override per-slide senza migrazioni distruttive
+
+### Changed
+- **`processImage.js`** — nuova utility `processImageFilePreserveAlpha()` per upload immagini che preserva la trasparenza PNG (usata dallo `StickerEditor`)
+- **Schema** — aggiunti `StickerSchema` e `StickerPositionSchema` in `src/lib/schema.js`; `ThemeSchema` espone `global_sticker: StickerSchema.nullable().optional()`
+- **Store** — nuova action `APPLY_THEME_STICKER` in `useCarouselStore.js` con dispatcher `applyThemeSticker(sticker)` (oggetto = imposta, `null` = forza nessuno, `undefined` = rimuovi il campo dal theme)
+- **Migrazioni** — `normalizeMinimal.js` propaga `theme.global_sticker` applicando i default ai campi mancanti (`size: 150`, `rotation: 0`, `opacity: 1`, `position: { x: 50, y: 50 }`)
+- **Renderer** — nuovo `StickerLayer` (`src/slide-renderer/StickerLayer.jsx`) montato in `SlideRenderer` dopo il contenuto della slide; regole CSS `.slide__sticker` aggiunte a `slide-renderer.css`
 
 ## [1.29.1] — 2026-05-29
 

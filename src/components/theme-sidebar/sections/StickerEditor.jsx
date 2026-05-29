@@ -1,6 +1,6 @@
 import { useRef } from 'react'
 import { processImageFilePreserveAlpha } from '../../../lib/images/processImage.js'
-import { StickerPositionGrid } from './StickerPositionGrid.jsx'
+import { StickerPositionPicker } from './StickerPositionPicker.jsx'
 import './sticker-editor.css'
 
 const DEFAULT_STICKER = {
@@ -18,8 +18,9 @@ const DEFAULT_STICKER = {
  * @param {object|null|undefined} sticker    - Sticker corrente dal theme.
  * @param {function}              onChange   - Callback con il nuovo oggetto sticker.
  * @param {function}              [onRemove] - Callback per rimuovere lo sticker (payload undefined).
+ * @param {string}                [formatId] - ID del formato slide corrente (per l'area di posizionamento).
  */
-export function StickerEditor({ sticker, onChange, onRemove }) {
+export function StickerEditor({ sticker, onChange, onRemove, formatId }) {
   const inputRef = useRef(null)
 
   async function handleFile(file) {
@@ -164,8 +165,9 @@ export function StickerEditor({ sticker, onChange, onRemove }) {
       {/* Posizione */}
       <div className="sticker-editor__row sticker-editor__row--top">
         <label className="sticker-editor__label">Posizione</label>
-        <StickerPositionGrid
+        <StickerPositionPicker
           value={sticker.position}
+          formatId={formatId}
           onChange={(pos) => patch({ position: pos })}
         />
       </div>

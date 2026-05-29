@@ -57,6 +57,7 @@ export function StickerSection({ isOpen, onToggle, theme, applyThemeSticker, use
           sticker={sticker}
           onChange={handleChange}
           onRemove={handleRemove}
+          formatId={theme?.format}
         />
       </div>
       {userId && (
