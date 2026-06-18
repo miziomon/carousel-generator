@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { CarouselSchema, ThemeSchema } from '../lib/schema.js'
 import { defaultCarousel } from '../lib/defaultCarousel.js'
+import { normalizeMinimalCarousel } from '../lib/migrations/normalizeMinimal.js'
 
 describe('CarouselSchema', () => {
   it('valida il defaultCarousel senza errori', () => {
@@ -30,6 +31,50 @@ describe('CarouselSchema', () => {
       ],
     }
     expect(CarouselSchema.safeParse(bad).success).toBe(false)
+  })
+
+  it('accetta lines_align con valori validi (left/center/right)', () => {
+    const ok = {
+      ...defaultCarousel,
+      slides: [
+        {
+          num: 1,
+          type: 'standard',
+          font: 'primary',
+          size: 'lg',
+          lines: ['riga 1', 'riga 2'],
+          lines_align: ['left', 'center'],
+        },
+      ],
+    }
+    expect(CarouselSchema.safeParse(ok).success).toBe(true)
+  })
+
+  it('rifiuta lines_align con un valore fuori enum', () => {
+    const bad = {
+      ...defaultCarousel,
+      slides: [
+        {
+          num: 1,
+          type: 'standard',
+          font: 'primary',
+          size: 'lg',
+          lines: ['riga 1'],
+          lines_align: ['justify'],
+        },
+      ],
+    }
+    expect(CarouselSchema.safeParse(bad).success).toBe(false)
+  })
+
+  it('accetta una slide senza lines_align (retrocompatibilità)', () => {
+    const ok = {
+      ...defaultCarousel,
+      slides: [
+        { num: 1, type: 'standard', font: 'primary', size: 'lg', lines: ['riga 1'] },
+      ],
+    }
+    expect(CarouselSchema.safeParse(ok).success).toBe(true)
   })
 
   it('rifiuta una cta con cta_items vuoto', () => {
@@ -88,6 +133,34 @@ describe('CarouselSchema', () => {
       ],
     }
     expect(CarouselSchema.safeParse(good).success).toBe(true)
+  })
+})
+
+describe('normalizeMinimalCarousel — lines_align', () => {
+  it('preserva lines_align in una slide standard', () => {
+    const raw = {
+      slides: [
+        { type: 'standard', lines: ['a', 'b'], lines_align: ['center', 'right'] },
+      ],
+    }
+    const out = normalizeMinimalCarousel(raw)
+    expect(out.slides[0].lines_align).toEqual(['center', 'right'])
+  })
+
+  it('preserva lines_align in una slide quote (ramo che parte da base)', () => {
+    const raw = {
+      slides: [
+        { type: 'quote', lines: ['citazione'], lines_align: ['center'] },
+      ],
+    }
+    const out = normalizeMinimalCarousel(raw)
+    expect(out.slides[0].lines_align).toEqual(['center'])
+  })
+
+  it('non aggiunge lines_align se assente nell input', () => {
+    const raw = { slides: [{ type: 'standard', lines: ['a'] }] }
+    const out = normalizeMinimalCarousel(raw)
+    expect(out.slides[0].lines_align).toBeUndefined()
   })
 })
 

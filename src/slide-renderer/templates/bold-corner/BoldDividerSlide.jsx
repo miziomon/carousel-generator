@@ -18,7 +18,7 @@ export function BoldDividerSlide({ slide, theme, total, calib }) {
       )}
       <BoldHeader theme={theme} slide={slide} total={total} />
       <div className={`bold__body bold__body--${sizeKey}`} style={bodyStyle}>
-        {parseLines(slide.lines, `bc-div-${slide.num}`, BOLD_CLASS_MAP)}
+        {parseLines(slide.lines, `bc-div-${slide.num}`, BOLD_CLASS_MAP, slide.lines_align)}
       </div>
       {slide.divider_label && (
         <div className="bold__kicker" style={{ marginTop: '24px', marginBottom: 0 }}>

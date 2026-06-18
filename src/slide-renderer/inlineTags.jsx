@@ -109,10 +109,33 @@ export function parseInlineTags(text, keyPrefix = '', classMap = DEFAULT_CLASS_M
  * Converte l'array lines in un array flat di React nodes con <br> intercalati.
  * Una stringa vuota "" produce un <br> extra (spazio paragrafo).
  * L'ultima riga non ha <br> finale.
+ *
+ * Se `aligns` è presente (allineamento per-riga, parallelo a `lines`), ogni riga
+ * viene invece wrappata in un <div> block con `text-align`: serve un contenitore
+ * block perché text-align non ha effetto su nodi inline. Indici mancanti ⇒ 'left'.
+ * Quando `aligns` è assente il comportamento resta identico (path <br>): le slide
+ * esistenti non subiscono alcuna regressione.
  */
-export function parseLines(lines, keyPrefix = 'line', classMap = DEFAULT_CLASS_MAP) {
+export function parseLines(lines, keyPrefix = 'line', classMap = DEFAULT_CLASS_MAP, aligns) {
   if (!lines || lines.length === 0) return null
 
+  // Path con allineamento per-riga: un <div> per riga con text-align inline.
+  if (aligns) {
+    return lines.map((line, idx) => {
+      const textAlign = aligns[idx] ?? 'left'
+      // riga vuota → <br> interno per preservare l'altezza (spazio paragrafo)
+      const content = line === ''
+        ? <br />
+        : parseInlineTags(line, `${keyPrefix}-${idx}`, classMap)
+      return (
+        <div key={`${keyPrefix}-line-${idx}`} style={{ textAlign }}>
+          {content}
+        </div>
+      )
+    })
+  }
+
+  // Path classico: righe in flusso unico con <br> intercalati.
   const result = []
 
   lines.forEach((line, idx) => {

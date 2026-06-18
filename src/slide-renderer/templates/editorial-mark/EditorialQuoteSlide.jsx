@@ -1,6 +1,6 @@
 import { EditorialHeader } from './EditorialHeader.jsx'
 import { EditorialFooter } from './EditorialFooter.jsx'
-import { parseLines } from '../../inlineTags.jsx'
+import { parseLines, parseInlineTags } from '../../inlineTags.jsx'
 import { EDITORIAL_CLASS_MAP } from './constants.js'
 import { computeBodyFont } from '../_shared/bodyFont.js'
 import { buildBodyStyle } from '../_shared/bodyStyle.js'
@@ -36,9 +36,33 @@ export function EditorialQuoteSlide({ slide, theme, total, calib }) {
       <EditorialHeader theme={theme} slide={slide} total={total} />
       <div className={`editorial__body editorial__body--${sizeKey} editorial__body--quote`} style={bodyStyle}>
         <div className="editorial__quote-text">
-          <span className="editorial__qmark editorial__qmark--open" aria-hidden="true">{DQ_OPEN}</span>
-          {parseLines(slide.lines, `q-${slide.num}`, EDITORIAL_CLASS_MAP)}
-          <span className="editorial__qmark editorial__qmark--close" aria-hidden="true">{DQ_CLOSE}</span>
+          {slide.lines_align
+            ? // Allineamento per-riga: ogni riga è un blocco; le virgolette restano
+              // attaccate al testo entrando nel primo/ultimo blocco (le qmark sono
+              // inline-block e fuori dai div finirebbero su righe separate).
+              slide.lines.map((line, idx) => {
+                const textAlign = slide.lines_align[idx] ?? 'left'
+                const isFirst = idx === 0
+                const isLast = idx === slide.lines.length - 1
+                return (
+                  <div key={`q-${slide.num}-line-${idx}`} style={{ textAlign }}>
+                    {isFirst && (
+                      <span className="editorial__qmark editorial__qmark--open" aria-hidden="true">{DQ_OPEN}</span>
+                    )}
+                    {line === '' ? <br /> : parseInlineTags(line, `q-${slide.num}-${idx}`, EDITORIAL_CLASS_MAP)}
+                    {isLast && (
+                      <span className="editorial__qmark editorial__qmark--close" aria-hidden="true">{DQ_CLOSE}</span>
+                    )}
+                  </div>
+                )
+              })
+            : (
+              <>
+                <span className="editorial__qmark editorial__qmark--open" aria-hidden="true">{DQ_OPEN}</span>
+                {parseLines(slide.lines, `q-${slide.num}`, EDITORIAL_CLASS_MAP)}
+                <span className="editorial__qmark editorial__qmark--close" aria-hidden="true">{DQ_CLOSE}</span>
+              </>
+            )}
         </div>
         {hasAttr && (
           <div className="editorial__quote-attr">

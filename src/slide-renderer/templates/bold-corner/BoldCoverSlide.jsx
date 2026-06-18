@@ -13,7 +13,7 @@ export function BoldCoverSlide({ slide, theme, total, calib }) {
     <>
       <BoldHeader theme={theme} slide={slide} total={total} />
       <div className="bold__body bold__body--cover" style={bodyStyle}>
-        {parseLines(slide.lines, `bc-cover-${slide.num}`, BOLD_CLASS_MAP)}
+        {parseLines(slide.lines, `bc-cover-${slide.num}`, BOLD_CLASS_MAP, slide.lines_align)}
       </div>
       <BoldFooter theme={theme} slide={slide} total={total} />
     </>

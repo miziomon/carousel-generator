@@ -13,7 +13,7 @@ export function EditorialCoverSlide({ slide, theme, total, calib }) {
     <>
       <EditorialHeader theme={theme} slide={slide} total={total} />
       <div className="editorial__body editorial__body--cover" style={bodyStyle}>
-        {parseLines(slide.lines, `cover-${slide.num}`, EDITORIAL_CLASS_MAP)}
+        {parseLines(slide.lines, `cover-${slide.num}`, EDITORIAL_CLASS_MAP, slide.lines_align)}
       </div>
       <EditorialFooter theme={theme} slide={slide} total={total} />
     </>

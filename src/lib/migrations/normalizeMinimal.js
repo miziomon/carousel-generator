@@ -144,6 +144,8 @@ function normalizeSlide(slide, index) {
   }
   if (slide._note_autore !== undefined) base._note_autore = slide._note_autore
   if (slide.background_image !== undefined) base.background_image = slide.background_image
+  // Allineamento per-riga (parallelo a lines): preservato se presente nell'import
+  if (Array.isArray(slide.lines_align)) base.lines_align = slide.lines_align
 
   if (type === 'cover') {
     const out = {

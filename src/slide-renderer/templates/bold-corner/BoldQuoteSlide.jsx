@@ -36,7 +36,7 @@ export function BoldQuoteSlide({ slide, theme, total, calib }) {
       <BoldHeader theme={theme} slide={slide} total={total} />
       <div className={`bold__body bold__body--${sizeKey} bold__body--quote`} style={bodyStyle}>
         <div className="bold__quote-text">
-          {parseLines(slide.lines, `bc-q-${slide.num}`, BOLD_CLASS_MAP)}
+          {parseLines(slide.lines, `bc-q-${slide.num}`, BOLD_CLASS_MAP, slide.lines_align)}
         </div>
         {hasAttr && (
           <div className="bold__quote-attr">

@@ -17,7 +17,7 @@ export function EditorialDividerSlide({ slide, theme, total, calib }) {
       )}
       <EditorialHeader theme={theme} slide={slide} total={total} />
       <div className={`editorial__body editorial__body--${sizeKey}`} style={bodyStyle}>
-        {parseLines(slide.lines, `div-${slide.num}`, EDITORIAL_CLASS_MAP)}
+        {parseLines(slide.lines, `div-${slide.num}`, EDITORIAL_CLASS_MAP, slide.lines_align)}
       </div>
       {slide.divider_label && (
         <div className="editorial__kicker" style={{ marginTop: '24px', marginBottom: 0 }}>

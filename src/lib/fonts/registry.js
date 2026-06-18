@@ -85,6 +85,17 @@ export const FONTS = [
     is_variable: true,
     files: ['Manrope-Variable.ttf'],
   },
+  {
+    id: 'Google Sans',
+    category: 'sans',
+    label: 'Google Sans',
+    css_family: '"Google Sans", sans-serif',
+    weights: [100, 900],
+    italic: true,
+    is_variable: true,
+    files: ['GoogleSans-VariableFont_GRAD,opsz,wght.ttf', 'GoogleSans-Italic-VariableFont_GRAD,opsz,wght.ttf'],
+    notes: 'Assi variabili: wght, opsz, GRAD',
+  },
 
   // SERIF
   {

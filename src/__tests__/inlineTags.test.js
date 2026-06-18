@@ -119,3 +119,41 @@ describe('parseLines', () => {
     expect(parseLines(null)).toBeNull()
   })
 })
+
+describe('parseLines — allineamento per-riga (aligns)', () => {
+  it('senza aligns mantiene il comportamento <br> (retrocompatibilità)', () => {
+    const result = parseLines(['riga1', 'riga2'])
+    expect(result).toHaveLength(3)
+    expect(result[1].type).toBe('br')
+  })
+
+  it('con aligns wrappa ogni riga in un <div> con textAlign', () => {
+    const result = parseLines(['riga1', 'riga2'], 'k', DEFAULT_CLASS_MAP, ['center', 'right'])
+    expect(result).toHaveLength(2)
+    expect(result[0].type).toBe('div')
+    expect(result[0].props.style.textAlign).toBe('center')
+    expect(result[1].type).toBe('div')
+    expect(result[1].props.style.textAlign).toBe('right')
+  })
+
+  it('riga vuota nel path aligns produce un <div> con <br> interno', () => {
+    const result = parseLines(['riga1', ''], 'k', DEFAULT_CLASS_MAP, ['left', 'left'])
+    expect(result[1].type).toBe('div')
+    expect(result[1].props.children.type).toBe('br')
+  })
+
+  it('indici di aligns mancanti usano il default "left"', () => {
+    const result = parseLines(['a', 'b', 'c'], 'k', DEFAULT_CLASS_MAP, ['right'])
+    expect(result[0].props.style.textAlign).toBe('right')
+    expect(result[1].props.style.textAlign).toBe('left')
+    expect(result[2].props.style.textAlign).toBe('left')
+  })
+
+  it('preserva i tag inline dentro il div allineato', () => {
+    const result = parseLines(['testo [hl]verde[/hl]'], 'k', DEFAULT_CLASS_MAP, ['center'])
+    const children = result[0].props.children
+    // parseInlineTags ritorna un array: ['testo ', <span.hl-block>]
+    expect(Array.isArray(children)).toBe(true)
+    expect(children[1].props.className).toBe('hl-block')
+  })
+})

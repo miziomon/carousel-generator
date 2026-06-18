@@ -153,6 +153,8 @@ const SlideBaseFields = {
   hidden_stickers:   z.array(z.string()).optional(),
   // Ordine custom della pila sticker (globali visibili + locali); assente = ordine default.
   sticker_order:     z.array(z.string()).optional(),
+  // Allineamento orizzontale per-riga, parallelo a `lines`. assente = tutto a sinistra.
+  lines_align:       z.array(z.enum(['left', 'center', 'right'])).optional(),
 }
 
 // ─── Schema per tipo (senza superRefine: discriminatedUnion lo richiede) ────

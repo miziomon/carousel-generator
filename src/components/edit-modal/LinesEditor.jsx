@@ -1,6 +1,13 @@
 import { useRef, useState, useCallback } from 'react'
-import { Trash2, Plus } from 'lucide-react'
+import { Trash2, Plus, AlignLeft, AlignCenter, AlignRight } from 'lucide-react'
 import { cn } from '../../lib/cn.js'
+
+// Opzioni di allineamento per-riga (sx / centro / dx)
+const ALIGN_OPTIONS = [
+  { value: 'left',   Icon: AlignLeft,   title: 'Allinea a sinistra' },
+  { value: 'center', Icon: AlignCenter, title: 'Centra' },
+  { value: 'right',  Icon: AlignRight,  title: 'Allinea a destra' },
+]
 
 // Tag inline disponibili nella toolbar
 const TOOLBAR_TAGS = [
@@ -34,12 +41,31 @@ function insertTagAtCursor(el, tag, currentValue, onChange) {
   })
 }
 
-// Singola riga con textarea + drag handle + delete
-function LineRow({ value, index, isFocused, onFocus, onChange, onDelete, onKeyDown, textareaRef }) {
+// Singola riga con textarea + drag handle + controlli allineamento + delete
+function LineRow({ value, index, align, isFocused, onFocus, onChange, onAlignChange, onDelete, onKeyDown, textareaRef }) {
   return (
     <div className={cn('flex gap-1.5 items-start group', isFocused && 'relative z-10')}>
       {/* Drag handle placeholder — il drag DnD arriva in Fase 4 */}
       <div className="mt-2 opacity-30 cursor-grab select-none text-slate-500 text-xs">⠿</div>
+
+      {/* Allineamento per-riga: sx / centro / dx */}
+      <div className="flex flex-col gap-0.5 mt-0.5">
+        {ALIGN_OPTIONS.map(({ value: alignValue, Icon, title }) => (
+          <button
+            key={alignValue}
+            onClick={() => onAlignChange(index, alignValue)}
+            className={cn(
+              'p-1 rounded border transition-colors',
+              (align ?? 'left') === alignValue
+                ? 'border-emerald-500/60 text-emerald-400'
+                : 'border-slate-700 text-slate-500 hover:border-slate-500 hover:text-slate-300'
+            )}
+            title={title}
+          >
+            <Icon size={12} />
+          </button>
+        ))}
+      </div>
 
       <textarea
         ref={textareaRef}
@@ -89,36 +115,46 @@ function InlineToolbar({ onInsert }) {
   )
 }
 
-export function LinesEditor({ lines, onChange }) {
+export function LinesEditor({ lines, aligns, onChange }) {
   const [focusedIdx, setFocusedIdx] = useState(null)
   const textareaRefs = useRef([])
+
+  // Array allineamenti parallelo a lines; default 'left' se assente o disallineato.
+  const safeAligns = lines.map((_, i) => aligns?.[i] ?? 'left')
 
   const handleChange = useCallback((idx, val) => {
     const next = [...lines]
     next[idx] = val
-    onChange(next)
-  }, [lines, onChange])
+    onChange(next, safeAligns)
+  }, [lines, safeAligns, onChange])
+
+  const handleAlignChange = useCallback((idx, value) => {
+    const nextAligns = [...safeAligns]
+    nextAligns[idx] = value
+    onChange(lines, nextAligns)
+  }, [lines, safeAligns, onChange])
 
   const handleDelete = useCallback((idx) => {
     if (lines.length <= 1) return  // almeno 1 riga
     const next = lines.filter((_, i) => i !== idx)
-    onChange(next)
+    const nextAligns = safeAligns.filter((_, i) => i !== idx)
+    onChange(next, nextAligns)
     setFocusedIdx(null)
-  }, [lines, onChange])
+  }, [lines, safeAligns, onChange])
 
   const handleAddLine = useCallback(() => {
-    onChange([...lines, 'Nuova riga'])
+    onChange([...lines, 'Nuova riga'], [...safeAligns, 'left'])
     // Focus sulla nuova riga dopo render
     requestAnimationFrame(() => {
       const idx = lines.length
       textareaRefs.current[idx]?.focus()
       textareaRefs.current[idx]?.select()
     })
-  }, [lines, onChange])
+  }, [lines, safeAligns, onChange])
 
   const handleAddEmpty = useCallback(() => {
-    onChange([...lines, ''])
-  }, [lines, onChange])
+    onChange([...lines, ''], [...safeAligns, 'left'])
+  }, [lines, safeAligns, onChange])
 
   function handleKeyDown(e, idx) {
     const isMac = navigator.platform.includes('Mac')
@@ -151,9 +187,11 @@ export function LinesEditor({ lines, onChange }) {
           key={idx}
           value={line}
           index={idx}
+          align={safeAligns[idx]}
           isFocused={focusedIdx === idx}
           onFocus={() => setFocusedIdx(idx)}
           onChange={handleChange}
+          onAlignChange={handleAlignChange}
           onDelete={handleDelete}
           onKeyDown={(e) => handleKeyDown(e, idx)}
           textareaRef={(el) => { textareaRefs.current[idx] = el }}

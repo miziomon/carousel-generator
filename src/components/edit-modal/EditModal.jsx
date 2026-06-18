@@ -400,8 +400,13 @@ export function EditModal({ slide, theme, total, carousel, onSave, onCancel, use
                 <FieldGroup label="Testo (righe)">
                   <LinesEditor
                     lines={draft.lines ?? ['']}
-                    onChange={(lines) => {
-                      set('lines', isCover ? lines.slice(0, 1) : lines)
+                    aligns={draft.lines_align ?? (draft.lines ?? ['']).map(() => 'left')}
+                    onChange={(lines, aligns) => {
+                      const nextLines = isCover ? lines.slice(0, 1) : lines
+                      const nextAligns = isCover ? aligns.slice(0, 1) : aligns
+                      set('lines', nextLines)
+                      // Omette il campo se è tutto 'left' (JSON pulito + retrocompat)
+                      set('lines_align', nextAligns.every((a) => a === 'left') ? undefined : nextAligns)
                     }}
                   />
                   {isCover && (

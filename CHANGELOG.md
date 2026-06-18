@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.31.0] — 2026-06-18
+
+### Added
+- **Allineamento orizzontale per-riga** (EditModal → sezione "Testo (righe)"): ogni riga delle slide testuali (`cover`, `standard`, `divider`, `quote`) può essere allineata in modo indipendente a sinistra, al centro o a destra tramite tre bottoni sempre visibili accanto a ciascuna riga. Nuovo campo opzionale `lines_align` in `SlideBaseFields` (`src/lib/schema.js`): array di `'left'|'center'|'right'` parallelo a `lines`. Il campo viene omesso quando tutte le righe sono allineate a sinistra, garantendo JSON pulito e piena retrocompatibilità con i caroselli esistenti
+- **Font variabile Google Sans** (`src/lib/fonts/registry.js` + `src/index.css`): nuovo font sans-serif con varianti normale e italica (assi variabili `wght`, `opsz`, `GRAD`), disponibile per gli slot primario e secondario
+- **Nuovi test**: copertura di `parseLines` con allineamento per-riga (`inlineTags.test.js`), validazione `lines_align` e conservazione nel flusso di normalizzazione import (`schema.test.js`)
+
+### Changed
+- **`parseLines`** (`src/slide-renderer/inlineTags.jsx`) — accetta un quarto parametro opzionale `aligns`: quando presente wrappa ogni riga in un `<div>` con `text-align` inline (necessario perché `text-align` non agisce su nodi inline); quando assente mantiene invariato il comportamento con `<br>`, evitando regressioni sulle slide esistenti
+- **Template editorial-mark e bold-corner** — gli otto componenti slide con righe propagano `slide.lines_align` a `parseLines`. La quote di editorial-mark mantiene le virgolette tipografiche attaccate al testo inserendole nel primo/ultimo blocco-riga
+- **`normalizeMinimal.js`** — `normalizeSlide` propaga il campo `lines_align` (ricostruisce le slide campo per campo, quindi senza questo intervento il campo andrebbe perso nell'import JSON)
+
 ## [1.30.2] — 2026-05-29
 
 ### Added
