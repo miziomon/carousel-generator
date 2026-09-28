@@ -1,101 +1,74 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { renderHook, act } from '@testing-library/react'
+import { describe, it, expect, vi } from 'vitest'
+import { renderHook } from '@testing-library/react'
 import { useAuth } from '../hooks/useAuth.js'
-import { loadSession } from '../lib/auth/storage.js'
 
-const SESSION_KEY = 'carosello:user_session'
-const DRAFT_KEY = 'carosello.draft.v1'
+// useAuth.js è un wrapper sottile su useHubAuth (@mavida/hub-auth/react): la
+// sessione, la persistenza e la guardia sul 401 sono testate nella libreria
+// (hub-auth/tests/client.test.ts). Qui si copre solo la mappatura verso la
+// forma pubblica attesa da App.jsx/Header.jsx (user.userId invece di
+// user.user_id) e la derivazione del tier.
+const mockUseHubAuth = vi.fn()
+vi.mock('@mavida/hub-auth/react', () => ({
+  useHubAuth: () => mockUseHubAuth(),
+}))
 
-function makeLocalStorageMock() {
-  let store = {}
-  return {
-    getItem: (k) => store[k] ?? null,
-    setItem: (k, v) => { store[k] = String(v) },
-    removeItem: (k) => { delete store[k] },
-    clear: () => { store = {} },
-  }
+function setHubAuthState(overrides) {
+  mockUseHubAuth.mockReturnValue({
+    status: 'anonymous',
+    user: null,
+    logout: vi.fn(),
+    ...overrides,
+  })
 }
 
-beforeEach(() => {
-  vi.stubGlobal('localStorage', makeLocalStorageMock())
-})
-
-describe('inizializzazione', () => {
-  it('parte come non loggato se localStorage è vuoto', () => {
+describe('useAuth', () => {
+  it('non loggato: user null, isLoggedIn false', () => {
+    setHubAuthState({ status: 'anonymous' })
     const { result } = renderHook(() => useAuth())
+
     expect(result.current.isLoggedIn).toBe(false)
+    expect(result.current.isChecking).toBe(false)
     expect(result.current.user).toBeNull()
-    expect(result.current.authStep).toBe('email')
+    expect(result.current.tier).toBe('anonymous')
   })
 
-  it('parte come loggato se la sessione è presente in localStorage', () => {
-    const user = { email: 'a@b.com', userId: 'u1', role: 'user', plan: 'basic' }
-    localStorage.setItem(SESSION_KEY, JSON.stringify(user))
+  it('sessione in verifica al boot: isChecking true, non ancora loggato', () => {
+    setHubAuthState({ status: 'checking' })
     const { result } = renderHook(() => useAuth())
-    expect(result.current.isLoggedIn).toBe(true)
-    expect(result.current.user).toEqual(user)
-  })
-})
 
-describe('loginSuccess', () => {
-  it('setta isLoggedIn e scrive la sessione in localStorage', () => {
-    const { result } = renderHook(() => useAuth())
-    const user = { email: 'test@test.com', userId: 'abc', role: null, plan: null }
-    act(() => {
-      result.current.loginSuccess(user)
+    expect(result.current.isChecking).toBe(true)
+    expect(result.current.isLoggedIn).toBe(false)
+  })
+
+  it('loggato: mappa user_id -> userId e deriva il tier da role/plan', () => {
+    setHubAuthState({
+      status: 'authenticated',
+      user: { user_id: 'u1', email: 'mario@esempio.com', role: 'user', plan: 'pro', status: 'active', tools: [] },
     })
+    const { result } = renderHook(() => useAuth())
+
     expect(result.current.isLoggedIn).toBe(true)
-    expect(result.current.user).toEqual(user)
-    expect(loadSession()).toEqual(user)
-  })
-})
-
-describe('setUserRole', () => {
-  it('aggiorna role e plan nello state e nel localStorage', () => {
-    const { result } = renderHook(() => useAuth())
-    const user = { email: 'x@y.com', userId: 'u2', role: null, plan: null }
-    act(() => { result.current.loginSuccess(user) })
-    act(() => { result.current.setUserRole('admin', 'pro') })
-    expect(result.current.user.role).toBe('admin')
-    expect(result.current.user.plan).toBe('pro')
-    expect(loadSession().role).toBe('admin')
-  })
-})
-
-describe('logout', () => {
-  it('setta isLoggedIn:false e rimuove la sessione', () => {
-    const user = { email: 'a@b.com', userId: 'u1', role: null, plan: null }
-    localStorage.setItem(SESSION_KEY, JSON.stringify(user))
-    const { result } = renderHook(() => useAuth())
-    act(() => { result.current.logout() })
-    expect(result.current.isLoggedIn).toBe(false)
-    expect(result.current.user).toBeNull()
-    expect(loadSession()).toBeNull()
+    expect(result.current.user).toEqual({
+      email: 'mario@esempio.com', userId: 'u1', role: 'user', plan: 'pro',
+    })
+    expect(result.current.tier).toBe('pro')
   })
 
-  it('non tocca il draft del carosello', () => {
-    localStorage.setItem(DRAFT_KEY, JSON.stringify({ title: 'bozza', slides: [] }))
-    localStorage.setItem(SESSION_KEY, JSON.stringify({ email: 'a@b.com', userId: 'u1', role: null, plan: null }))
+  it('utente admin: tier admin indipendentemente dal piano', () => {
+    setHubAuthState({
+      status: 'authenticated',
+      user: { user_id: 'u1', email: 'a@esempio.com', role: 'admin', plan: 'basic' },
+    })
     const { result } = renderHook(() => useAuth())
-    act(() => { result.current.logout() })
-    expect(localStorage.getItem(DRAFT_KEY)).not.toBeNull()
-  })
-})
 
-describe('setPendingEmail', () => {
-  it('salva l\'email e porta authStep a otp', () => {
-    const { result } = renderHook(() => useAuth())
-    act(() => { result.current.setPendingEmail('pippo@test.com') })
-    expect(result.current.pendingEmail).toBe('pippo@test.com')
-    expect(result.current.authStep).toBe('otp')
+    expect(result.current.tier).toBe('admin')
   })
-})
 
-describe('resetToEmailStep', () => {
-  it('riporta authStep a email', () => {
+  it('logout è lo stesso riferimento esposto da useHubAuth', () => {
+    const logout = vi.fn()
+    setHubAuthState({ status: 'anonymous', logout })
     const { result } = renderHook(() => useAuth())
-    act(() => { result.current.setPendingEmail('x@y.com') })
-    act(() => { result.current.resetToEmailStep() })
-    expect(result.current.authStep).toBe('email')
+
+    expect(result.current.logout).toBe(logout)
   })
 })

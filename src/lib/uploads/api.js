@@ -1,14 +1,18 @@
+import { hubAuth } from '../../auth.js'
+
 const BASE = import.meta.env.VITE_API_BASE_URL
-const TOKEN = import.meta.env.VITE_API_AUTH_TOKEN
 
 async function authFetch(path, options = {}) {
+  const token = hubAuth.getToken()
   const res = await fetch(`${BASE}${path}`, {
     ...options,
     headers: {
-      Authorization: `Bearer ${TOKEN}`,
+      Authorization: `Bearer ${token}`,
       ...options.headers,
     },
   })
+
+  if (res.status === 401) hubAuth.handleUnauthorized(token)
 
   if (!res.ok) {
     let message

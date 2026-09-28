@@ -1,6 +1,7 @@
 import { getAiConfig } from './config.js'
 import { buildSystemPrompt } from './buildSystemPrompt.js'
 import { ApiError, mapHttpErrorToApiError } from './errors.js'
+import { hubAuth } from '../../auth.js'
 
 export async function generateCarousel({ postText, slideCount, extraInstructions, currentCarousel, userId }) {
   const { url, token } = getAiConfig()
@@ -42,6 +43,8 @@ export async function generateCarousel({ postText, slideCount, extraInstructions
   }
 
   const responseBody = await response.json().catch(() => null)
+
+  if (response.status === 401) hubAuth.handleUnauthorized(token)
 
   if (!response.ok) {
     throw mapHttpErrorToApiError(response.status, responseBody)

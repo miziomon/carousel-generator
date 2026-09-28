@@ -17,7 +17,8 @@ import { createCarousel, updateCarousel } from './lib/carousel/api.js'
 import { generateThumbnail } from './lib/carousel/generateThumbnail.js'
 import { suggestTitle } from './lib/carousel/suggestTitle.js'
 import { estimateCarouselSize, API_SIZE_WARNING_THRESHOLD, API_SIZE_ERROR_THRESHOLD, formatBytes } from './lib/images/estimateSize.js'
-import { LoginScreen } from './components/auth/LoginScreen.jsx'
+import { LoginScreen } from '@mavida/hub-auth/ui'
+import './components/auth/auth.css'
 import { Header } from './components/header/Header.jsx'
 import { TabBar } from './components/tabs/TabBar.jsx'
 import { SlideGrid } from './components/slide-grid/SlideGrid.jsx'
@@ -37,13 +38,17 @@ import { ToastContainer, toast } from './components/ui/Toast.jsx'
 export default function App() {
   const auth = useAuth()
   const appTheme = useAppTheme()
-  const { isExchanging, linkError } = useMagicLinkLogin(auth)
+  const { isExchanging, linkError } = useMagicLinkLogin()
 
   useEffect(() => {
     document.title = `SLIDE-ORAMA — v${pkg.version}`
   }, [])
 
-  if (isExchanging) {
+  useEffect(() => {
+    if (linkError) toast(linkError, 'error')
+  }, [linkError])
+
+  if (isExchanging || auth.isChecking) {
     return (
       <div className="auth">
         <div className="auth__card auth__card--loading">
@@ -57,7 +62,10 @@ export default function App() {
   if (!auth.isLoggedIn) {
     return (
       <>
-        <LoginScreen auth={auth} linkError={linkError} />
+        <LoginScreen
+          title="Carousel Generator"
+          subtitle="Accedi per creare e modificare caroselli"
+        />
         <ToastContainer />
       </>
     )

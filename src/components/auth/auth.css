@@ -1,5 +1,7 @@
 /* === AUTH MODULE ===
- * Namespace: .auth__* */
+ * Namespace: .auth__* — usato solo dalla schermata "Accesso in corso" del
+ * magic link (App.jsx). Lo step email/OTP viene da @mavida/hub-auth/ui,
+ * tema qui sotto. */
 
 .auth {
   position: fixed;
@@ -23,14 +25,10 @@
   gap: 32px;
 }
 
-/* ── Branding ─────────────────────────────────────────────────────────────── */
-
-.auth__brand {
-  display: flex;
-  flex-direction: column;
+.auth__card--loading {
   align-items: center;
-  gap: 6px;
-  text-align: center;
+  justify-content: center;
+  gap: 16px;
 }
 
 .auth__logo {
@@ -41,159 +39,31 @@
   line-height: 1.2;
 }
 
-.auth__version {
-  font-size: 0.75rem;
-  color: rgba(232, 232, 232, 0.3);
-  font-family: 'JetBrains Mono', monospace;
-}
-
 .auth__tagline {
   font-size: 0.85rem;
   color: rgba(232, 232, 232, 0.45);
   margin-top: 4px;
 }
 
-/* ── Campi email / OTP ────────────────────────────────────────────────────── */
-
-.auth__field {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+/* ── Tema di @mavida/hub-auth/ui — stesso navy/neon del resto dell'app.
+ * Fuori da qualsiasi regola annidata: hub-auth.css non usa @layer, quindi
+ * una regola "layered" perderebbe sempre contro di lei a prescindere
+ * dall'ordine — vince solo un'altra regola altrettanto unlayered. */
+.hub-auth {
+  --hub-auth-font: inherit;
+  --hub-auth-bg: #0f172a;
+  --hub-auth-card-bg: rgba(255, 255, 255, 0.03);
+  --hub-auth-card-border: rgba(255, 255, 255, 0.08);
+  --hub-auth-text: rgba(232, 232, 232, 0.95);
+  --hub-auth-muted: rgba(232, 232, 232, 0.45);
+  --hub-auth-input-bg: rgba(255, 255, 255, 0.06);
+  --hub-auth-input-border: rgba(255, 255, 255, 0.12);
+  --hub-auth-primary: #00ffaa;
+  --hub-auth-primary-hover: #00ffaa;
+  --hub-auth-primary-text: #0a0f1e;
+  --hub-auth-focus: rgba(0, 255, 170, 0.25);
 }
 
-.auth__label {
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: rgba(232, 232, 232, 0.7);
-}
-
-.auth__input {
-  width: 100%;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 8px;
-  padding: 11px 14px;
-  font-size: 0.9rem;
-  font-family: inherit;
-  color: rgba(232, 232, 232, 0.92);
-  transition: border-color 0.15s;
-  box-sizing: border-box;
-}
-
-.auth__input:focus {
-  outline: none;
-  border-color: rgba(0, 255, 170, 0.5);
-}
-
-.auth__input::placeholder {
-  color: rgba(232, 232, 232, 0.25);
-}
-
-/* ── Bottone principale ───────────────────────────────────────────────────── */
-
-.auth__btn {
-  width: 100%;
-  background: #00ffaa;
-  border: none;
-  border-radius: 8px;
-  padding: 11px 0;
-  font-size: 0.9rem;
-  font-weight: 700;
-  color: #0a0f1e;
-  cursor: pointer;
-  transition: opacity 0.15s;
-}
-
-.auth__btn:hover:not(:disabled) {
-  opacity: 0.88;
-}
-
-.auth__btn:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
-/* ── Link secondari ───────────────────────────────────────────────────────── */
-
-.auth__links {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  flex-wrap: wrap;
-}
-
-.auth__link {
-  background: none;
-  border: none;
-  font-size: 0.8rem;
-  color: rgba(232, 232, 232, 0.45);
-  cursor: pointer;
-  padding: 0;
-  transition: color 0.15s;
-}
-
-.auth__link:hover {
-  color: rgba(232, 232, 232, 0.8);
-}
-
-/* ── 6 input OTP ──────────────────────────────────────────────────────────── */
-
-.auth__otp-row {
-  display: flex;
-  gap: 10px;
-  justify-content: center;
-}
-
-.auth__otp-digit {
-  width: 48px;
-  height: 56px;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 8px;
-  font-size: 1.4rem;
-  font-family: 'JetBrains Mono', monospace;
-  font-weight: 700;
-  color: rgba(232, 232, 232, 0.95);
-  text-align: center;
-  caret-color: #00ffaa;
-  transition: border-color 0.15s;
-}
-
-.auth__otp-digit:focus {
-  outline: none;
-  border-color: rgba(0, 255, 170, 0.5);
-}
-
-/* ── Hint / errore ────────────────────────────────────────────────────────── */
-
-.auth__hint {
-  font-size: 0.8rem;
-  color: rgba(232, 232, 232, 0.4);
-  text-align: center;
-  line-height: 1.5;
-}
-
-.auth__hint strong {
-  color: rgba(232, 232, 232, 0.7);
-}
-
-/* ── Stato loading magic link ─────────────────────────────────────────────── */
-
-.auth__card--loading {
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
-}
-
-/* ── Banner errore magic link ─────────────────────────────────────────────── */
-
-.auth__link-error {
-  background: rgba(255, 80, 80, 0.1);
-  border: 1px solid rgba(255, 80, 80, 0.3);
-  border-radius: 8px;
-  padding: 12px 16px;
-  font-size: 0.85rem;
-  color: rgba(255, 140, 140, 0.95);
-  line-height: 1.5;
-  text-align: center;
+.hub-auth__title {
+  font-family: 'Fraunces', serif;
 }

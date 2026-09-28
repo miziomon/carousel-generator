@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.32.0] — 2026-09-28
+
+### Security
+- **Rimosso il Bearer statico `VITE_API_AUTH_TOKEN`, compilato nel bundle pubblico e condiviso da tutti gli utenti**: le chiamate a `/carousel`, `/uploads` e `/chat/completions` (generazione AI) usavano questo token invece del `session_token` per-utente emesso dal login. Chiunque apriva la console del browser poteva estrarlo e usarlo per operare come qualunque altro utente (identità determinata solo dallo `user_id` passato nel body/query). Ora ogni chiamata usa il `session_token` della sessione autenticata (OTP o magic link), gestito da `@mavida/hub-auth`.
+
+### Changed
+- **Login OTP e magic link migrati a `@mavida/hub-auth`** (libreria condivisa dei progetti hub, `mavidasnc/hub-auth` v1.1.0): sostituisce l'implementazione locale (`hooks/useAuth.js` a `useReducer`, `lib/auth/{api,storage}.js`, `components/auth/{EmailStep,OtpStep,LoginScreen}.jsx`), ora rimossa. La sessione salvata dalla vecchia versione (`carosello:user_session`) viene recuperata in automatico e ripulita, senza sloggare nessuno — incluse le sessioni da magic link, il cui `sessionToken` la vecchia versione salvava ma non usava mai come Bearer (era di fatto il bug di sicurezza sopra: l'app girava solo sul token statico).
+  - `hub-auth` v1.1.0 aggiunge `adoptSession({token, user})`, usata dal magic link (`hooks/useMagicLinkLogin.js`) per adottare la sessione ottenuta da `POST /access-links/exchange` con lo stesso trattamento di un login OTP riuscito (persistenza, guardia sul 401, refresh da `GET /me`). La scadenza del link non è più un timer lato client basato su `expiresAt`, ma la scadenza reale della sessione lato server.
+  - `App.jsx`: la guardia manuale (`!auth.isLoggedIn`) mostra ora anche uno stato di caricamento durante la validazione della sessione al boot (`auth.isChecking`), prima assente.
+  - `hooks/useAuth.js` resta come wrapper di compatibilità (stessa forma pubblica: `user.userId`, `tier`, `isLoggedIn`, `logout`) per non toccare `App.jsx`/`Header.jsx` oltre il minimo.
+  - `lib/carousel/api.js`, `lib/uploads/api.js`, `lib/ai/config.js`: leggono il token da `hubAuth.getToken()` ad ogni chiamata invece che da una costante di modulo, e notificano `hubAuth.handleUnauthorized()` sui 401.
+  - `docs/auth-system.md`: sostituito con un rimando alla nuova architettura (descriveva l'implementazione locale ora rimossa).
+  - Verificato end-to-end contro hub in produzione: login OTP (editor, menu utente), logout. Il magic link è verificato via i test della libreria (`adoptSession`) e la revisione del codice, non con un link reale generato in produzione.
+
 ## [1.31.0] — 2026-06-18
 
 ### Added
