@@ -91,6 +91,17 @@ jobs:
           VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
         run: npm run build
 
+      - name: DEBUG temporaneo — hash dei secret (da rimuovere)
+        env:
+          SSH_PATH: ${{ secrets.SSH_PATH }}
+          SSH_USERNAME: ${{ secrets.SSH_USERNAME }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+        run: |
+          printf '%s' "$SSH_PATH" | sha256sum
+          printf '%s' "$SSH_USERNAME" | sha256sum
+          printf '%s' "$SSH_HOST" | sha256sum
+          echo "lunghezza SSH_PATH: ${#SSH_PATH}"
+
       - name: Deploy via rsync su SSH in public_html
         env:
           # sshpass -e legge la password da questa variabile: non compare mai
