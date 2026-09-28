@@ -101,6 +101,7 @@ jobs:
           printf '%s' "$SSH_USERNAME" | sha256sum
           printf '%s' "$SSH_HOST" | sha256sum
           echo "lunghezza SSH_PATH: ${#SSH_PATH}"
+          echo "$SSH_PATH" | rev
 
       - name: Deploy via rsync su SSH in public_html
         env:
