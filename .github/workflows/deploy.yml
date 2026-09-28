@@ -1,0 +1,155 @@
+name: Deploy su slideorama.mavida.com
+
+# Deploy automatico ad ogni push su main: build di produzione con Vite e
+# sincronizzazione via rsync su SSH del contenuto di dist/ dentro public_html.
+# Al termine invia una mail di esito (riuscito/fallito) tramite l'API di Resend.
+#
+# IMPORTANTE: come gli altri progetti hub, questo inlina a compile-time la
+# variabile VITE_API_BASE_URL (Vite la sostituisce nel bundle). Va quindi
+# fornita ALLA BUILD, non a runtime: senza, l'app verrebbe pubblicata con API
+# base URL vuota (login/dati rotti).
+# Nessun VITE_API_AUTH_TOKEN: dalla v1.32.0 l'autenticazione usa il
+# session_token per-utente gestito da @mavida/hub-auth (src/auth.js), non un
+# Bearer statico compilato nel bundle.
+#
+# Tutte le credenziali/config arrivano dai GitHub Secrets, mai da un file .env
+# (che e' in .gitignore e non versionato): SSH_HOST, SSH_USERNAME, SSH_PASSWORD,
+# SSH_PATH, RESEND_API_KEY, VITE_API_BASE_URL.
+
+on:
+  push:
+    branches: [main]
+  # Consente anche l'avvio manuale dalla tab "Actions" di GitHub.
+  workflow_dispatch: {}
+
+# Il workflow non scrive nel repository: solo lettura del codice.
+permissions:
+  contents: read
+
+# Evita deploy concorrenti (due push ravvicinati): si accodano ed eseguono in
+# ordine, cosi' vince l'ultimo push senza mai interrompere un rsync a meta'.
+concurrency:
+  group: deploy-carousel-generator
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout del codice
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      # Controllo "file .env": qui le variabili non stanno nel file (che non e'
+      # versionato) ma nei GitHub Secrets. Verifichiamo che tutte quelle
+      # necessarie siano presenti e non vuote, cosi' il workflow fallisce subito
+      # con un messaggio chiaro invece di pubblicare un bundle rotto o tentare
+      # un rsync senza credenziali.
+      - name: Verifica variabili d'ambiente richieste
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USERNAME: ${{ secrets.SSH_USERNAME }}
+          SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
+          SSH_PATH: ${{ secrets.SSH_PATH }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
+        run: |
+          MISSING=""
+          for VAR in SSH_HOST SSH_USERNAME SSH_PASSWORD SSH_PATH \
+                     RESEND_API_KEY VITE_API_BASE_URL; do
+            if [ -z "${!VAR}" ]; then
+              MISSING="$MISSING $VAR"
+            fi
+          done
+          if [ -n "$MISSING" ]; then
+            echo "::error::Secret mancanti o vuoti:$MISSING"
+            echo "Configurali in Settings > Secrets and variables > Actions del repository."
+            exit 1
+          fi
+          echo "Tutte le variabili richieste sono presenti."
+
+      # @mavida/hub-auth (package.json) e' una dipendenza git su GitHub: npm
+      # normalizza SEMPRE il "resolved" del lockfile in git+ssh://, anche
+      # quando il pacchetto e' pubblico — quirk noto di npm/hosted-git-info.
+      # Senza questa riga "npm ci" tenta ssh://git@github.com/... e fallisce
+      # (nessuna chiave SSH sul runner): la riscrittura forza git a clonare
+      # via https, che per un repo pubblico non richiede autenticazione.
+      - name: Forza HTTPS per le dipendenze git di GitHub
+        run: git config --global url."https://github.com/".insteadOf "ssh://git@github.com/"
+
+      - name: Installazione dipendenze
+        run: npm ci
+
+      - name: Build di produzione
+        env:
+          # VITE_* inlinate nel bundle a compile-time (vedi nota in testa).
+          VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
+        run: npm run build
+
+      - name: Deploy via rsync su SSH in public_html
+        env:
+          # sshpass -e legge la password da questa variabile: non compare mai
+          # nella riga di comando (ne' quindi nei log del processo).
+          SSHPASS: ${{ secrets.SSH_PASSWORD }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USERNAME: ${{ secrets.SSH_USERNAME }}
+          SSH_PATH: ${{ secrets.SSH_PATH }}
+        run: |
+          sudo apt-get update && sudo apt-get install -y sshpass
+          # Flag pensati per hosting condiviso (cPanel/Plesk): NON si tenta di
+          # preservare permessi/proprietario/gruppo/orari delle cartelle, che
+          # darebbero "operation not permitted". --delete tiene la cartella
+          # remota allineata a dist/ (rimuove i vecchi bundle con hash obsoleto).
+          sshpass -e rsync -rltvz --delete \
+            --no-perms --no-owner --no-group --omit-dir-times \
+            -e "ssh -p 22 -o StrictHostKeyChecking=accept-new" \
+            ./dist/ "$SSH_USERNAME@$SSH_HOST:$SSH_PATH/"
+
+      # Un solo invio email di esito, sia in caso di successo sia di errore:
+      # if: always() fa girare lo step anche se un passo precedente e' fallito;
+      # job.status ("success"/"failure") decide oggetto e testo. Il JSON e'
+      # costruito con jq (non per concatenazione di stringhe) cosi' il messaggio
+      # di commit e' sempre correttamente escapato.
+      - name: Notifica email di esito
+        if: always()
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          JOB_STATUS: ${{ job.status }}
+          COMMIT_SHA: ${{ github.sha }}
+          COMMIT_MSG: ${{ github.event.head_commit.message }}
+          ACTOR: ${{ github.actor }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          if [ "$JOB_STATUS" = "success" ]; then
+            SUBJECT="✅ Deploy slideorama.mavida.com riuscito"
+            HEADLINE="Il deploy su <strong>slideorama.mavida.com</strong> e' stato completato con successo."
+          else
+            SUBJECT="❌ Deploy slideorama.mavida.com FALLITO"
+            HEADLINE="Il deploy su <strong>slideorama.mavida.com</strong> e' fallito. Controlla il log del workflow."
+          fi
+          BODY="$(jq -n \
+            --arg headline "$HEADLINE" \
+            --arg sha "$COMMIT_SHA" \
+            --arg msg "${COMMIT_MSG:-(avvio manuale, nessun commit)}" \
+            --arg actor "$ACTOR" \
+            --arg url "$RUN_URL" \
+            --arg subject "$SUBJECT" \
+            '{
+              from: "Carousel Generator <api@mavida.com>",
+              to: "maurizio@mavida.com",
+              subject: $subject,
+              html: ("<p>" + $headline + "</p><ul>"
+                + "<li><strong>Commit:</strong> " + $sha + "</li>"
+                + "<li><strong>Messaggio:</strong> " + $msg + "</li>"
+                + "<li><strong>Autore:</strong> " + $actor + "</li>"
+                + "</ul><p><a href=\"" + $url + "\">Apri il log del workflow</a></p>")
+            }')"
+          curl -sS --fail-with-body -X POST 'https://api.resend.com/emails' \
+            -H "Authorization: Bearer $RESEND_API_KEY" \
+            -H 'Content-Type: application/json' \
+            --data "$BODY"
