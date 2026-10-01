@@ -14,7 +14,7 @@ export function EditorialStandardSlide({ slide, theme, total, calib }) {
     <>
       <EditorialHeader theme={theme} slide={slide} total={total} />
       <div className={`editorial__body editorial__body--${sizeKey}`} style={bodyStyle}>
-        {parseLines(slide.lines, `std-${slide.num}`, EDITORIAL_CLASS_MAP, slide.lines_align)}
+        {parseLines(slide.lines, `std-${slide.num}`, EDITORIAL_CLASS_MAP, slide.lines_align, slide.num)}
       </div>
       <EditorialFooter theme={theme} slide={slide} total={total} />
     </>

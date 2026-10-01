@@ -164,6 +164,27 @@ describe('normalizeMinimalCarousel — lines_align', () => {
   })
 })
 
+describe('separatore — separator_size_override e "[sep]"', () => {
+  const slideWith = (extra) => ({
+    ...defaultCarousel,
+    slides: [{ num: 1, type: 'standard', font: 'primary', size: 'lg', lines: ['a', '[sep]', 'b'], ...extra }],
+  })
+
+  it('accetta separator_size_override valido e la voce "[sep]" in lines', () => {
+    expect(CarouselSchema.safeParse(slideWith({ separator_size_override: 24 })).success).toBe(true)
+  })
+
+  it('rifiuta separator_size_override fuori range', () => {
+    expect(CarouselSchema.safeParse(slideWith({ separator_size_override: 500 })).success).toBe(false)
+    expect(CarouselSchema.safeParse(slideWith({ separator_size_override: -1 })).success).toBe(false)
+  })
+
+  it('normalizeMinimalCarousel preserva separator_size_override', () => {
+    const raw = { slides: [{ type: 'standard', lines: ['a', '[sep]', 'b'], separator_size_override: 16 }] }
+    expect(normalizeMinimalCarousel(raw).slides[0].separator_size_override).toBe(16)
+  })
+})
+
 describe('ThemeSchema — template_id', () => {
   const baseTheme = {
     palette_id: 'system-tech-dark',

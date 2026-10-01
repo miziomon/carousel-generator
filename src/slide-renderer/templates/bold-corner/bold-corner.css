@@ -104,6 +104,12 @@
   padding: 0 2px;
 }
 
+/* === SEPARATORE === spacer verticale (default: metà della dimensione del testo) */
+.bold__separator {
+  display: block;
+  height: var(--slide-separator-size, 0);
+}
+
 /* === QUOTE ===
  * Nessuna virgoletta tipografica — incoerente col mood manifesto.
  * Attribuzione in monospace bold, "— " in accent. */

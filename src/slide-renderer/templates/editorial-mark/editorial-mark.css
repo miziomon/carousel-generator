@@ -97,6 +97,12 @@
   padding: 0 2px;
 }
 
+/* === SEPARATORE === spacer verticale (default: metà della dimensione del testo) */
+.editorial__separator {
+  display: block;
+  height: var(--slide-separator-size, 0);
+}
+
 /* === ELEMENTI SPECIALI === */
 .editorial__swipe-mini {
   position: absolute;

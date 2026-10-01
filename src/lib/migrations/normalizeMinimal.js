@@ -146,6 +146,8 @@ function normalizeSlide(slide, index) {
   if (slide.background_image !== undefined) base.background_image = slide.background_image
   // Allineamento per-riga (parallelo a lines): preservato se presente nell'import
   if (Array.isArray(slide.lines_align)) base.lines_align = slide.lines_align
+  // Altezza separatori "[sep]" per-slide: preservata se presente nell'import
+  if (typeof slide.separator_size_override === 'number') base.separator_size_override = slide.separator_size_override
 
   if (type === 'cover') {
     const out = {

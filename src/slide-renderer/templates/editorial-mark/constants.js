@@ -5,4 +5,5 @@ export const EDITORIAL_CLASS_MAP = {
   soft: 'editorial__hl-soft',
   c:    'editorial__hl-color',
   u:    'editorial__hl-under',
+  sep:  'editorial__separator',
 }

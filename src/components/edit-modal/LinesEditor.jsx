@@ -1,6 +1,7 @@
 import { useRef, useState, useCallback } from 'react'
-import { Trash2, Plus, AlignLeft, AlignCenter, AlignRight } from 'lucide-react'
+import { Trash2, Plus, AlignLeft, AlignCenter, AlignRight, SeparatorHorizontal } from 'lucide-react'
 import { cn } from '../../lib/cn.js'
+import { SEPARATOR_TOKEN, isSeparator } from '../../slide-renderer/inlineTags.jsx'
 
 // Opzioni di allineamento per-riga (sx / centro / dx)
 const ALIGN_OPTIONS = [
@@ -43,6 +44,25 @@ function insertTagAtCursor(el, tag, currentValue, onChange) {
 
 // Singola riga con textarea + drag handle + controlli allineamento + delete
 function LineRow({ value, index, align, isFocused, onFocus, onChange, onAlignChange, onDelete, onKeyDown, textareaRef }) {
+  // Separatore: riga compatta non editabile (solo handle + elimina)
+  if (isSeparator(value)) {
+    return (
+      <div className="flex gap-1.5 items-center group">
+        <div className="opacity-30 cursor-grab select-none text-slate-500 text-xs">⠿</div>
+        <div className="flex-1 flex items-center gap-2 px-3 py-1 rounded border border-dashed border-slate-700 text-xs font-mono text-slate-500">
+          <SeparatorHorizontal size={12} /> separatore
+        </div>
+        <button
+          onClick={() => onDelete(index)}
+          className="p-1 opacity-0 group-hover:opacity-100 hover:text-red-400 text-slate-500 transition-all"
+          title="Elimina separatore"
+        >
+          <Trash2 size={13} />
+        </button>
+      </div>
+    )
+  }
+
   return (
     <div className={cn('flex gap-1.5 items-start group', isFocused && 'relative z-10')}>
       {/* Drag handle placeholder — il drag DnD arriva in Fase 4 */}
@@ -156,6 +176,10 @@ export function LinesEditor({ lines, aligns, onChange }) {
     onChange([...lines, ''], [...safeAligns, 'left'])
   }, [lines, safeAligns, onChange])
 
+  const handleAddSeparator = useCallback(() => {
+    onChange([...lines, SEPARATOR_TOKEN], [...safeAligns, 'left'])
+  }, [lines, safeAligns, onChange])
+
   function handleKeyDown(e, idx) {
     const isMac = navigator.platform.includes('Mac')
     const ctrl = isMac ? e.metaKey : e.ctrlKey
@@ -211,6 +235,13 @@ export function LinesEditor({ lines, aligns, onChange }) {
           title="Inserisce una riga vuota per creare spazio extra tra i paragrafi"
         >
           <Plus size={11} /> Riga vuota (spazio)
+        </button>
+        <button
+          onClick={handleAddSeparator}
+          className="flex items-center gap-1 text-xs font-mono text-slate-400 hover:text-slate-300 transition-colors px-2 py-1 rounded border border-slate-700 hover:border-slate-500"
+          title="Inserisce un separatore alto metà della dimensione del testo (regolabile in Tipografia)"
+        >
+          <Plus size={11} /> Aggiungi separatore
         </button>
       </div>
     </div>

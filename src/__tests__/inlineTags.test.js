@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { parseInlineTags, parseLines, DEFAULT_CLASS_MAP } from '../slide-renderer/inlineTags.jsx'
+import { parseInlineTags, parseLines, isSeparator, DEFAULT_CLASS_MAP } from '../slide-renderer/inlineTags.jsx'
 
 describe('parseInlineTags', () => {
   it('restituisce testo puro senza tag', () => {
@@ -103,9 +103,9 @@ describe('parseLines', () => {
 
   it('riga vuota produce <br> extra', () => {
     const result = parseLines(['riga1', '', 'riga3'])
-    // riga1, <br>, <br (da stringa vuota)>, <br>, riga3
-    const brCount = result.filter((n) => n?.type === 'br').length
-    expect(brCount).toBe(3)
+    // span(riga1), <br>, span(<br> da stringa vuota), <br>, span(riga3)
+    expect(result.filter((n) => n?.type === 'br')).toHaveLength(2)
+    expect(result[2].props.children.type).toBe('br')
   })
 
   it("l'ultima riga non ha <br> finale", () => {
@@ -139,7 +139,8 @@ describe('parseLines — allineamento per-riga (aligns)', () => {
   it('riga vuota nel path aligns produce un <div> con <br> interno', () => {
     const result = parseLines(['riga1', ''], 'k', DEFAULT_CLASS_MAP, ['left', 'left'])
     expect(result[1].type).toBe('div')
-    expect(result[1].props.children.type).toBe('br')
+    // div > span.slide-row > <br>
+    expect(result[1].props.children.props.children.type).toBe('br')
   })
 
   it('indici di aligns mancanti usano il default "left"', () => {
@@ -151,9 +152,59 @@ describe('parseLines — allineamento per-riga (aligns)', () => {
 
   it('preserva i tag inline dentro il div allineato', () => {
     const result = parseLines(['testo [hl]verde[/hl]'], 'k', DEFAULT_CLASS_MAP, ['center'])
-    const children = result[0].props.children
-    // parseInlineTags ritorna un array: ['testo ', <span.hl-block>]
+    // div > span.slide-row > parseInlineTags (array: ['testo ', <span.hl-block>])
+    const children = result[0].props.children.props.children
     expect(Array.isArray(children)).toBe(true)
     expect(children[1].props.className).toBe('hl-block')
+  })
+})
+
+describe('parseLines — classi BEM per-riga e separatore', () => {
+  it('assegna slide-row + slide_NN_row_MM con zero-padding (path classico)', () => {
+    const result = parseLines(['a', 'b', 'c'], 'k', DEFAULT_CLASS_MAP, undefined, 2)
+    const rows = result.filter((n) => n?.type === 'span')
+    expect(rows.map((r) => r.props.className)).toEqual([
+      'slide-row slide_02_row_01',
+      'slide-row slide_02_row_02',
+      'slide-row slide_02_row_03',
+    ])
+  })
+
+  it('assegna le stesse classi nel path con aligns', () => {
+    const result = parseLines(['a', 'b'], 'k', DEFAULT_CLASS_MAP, ['left', 'left'], 11)
+    expect(result[0].props.children.props.className).toBe('slide-row slide_11_row_01')
+    expect(result[1].props.children.props.className).toBe('slide-row slide_11_row_02')
+  })
+
+  it('senza slideNum resta solo la classe comune', () => {
+    const result = parseLines(['a'])
+    expect(result[0].props.className).toBe('slide-row')
+  })
+
+  it('[sep] produce uno span con classMap.sep, senza <br> adiacenti', () => {
+    const result = parseLines(['a', '[sep]', 'b'], 'k', { ...DEFAULT_CLASS_MAP, sep: 'x__sep' }, undefined, 1)
+    // span(a), span.sep, span(b): nessun <br> prima o dopo il separatore
+    expect(result).toHaveLength(3)
+    expect(result.some((n) => n?.type === 'br')).toBe(false)
+    expect(result[1].props.className).toBe('slide-row slide_01_row_02 x__sep')
+  })
+
+  it('[sep] nel path aligns è uno span diretto, senza div', () => {
+    const result = parseLines(['a', '[sep]'], 'k', DEFAULT_CLASS_MAP, ['left', 'left'], 1)
+    expect(result[1].type).toBe('span')
+    expect(result[1].props.className).toContain(DEFAULT_CLASS_MAP.sep)
+  })
+
+  it('la numerazione è posizionale: righe vuote e separatori contano', () => {
+    const result = parseLines(['a', '', '[sep]', 'b'], 'k', DEFAULT_CLASS_MAP, undefined, 1)
+    const rows = result.filter((n) => n?.type === 'span')
+    expect(rows[3].props.className).toBe('slide-row slide_01_row_04')
+  })
+
+  it('isSeparator riconosce solo la sentinella', () => {
+    expect(isSeparator('[sep]')).toBe(true)
+    expect(isSeparator(' [sep] ')).toBe(true)
+    expect(isSeparator('testo')).toBe(false)
+    expect(isSeparator('')).toBe(false)
   })
 })

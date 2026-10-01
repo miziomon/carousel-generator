@@ -1,6 +1,6 @@
 import { EditorialHeader } from './EditorialHeader.jsx'
 import { EditorialFooter } from './EditorialFooter.jsx'
-import { parseLines, parseInlineTags } from '../../inlineTags.jsx'
+import { parseLines, parseInlineTags, isSeparator, rowClassName } from '../../inlineTags.jsx'
 import { EDITORIAL_CLASS_MAP } from './constants.js'
 import { computeBodyFont } from '../_shared/bodyFont.js'
 import { buildBodyStyle } from '../_shared/bodyStyle.js'
@@ -31,6 +31,10 @@ export function EditorialQuoteSlide({ slide, theme, total, calib }) {
   const source = slide.source ? smartQuotes(slide.source) : null
   const hasAttr = author || source
 
+  // Indici della prima/ultima riga di testo (i separatori non portano le virgolette)
+  const firstTextIdx = slide.lines.findIndex((l) => !isSeparator(l))
+  const lastTextIdx = slide.lines.length - 1 - [...slide.lines].reverse().findIndex((l) => !isSeparator(l))
+
   return (
     <>
       <EditorialHeader theme={theme} slide={slide} total={total} />
@@ -41,15 +45,31 @@ export function EditorialQuoteSlide({ slide, theme, total, calib }) {
               // attaccate al testo entrando nel primo/ultimo blocco (le qmark sono
               // inline-block e fuori dai div finirebbero su righe separate).
               slide.lines.map((line, idx) => {
+                const rowCls = rowClassName(slide.num, idx)
+
+                // separatore → spacer block, senza div di allineamento né virgolette
+                if (isSeparator(line)) {
+                  return (
+                    <span
+                      key={`q-${slide.num}-line-${idx}`}
+                      className={`${rowCls} ${EDITORIAL_CLASS_MAP.sep}`}
+                      aria-hidden="true"
+                    />
+                  )
+                }
+
                 const textAlign = slide.lines_align[idx] ?? 'left'
-                const isFirst = idx === 0
-                const isLast = idx === slide.lines.length - 1
+                // le virgolette vanno sulla prima/ultima riga che non è un separatore
+                const isFirst = idx === firstTextIdx
+                const isLast = idx === lastTextIdx
                 return (
                   <div key={`q-${slide.num}-line-${idx}`} style={{ textAlign }}>
                     {isFirst && (
                       <span className="editorial__qmark editorial__qmark--open" aria-hidden="true">{DQ_OPEN}</span>
                     )}
-                    {line === '' ? <br /> : parseInlineTags(line, `q-${slide.num}-${idx}`, EDITORIAL_CLASS_MAP)}
+                    <span className={rowCls}>
+                      {line === '' ? <br /> : parseInlineTags(line, `q-${slide.num}-${idx}`, EDITORIAL_CLASS_MAP)}
+                    </span>
                     {isLast && (
                       <span className="editorial__qmark editorial__qmark--close" aria-hidden="true">{DQ_CLOSE}</span>
                     )}
@@ -59,7 +79,7 @@ export function EditorialQuoteSlide({ slide, theme, total, calib }) {
             : (
               <>
                 <span className="editorial__qmark editorial__qmark--open" aria-hidden="true">{DQ_OPEN}</span>
-                {parseLines(slide.lines, `q-${slide.num}`, EDITORIAL_CLASS_MAP)}
+                {parseLines(slide.lines, `q-${slide.num}`, EDITORIAL_CLASS_MAP, undefined, slide.num)}
                 <span className="editorial__qmark editorial__qmark--close" aria-hidden="true">{DQ_CLOSE}</span>
               </>
             )}

@@ -53,6 +53,8 @@ Le variabili CSS della palette (`--slide-bg`, `--slide-fg`, `--slide-accent`, `-
 
 `src/slide-renderer/inlineTags.jsx` — parser state-machine che converte le stringhe con tag (`[hl]`, `[soft]`, `[c]`, `[u]`, `[em]`) in React nodes. **Mai `dangerouslySetInnerHTML`**. Sotto test in `src/__tests__/inlineTags.test.js`.
 
+**Righe e separatore** (`parseLines`): ogni riga di `lines` è renderizzata in uno `<span class="slide-row slide_NN_row_MM">` (NN = `slide.num`, MM = posizione nell'array, entrambi con zero-padding a 2 cifre; righe vuote e separatori contano). La voce sentinella `"[sep]"` (`SEPARATOR_TOKEN`, `isSeparator()`) è un separatore: uno `<span>` block (spacer) alto `--slide-separator-size`, che `buildBodyStyle` imposta a `slide.separator_size_override` (px) oppure, se assente, a metà del `finalSize` calibrato. Il separatore non ha `<br>` adiacenti. `parseLines(lines, keyPrefix, classMap, aligns, slideNum)` richiede `slideNum` per generare le classi posizionali; la classe del separatore viene da `classMap.sep` (`editorial__separator` / `bold__separator`). La quote editorial con `lines_align` ha un proprio path di render (virgolette sulla prima/ultima riga non-separatore).
+
 ### Schema Zod: `schema.js`
 
 `src/lib/schema.js` — discriminatedUnion su `type`. Importante: i vincoli cross-campo (cover→1 riga, divider→1-2 righe) sono in `CarouselSchema.superRefine()`, **non** negli schemi individuali — questo perché `z.discriminatedUnion` richiede `ZodObject` puri, e `.superRefine()` restituisce `ZodEffects`.

@@ -15,6 +15,10 @@ export function buildBodyStyle(prefix, { finalSize, finalLH, fontVars, slide }) 
     ...fontVars,
   }
 
+  // Altezza separatore: override per-slide, altrimenti metà della dimensione testo
+  const separatorSize = slide.separator_size_override ?? finalSize / 2
+  style['--slide-separator-size'] = `${separatorSize}px`
+
   if (slide.color_override) {
     style['--slide-body-color'] = slide.color_override
   }

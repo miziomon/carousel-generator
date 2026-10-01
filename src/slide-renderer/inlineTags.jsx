@@ -21,6 +21,7 @@ export const DEFAULT_CLASS_MAP = {
   soft: 'hl-soft',
   c:    'hl-color',
   u:    'hl-under',
+  sep:  'line-separator',
 }
 
 // Tokenizza la stringa in parti: testo puro o tag aperto/chiuso
@@ -106,22 +107,56 @@ export function parseInlineTags(text, keyPrefix = '', classMap = DEFAULT_CLASS_M
 }
 
 /**
- * Converte l'array lines in un array flat di React nodes con <br> intercalati.
+ * Valore sentinella nell'array `lines` che rappresenta un separatore:
+ * uno spazio verticale vuoto, alto per default metà della dimensione del testo.
+ */
+export const SEPARATOR_TOKEN = '[sep]'
+
+export function isSeparator(line) {
+  return typeof line === 'string' && line.trim() === SEPARATOR_TOKEN
+}
+
+// Zero-padding a 2 cifre per le classi BEM posizionali (es. 1 → "01")
+const pad2 = (n) => String(n).padStart(2, '0')
+
+/**
+ * Classi BEM della riga: `slide-row` (comune) + `slide_NN_row_MM` (posizionale).
+ * L'indice è la posizione nell'array lines (righe vuote e separatori inclusi).
+ * Senza `slideNum` resta solo la classe comune.
+ */
+export function rowClassName(slideNum, idx) {
+  if (slideNum === undefined || slideNum === null) return 'slide-row'
+  return `slide-row slide_${pad2(slideNum)}_row_${pad2(idx + 1)}`
+}
+
+/**
+ * Converte l'array lines in un array flat di React nodes, ogni riga dentro uno <span>
+ * con classi BEM (vedi rowClassName), con <br> intercalati.
  * Una stringa vuota "" produce un <br> extra (spazio paragrafo).
  * L'ultima riga non ha <br> finale.
+ * La voce SEPARATOR_TOKEN produce uno <span> block (spacer) che va a capo da solo:
+ * per questo non ha <br> adiacenti.
  *
  * Se `aligns` è presente (allineamento per-riga, parallelo a `lines`), ogni riga
  * viene invece wrappata in un <div> block con `text-align`: serve un contenitore
  * block perché text-align non ha effetto su nodi inline. Indici mancanti ⇒ 'left'.
- * Quando `aligns` è assente il comportamento resta identico (path <br>): le slide
- * esistenti non subiscono alcuna regressione.
+ * Quando `aligns` è assente si usa il path <br>.
  */
-export function parseLines(lines, keyPrefix = 'line', classMap = DEFAULT_CLASS_MAP, aligns) {
+export function parseLines(lines, keyPrefix = 'line', classMap = DEFAULT_CLASS_MAP, aligns, slideNum) {
   if (!lines || lines.length === 0) return null
+
+  const sepClass = classMap.sep ?? DEFAULT_CLASS_MAP.sep
 
   // Path con allineamento per-riga: un <div> per riga con text-align inline.
   if (aligns) {
     return lines.map((line, idx) => {
+      const rowCls = rowClassName(slideNum, idx)
+
+      // separatore → spacer block, senza div di allineamento
+      if (isSeparator(line)) {
+        return <span key={`${keyPrefix}-line-${idx}`} className={`${rowCls} ${sepClass}`} aria-hidden="true" />
+      }
+
       const textAlign = aligns[idx] ?? 'left'
       // riga vuota → <br> interno per preservare l'altezza (spazio paragrafo)
       const content = line === ''
@@ -129,7 +164,7 @@ export function parseLines(lines, keyPrefix = 'line', classMap = DEFAULT_CLASS_M
         : parseInlineTags(line, `${keyPrefix}-${idx}`, classMap)
       return (
         <div key={`${keyPrefix}-line-${idx}`} style={{ textAlign }}>
-          {content}
+          <span className={rowCls}>{content}</span>
         </div>
       )
     })
@@ -140,15 +175,21 @@ export function parseLines(lines, keyPrefix = 'line', classMap = DEFAULT_CLASS_M
 
   lines.forEach((line, idx) => {
     const isLast = idx === lines.length - 1
+    const rowCls = rowClassName(slideNum, idx)
 
-    if (line === '') {
-      result.push(<br key={`${keyPrefix}-empty-${idx}`} />)
-    } else {
-      const nodes = parseInlineTags(line, `${keyPrefix}-${idx}`, classMap)
-      result.push(...nodes)
+    if (isSeparator(line)) {
+      // il blocco va a capo da solo: nessun <br> prima né dopo
+      result.push(<span key={`${keyPrefix}-row-${idx}`} className={`${rowCls} ${sepClass}`} aria-hidden="true" />)
+      return
     }
 
-    if (!isLast) {
+    const content = line === ''
+      ? <br />
+      : parseInlineTags(line, `${keyPrefix}-${idx}`, classMap)
+    result.push(<span key={`${keyPrefix}-row-${idx}`} className={rowCls}>{content}</span>)
+
+    // niente <br> dopo l'ultima riga né prima di un separatore (già block)
+    if (!isLast && !isSeparator(lines[idx + 1])) {
       result.push(<br key={`${keyPrefix}-br-${idx}`} />)
     }
   })

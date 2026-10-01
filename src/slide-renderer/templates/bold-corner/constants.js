@@ -5,4 +5,5 @@ export const BOLD_CLASS_MAP = {
   soft: 'bold__hl-soft',
   c:    'bold__hl-color',
   u:    'bold__hl-under',
+  sep:  'bold__separator',
 }

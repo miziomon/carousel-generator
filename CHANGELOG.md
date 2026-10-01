@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.33.0] — 2026-10-01
+
+### Added
+- **Separatore tra le righe** (EditModal → tab Contenuto, bottone "Aggiungi separatore" accanto a "Riga vuota (spazio)"): inserisce nell'array `lines` la voce sentinella `"[sep]"`, resa come spazio verticale vuoto alto per default metà della dimensione del testo della slide (più fine della riga vuota, che occupa un'intera riga). Nell'editor appare come riga compatta non editabile.
+- **Altezza separatore per-slide** (EditModal → tab Tipografia, sezione "Separatore"): checkbox + slider/campo numerico 0–120 px. Nuovo campo opzionale `separator_size_override` in `SlideBaseFields` (`src/lib/schema.js`); assente = metà della dimensione testo. Propagato da `normalizeMinimal.js` nell'import JSON. Variabile CSS `--slide-separator-size` impostata da `buildBodyStyle`.
+- **Classi BEM per ogni riga**: ogni riga delle slide è in uno `<span class="slide-row slide_NN_row_MM">` (es. `slide_01_row_01`, `slide_02_row_03`). La numerazione è posizionale sull'array `lines`: righe vuote e separatori contano.
+- **Nuovi test**: classi per-riga e separatore in `inlineTags.test.js`, `bodyStyle.test.js` (nuovo), `separator_size_override` in `schema.test.js`.
+
+### Changed
+- **`parseLines`** (`src/slide-renderer/inlineTags.jsx`) — nuovo quinto parametro `slideNum`; ogni riga è wrappata in uno `<span>` (nel path con `aligns` dentro il `<div>` di allineamento). Esportati `SEPARATOR_TOKEN`, `isSeparator`, `rowClassName`.
+- **Template editorial-mark e bold-corner** — passano `slide.num` a `parseLines`; aggiunta la classe `sep` ai `*_CLASS_MAP` e la regola CSS `.editorial__separator` / `.bold__separator`. La quote editorial con allineamento per-riga ha le virgolette sulla prima/ultima riga non-separatore.
+
 ## [1.32.0] — 2026-09-28
 
 ### Security

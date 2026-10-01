@@ -12,6 +12,7 @@ const FONT_OPTIONS = [
 
 const MIN_SIZE = 8
 const MAX_SIZE = 120
+const MAX_SEP = 120
 
 /**
  * Pannello tipografia per-slide nell'EditModal.
@@ -72,6 +73,30 @@ export function TypographyPanel({ draft, theme, set }) {
     if (!isNaN(parsed)) {
       const clamped = Math.min(2.5, Math.max(0.6, parsed))
       set('line_height_override', Math.round(clamped * 100) / 100)
+    }
+  }
+
+  // Separatore: altezza in px; senza override = metà della dimensione testo (calcolata dal renderer)
+  const hasSepOverride = draft.separator_size_override !== undefined && draft.separator_size_override !== null
+  const currentSep = hasSepOverride ? draft.separator_size_override : Math.round(currentSize / 2)
+
+  function handleSepToggle(e) {
+    if (!e.target.checked) {
+      set('separator_size_override', undefined)
+    } else {
+      // parte dal valore automatico corrente per evitare salti visivi
+      set('separator_size_override', Math.round(currentSize / 2))
+    }
+  }
+
+  function handleSepSlider(e) {
+    set('separator_size_override', Number(e.target.value))
+  }
+
+  function handleSepInput(e) {
+    const parsed = parseInt(e.target.value, 10)
+    if (!isNaN(parsed)) {
+      set('separator_size_override', Math.min(MAX_SEP, Math.max(0, parsed)))
     }
   }
 
@@ -193,6 +218,50 @@ export function TypographyPanel({ draft, theme, set }) {
         ) : (
           <p className="typography-panel__inherited">
             Dal tema: {globalSize}px (slot {activeSlot})
+          </p>
+        )}
+      </div>
+
+      {/* Separatore (override) */}
+      <div className="typography-panel__group">
+        <label className="typography-panel__label">
+          Separatore
+          <span className="typography-panel__badge">override</span>
+        </label>
+        <div className="typography-panel__size-toggle">
+          <label className="typography-panel__check-label">
+            <input
+              type="checkbox"
+              checked={hasSepOverride}
+              onChange={handleSepToggle}
+            />
+            Personalizza altezza separatore
+          </label>
+        </div>
+        {hasSepOverride ? (
+          <div className="typography-panel__size-row">
+            <input
+              type="range"
+              min={0}
+              max={MAX_SEP}
+              step={1}
+              value={currentSep}
+              onChange={handleSepSlider}
+              className="typography-panel__range"
+            />
+            <input
+              type="number"
+              min={0}
+              max={MAX_SEP}
+              value={currentSep}
+              onChange={handleSepInput}
+              className="typography-panel__num"
+            />
+            <span className="typography-panel__unit">px</span>
+          </div>
+        ) : (
+          <p className="typography-panel__inherited">
+            Auto: metà della dimensione del testo
           </p>
         )}
       </div>

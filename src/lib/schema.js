@@ -134,6 +134,8 @@ const SlideBaseFields = {
   font_id_override:    z.enum(FONT_IDS).optional(),
   font_size_override:  z.number().min(8).max(120).optional(),
   line_height_override: z.number().min(0.6).max(2.5).optional(),
+  // Altezza (px) dei separatori "[sep]" in lines; assente = metà della dimensione testo.
+  separator_size_override: z.number().min(0).max(120).optional(),
   // Colore corpo testo (hex/rgba). assente = eredita --slide-fg.
   color_override:      z.string().optional(),
   // Ombreggiatura testo. assente = nessuna ombra.
