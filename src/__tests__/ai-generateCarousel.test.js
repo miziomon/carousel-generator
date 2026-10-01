@@ -1,5 +1,12 @@
-import { describe, it, expect, vi, afterEach } from 'vitest'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { generateCarousel } from '../lib/ai/generateCarousel.js'
+import { installHttpMock } from './helpers/mockHttp.js'
+import { hubAuth } from '../auth.js'
+
+// Sessione finta (l'integrazione vera con hub-auth è in http.test.js)
+vi.mock('../auth.js', async () => ({
+  hubAuth: (await import('./helpers/fakeHubAuth.js')).makeFakeHubAuth(),
+}))
 
 // Mocka il modulo config per evitare di dipendere da import.meta.env in test
 vi.mock('../lib/ai/config.js', () => ({
@@ -23,16 +30,16 @@ const BASE_PARAMS = {
   userId: 'user-123',
 }
 
+let http
+beforeEach(() => { http = installHttpMock() })
 afterEach(() => {
-  vi.restoreAllMocks()
+  http.uninstall()
+  vi.clearAllMocks()
 })
 
 describe('generateCarousel', () => {
   it('200 OK — ritorna carousel, model, usage', async () => {
-    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve(MOCK_RESPONSE_BODY),
-    }))
+    http.respond({ body: MOCK_RESPONSE_BODY })
 
     const result = await generateCarousel(BASE_PARAMS)
     expect(result.carousel).toEqual(MOCK_CAROUSEL)
@@ -42,57 +49,42 @@ describe('generateCarousel', () => {
   })
 
   it('body contiene force_json_response: true', async () => {
-    let capturedBody
-    vi.stubGlobal('fetch', vi.fn().mockImplementation((_url, opts) => {
-      capturedBody = JSON.parse(opts.body)
-      return Promise.resolve({ ok: true, json: () => Promise.resolve(MOCK_RESPONSE_BODY) })
-    }))
+    http.respond({ body: MOCK_RESPONSE_BODY })
 
     await generateCarousel(BASE_PARAMS)
+    const capturedBody = http.lastRequest().json()
     expect(capturedBody.force_json_response).toBe(true)
   })
 
   it('body contiene user_id quando passato', async () => {
-    let capturedBody
-    vi.stubGlobal('fetch', vi.fn().mockImplementation((_url, opts) => {
-      capturedBody = JSON.parse(opts.body)
-      return Promise.resolve({ ok: true, json: () => Promise.resolve(MOCK_RESPONSE_BODY) })
-    }))
+    http.respond({ body: MOCK_RESPONSE_BODY })
 
     await generateCarousel({ ...BASE_PARAMS, userId: 'u-abc' })
+    const capturedBody = http.lastRequest().json()
     expect(capturedBody.user_id).toBe('u-abc')
   })
 
   it('body contiene system_prompt e message', async () => {
-    let capturedBody
-    vi.stubGlobal('fetch', vi.fn().mockImplementation((_url, opts) => {
-      capturedBody = JSON.parse(opts.body)
-      return Promise.resolve({ ok: true, json: () => Promise.resolve(MOCK_RESPONSE_BODY) })
-    }))
+    http.respond({ body: MOCK_RESPONSE_BODY })
 
     await generateCarousel(BASE_PARAMS)
+    const capturedBody = http.lastRequest().json()
     expect(typeof capturedBody.system_prompt).toBe('string')
     expect(capturedBody.system_prompt.length).toBeGreaterThan(0)
     expect(capturedBody.message).toContain(BASE_PARAMS.postText.trim())
   })
 
   it('401 → ApiError UNAUTHORIZED', async () => {
-    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
-      ok: false,
-      status: 401,
-      json: () => Promise.resolve({ error: 'Unauthorized' }),
-    }))
+    http.respond({ status: 401, body: { error: 'Unauthorized' } })
 
     await expect(generateCarousel(BASE_PARAMS)).rejects.toMatchObject({ code: 'UNAUTHORIZED' })
+    // il token usato viene notificato a hub-auth per il logout automatico
+    expect(hubAuth.handleUnauthorized).toHaveBeenCalledWith('test-token')
   })
 
   it('422 → ApiError JSON_VALIDATION_FAILED con payload', async () => {
     const body = { raw_response: 'garbage', error: 'JsonValidationFailed' }
-    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
-      ok: false,
-      status: 422,
-      json: () => Promise.resolve(body),
-    }))
+    http.respond({ status: 422, body })
 
     await expect(generateCarousel(BASE_PARAMS)).rejects.toMatchObject({
       code: 'JSON_VALIDATION_FAILED',
@@ -101,30 +93,24 @@ describe('generateCarousel', () => {
   })
 
   it('errore di rete → ApiError NETWORK_ERROR', async () => {
-    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new TypeError('Failed to fetch')))
+    http.networkError()
 
     await expect(generateCarousel(BASE_PARAMS)).rejects.toMatchObject({ code: 'NETWORK_ERROR' })
   })
 
   it('message include [Numero target di slide] quando slideCount è un numero', async () => {
-    let capturedBody
-    vi.stubGlobal('fetch', vi.fn().mockImplementation((_url, opts) => {
-      capturedBody = JSON.parse(opts.body)
-      return Promise.resolve({ ok: true, json: () => Promise.resolve(MOCK_RESPONSE_BODY) })
-    }))
+    http.respond({ body: MOCK_RESPONSE_BODY })
 
     await generateCarousel({ ...BASE_PARAMS, slideCount: 8 })
+    const capturedBody = http.lastRequest().json()
     expect(capturedBody.message).toContain('[Numero target di slide: 8]')
   })
 
   it('message NON include [Numero target] quando slideCount è auto', async () => {
-    let capturedBody
-    vi.stubGlobal('fetch', vi.fn().mockImplementation((_url, opts) => {
-      capturedBody = JSON.parse(opts.body)
-      return Promise.resolve({ ok: true, json: () => Promise.resolve(MOCK_RESPONSE_BODY) })
-    }))
+    http.respond({ body: MOCK_RESPONSE_BODY })
 
     await generateCarousel({ ...BASE_PARAMS, slideCount: 'auto' })
+    const capturedBody = http.lastRequest().json()
     expect(capturedBody.message).not.toContain('Numero target')
   })
 })

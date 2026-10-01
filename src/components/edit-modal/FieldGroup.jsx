@@ -29,8 +29,8 @@ export function TextInput({ value, onChange, placeholder, disabled, className, .
       placeholder={placeholder}
       disabled={disabled}
       className={cn(
-        'w-full bg-slate-900 border border-slate-600 rounded px-3 py-1.5 text-sm text-slate-100',
-        'focus:outline-none focus:border-emerald-500/60 transition-colors font-mono',
+        'w-full bg-slate-900 border border-slate-600 rounded-sm px-3 py-1.5 text-sm text-slate-100',
+        'focus:outline-hidden focus:border-emerald-500/60 transition-colors font-mono',
         disabled && 'opacity-40 cursor-not-allowed',
         className
       )}
@@ -47,8 +47,8 @@ export function SelectInput({ value, onChange, options, disabled, className }) {
       onChange={(e) => onChange(e.target.value)}
       disabled={disabled}
       className={cn(
-        'w-full bg-slate-900 border border-slate-600 rounded px-3 py-1.5 text-sm text-slate-100',
-        'focus:outline-none focus:border-emerald-500/60 transition-colors font-mono',
+        'w-full bg-slate-900 border border-slate-600 rounded-sm px-3 py-1.5 text-sm text-slate-100',
+        'focus:outline-hidden focus:border-emerald-500/60 transition-colors font-mono',
         disabled && 'opacity-40 cursor-not-allowed',
         className
       )}
@@ -70,7 +70,7 @@ export function RadioGroup({ value, onChange, options, name }) {
         <label
           key={opt.value}
           className={cn(
-            'flex items-center gap-1.5 px-3 py-1.5 rounded border cursor-pointer text-xs font-mono transition-colors',
+            'flex items-center gap-1.5 px-3 py-1.5 rounded-sm border cursor-pointer text-xs font-mono transition-colors',
             value === opt.value
               ? 'border-emerald-500/60 bg-emerald-500/10 text-emerald-400'
               : 'border-slate-600 text-slate-400 hover:border-slate-500 hover:text-slate-300'
@@ -106,7 +106,7 @@ export function Toggle({ checked, onChange, label }) {
       >
         <span
           className={cn(
-            'absolute top-0.5 left-0 w-4 h-4 bg-white rounded-full shadow transition-transform',
+            'absolute top-0.5 left-0 w-4 h-4 bg-white rounded-full shadow-sm transition-transform',
             checked ? 'translate-x-[18px]' : 'translate-x-[2px]'
           )}
         />

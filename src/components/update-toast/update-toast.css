@@ -1,0 +1,91 @@
+/* === UPDATE TOAST ===
+ * Namespace: .update-toast__* — avviso "Nuova versione disponibile" (PWA).
+ * Usa le variabili del tema app, quindi segue dark/light. */
+
+.update-toast {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  /* sopra la schermata di login (.auth, z-index 9999) */
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  max-width: calc(100vw - 32px);
+  padding: 10px 14px;
+  background: var(--app-bg-popup);
+  color: var(--app-fg);
+  border: 1px solid rgba(var(--app-fg-rgb), 0.15);
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  font-size: 14px;
+  animation: update-toast-in 0.18s ease-out;
+}
+
+.update-toast__icon {
+  flex-shrink: 0;
+  color: var(--app-accent);
+}
+
+.update-toast__text {
+  min-width: 0;
+}
+
+.update-toast__reload {
+  flex-shrink: 0;
+  padding: 6px 12px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--app-accent);
+  color: #0a0f1e;
+  font: inherit;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: filter 0.15s ease;
+}
+
+.update-toast__reload:hover {
+  filter: brightness(1.1);
+}
+
+.update-toast__dismiss {
+  flex-shrink: 0;
+  display: flex;
+  padding: 6px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: rgba(var(--app-fg-rgb), 0.55);
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.update-toast__dismiss:hover {
+  background: rgba(var(--app-fg-rgb), 0.1);
+  color: var(--app-fg);
+}
+
+.update-toast__reload:focus-visible,
+.update-toast__dismiss:focus-visible {
+  outline: 2px solid var(--app-accent);
+  outline-offset: 2px;
+}
+
+@keyframes update-toast-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 12px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .update-toast {
+    animation: none;
+  }
+}

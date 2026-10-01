@@ -21,7 +21,7 @@ npx vitest run src/__tests__/schema.test.js
 
 ### Stato globale: `useCarouselStore`
 
-`src/hooks/useCarouselStore.js` è l'unica fonte di verità. Usa `useReducer` (niente Context globale, niente Zustand): il hook viene istanziato in `App.jsx` e le azioni vengono passate come props verso il basso.
+`src/hooks/useCarouselStore.js` è l'unica fonte di verità. Lo stato vive in uno store **zustand** globale (singleton di modulo) e viene aggiornato da un **reducer** puro (`reducer`, esportato): ogni azione passa da `dispatch(action)`, che calcola il nuovo stato col reducer e, se il reducer restituisce lo stesso oggetto (azione ignorata), non provoca re-render. L'hook `useCarouselStore()` espone stato + azioni (definite una sola volta a livello di modulo, quindi con identità stabile) e viene istanziato in `App.jsx`: le azioni vengono passate come props verso il basso. Nuove azioni si aggiungono come `case` nel reducer + una funzione `dispatch({ type, payload })` + la chiave nel `return` dell'hook. `resetCarouselStore()` riporta lo store allo stato iniziale (serve ai test, perché lo store è un singleton).
 
 Lo stato ha 4 sezioni: `carousel` (dati), `ui` (tab attiva, slide in edit), `history` (stack undo/redo, max 50 snapshot), `meta` (isDirty, lastSavedAt).
 
@@ -40,6 +40,14 @@ Lo stato ha 4 sezioni: `carousel` (dati), `ui` (tab attiva, slide in edit), `his
 - `sticker_order` — `string[]` — ordine custom dell'intera pila (globali visibili + locali); assente = ordine default.
 
 La logica di risoluzione è centralizzata in `src/lib/resolveSlideStickers.js` (`resolveSlideStickers(slide, theme)`) — selettore puro usato sia da `SlideRenderer` che da `SlideStickerPanel`. `REMOVE_THEME_STICKER` pulisce automaticamente i riferimenti orfani in tutte le slide. Le sei action per-slide sono `ADD/UPDATE/REMOVE/REORDER_SLIDE_STICKER`, `RESET_SLIDE_STICKER_OVERRIDE`, `RESTORE_SLIDE_STICKER`. La UI è nel tab "Sticker" dell'`EditModal` (`src/components/edit-modal/SlideStickerPanel.jsx`) — opera sul draft locale, committato solo al salvataggio.
+
+### Chiamate al backend: `lib/http.js` (axios)
+
+Tutte le chiamate HTTP passano da `src/lib/http.js`: `http` è un'istanza axios con `baseURL = VITE_API_BASE_URL` e gli interceptor di `hubAuth.installAxiosInterceptors()` (Bearer della sessione letto a ogni richiesta, su 401 `hubAuth.handleUnauthorized(token)`); `publicHttp` è la stessa istanza senza interceptor, per gli endpoint pubblici (scambio magic link). `apiRequest(config)` restituisce direttamente il body (204 → `null`) e trasforma gli errori HTTP in `Error` con `message` (`message` → `error` → `Errore N`) e `status`; la usano `lib/carousel/api.js` e `lib/uploads/api.js`. `generateCarousel` e `exchangeAccessLink` usano `validateStatus: () => true` per mappare da sé gli stati di errore (`ApiError`, messaggi leggibili). Nessun timeout: la generazione AI può durare a lungo. **Non usare `fetch` direttamente.** Nei test si usa `src/__tests__/helpers/mockHttp.js` (sostituisce l'adapter di axios) e `fakeHubAuth.js`.
+
+### PWA e avviso di nuova versione
+
+L'app è una PWA (`vite-plugin-pwa`, `registerType: 'prompt'`, config in `vite.config.js`): manifest e icone in `public/` (`pwa-*.png`, `favicon.svg`, `apple-touch-icon.png`; monogramma «S» neon su navy). Il precache contiene solo l'app shell (js/css/html/icone, ~1,9 MB); i font in `public/fonts` (~11 MB) si cachano a runtime (`CacheFirst`, cache `carosello-fonts`). Le chiamate al backend non hanno route nel service worker: restano sempre live. `PwaUpdateNotice` (montato in `main.jsx`, anche sul login) usa `usePwaUpdate` (`src/hooks/usePwaUpdate.js`) che controlla nuove versioni ogni ora e al ritorno in primo piano (min. 5 minuti tra due controlli) e mostra `UpdateToast` ("Nuova versione disponibile" / "Aggiorna ora" / chiudi): mai un reload automatico, il draft comunque è già salvato dall'autosave. Il service worker gira solo nel build (`npm run preview` o produzione), non in `npm run dev`. Attenzione: sulla stessa origine `localhost:PORTA` un service worker registrato da un altro progetto continua a servire il suo contenuto; per provare la PWA usa una porta libera.
 
 ### Rendering slide: `SlideRenderer`
 
@@ -79,7 +87,7 @@ Il render per l'export è centralizzato in `src/lib/renderSlideAsPng.jsx` (`rend
 
 ### Convenzioni CSS
 
-- **Tailwind**: solo per layout dell'app shell (flex, gap, overflow, padding).
+- **Tailwind** (v4, plugin `@tailwindcss/vite`, nessun `tailwind.config.js`/`postcss.config.js`): solo per layout dell'app shell (flex, gap, overflow, padding). `src/index.css` contiene due regole di compatibilità v3→v4 (colore bordi di default e `cursor: pointer` sui bottoni).
 - **BEM con CSS dedicato per componente**: ogni componente ha il suo `.css` accanto al `.jsx`. L'identità visiva dei componenti non va mai espressa con classi Tailwind.
 - Il CSS delle slide (`slide-renderer.css`) è intoccabile.
 
@@ -100,6 +108,7 @@ Hook usati in `App.jsx` o nei componenti, non documentati altrove:
 | `useDebouncedCallback` | `src/hooks/useDebouncedCallback.js` | Utility debounce generico |
 | `usePaletteLibraryPersistence` | `src/hooks/usePaletteLibraryPersistence.js` | Salvataggio palette custom nel localStorage |
 | `useUiPreferences` | `src/hooks/useUiPreferences.js` | Stato sidebar (aperta/chiusa, sezioni espanse) |
+| `usePwaUpdate` | `src/hooks/usePwaUpdate.js` | Registra il service worker, controlla nuove versioni (ogni ora / al ritorno in primo piano) ed espone `needRefresh`/`reload`/`dismiss` |
 
 ### Lazy loading
 

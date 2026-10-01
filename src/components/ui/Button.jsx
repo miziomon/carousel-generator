@@ -31,7 +31,7 @@ export function Button({
       disabled={disabled}
       onClick={onClick}
       className={cn(
-        'inline-flex items-center gap-1.5 rounded transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500/50',
+        'inline-flex items-center gap-1.5 rounded-sm transition-colors focus:outline-hidden focus:ring-2 focus:ring-emerald-500/50',
         VARIANTS[variant],
         SIZES[size],
         disabled && 'opacity-40 cursor-not-allowed pointer-events-none',

@@ -1,4 +1,5 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
+import { installHttpMock } from './helpers/mockHttp.js'
 import {
   readAccessTokenFromUrl,
   stripAccessTokenFromUrl,
@@ -92,19 +93,16 @@ describe('stripAccessTokenFromUrl', () => {
 // ── Exchange token → sessione ──────────────────────────────────────────────
 
 describe('exchangeAccessLink', () => {
-  beforeEach(() => {
-    vi.stubGlobal('fetch', vi.fn())
-  })
+  let http
+  beforeEach(() => { http = installHttpMock() })
+  afterEach(() => http.uninstall())
 
   it('mappa correttamente la risposta del backend in camelCase', async () => {
-    vi.mocked(fetch).mockResolvedValueOnce({
-      ok: true,
-      json: async () => ({
+    http.respond({ body: {
         session_token: 'sess-abc',
         user_id: 'user-uuid-123',
         expires_at: '2026-05-27T18:00:00+00:00',
-      }),
-    })
+      } })
 
     const result = await exchangeAccessLink('test-token')
     expect(result.sessionToken).toBe('sess-abc')
@@ -114,11 +112,7 @@ describe('exchangeAccessLink', () => {
   })
 
   it('lancia un errore leggibile per 401', async () => {
-    vi.mocked(fetch).mockResolvedValueOnce({
-      ok: false,
-      status: 401,
-      json: async () => ({ error: 'Unauthorized' }),
-    })
+    http.respond({ status: 401, body: { error: 'Unauthorized' } })
 
     await expect(exchangeAccessLink('bad-token')).rejects.toThrow(
       'Link non valido, scaduto o revocato.',
@@ -126,11 +120,7 @@ describe('exchangeAccessLink', () => {
   })
 
   it('lancia un errore leggibile per 429', async () => {
-    vi.mocked(fetch).mockResolvedValueOnce({
-      ok: false,
-      status: 429,
-      json: async () => ({ error: 'RateLimitExceeded' }),
-    })
+    http.respond({ status: 429, body: { error: 'RateLimitExceeded' } })
 
     await expect(exchangeAccessLink('token')).rejects.toThrow(
       'Troppi tentativi, riprova tra poco.',
@@ -138,11 +128,7 @@ describe('exchangeAccessLink', () => {
   })
 
   it('lancia un errore leggibile per 503', async () => {
-    vi.mocked(fetch).mockResolvedValueOnce({
-      ok: false,
-      status: 503,
-      json: async () => ({ error: 'Service Unavailable' }),
-    })
+    http.respond({ status: 503, body: { error: 'Service Unavailable' } })
 
     await expect(exchangeAccessLink('token')).rejects.toThrow(
       'Servizio non disponibile',
@@ -150,11 +136,7 @@ describe('exchangeAccessLink', () => {
   })
 
   it('usa il messaggio del backend per errori generici', async () => {
-    vi.mocked(fetch).mockResolvedValueOnce({
-      ok: false,
-      status: 500,
-      json: async () => ({ message: 'Internal server error' }),
-    })
+    http.respond({ status: 500, body: { message: 'Internal server error' } })
 
     await expect(exchangeAccessLink('token')).rejects.toThrow(
       'Internal server error',
@@ -162,11 +144,7 @@ describe('exchangeAccessLink', () => {
   })
 
   it('usa un messaggio di fallback se il backend non invia dettagli', async () => {
-    vi.mocked(fetch).mockResolvedValueOnce({
-      ok: false,
-      status: 500,
-      json: async () => ({}),
-    })
+    http.respond({ status: 500, body: {} })
 
     await expect(exchangeAccessLink('token')).rejects.toThrow('Errore durante')
   })

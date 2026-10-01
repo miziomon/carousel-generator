@@ -2,6 +2,7 @@ import { getAiConfig } from './config.js'
 import { buildSystemPrompt } from './buildSystemPrompt.js'
 import { ApiError, mapHttpErrorToApiError } from './errors.js'
 import { hubAuth } from '../../auth.js'
+import { http } from '../http.js'
 
 export async function generateCarousel({ postText, slideCount, extraInstructions, currentCarousel, userId }) {
   const { url, token } = getAiConfig()
@@ -30,23 +31,23 @@ export async function generateCarousel({ postText, slideCount, extraInstructions
 
   let response
   try {
-    response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
-      body: JSON.stringify(body),
+    // validateStatus sempre vero: gli errori HTTP si leggono dal body e si
+    // mappano in ApiError più sotto (401 incluso), non come eccezioni axios.
+    // L'Authorization esplicito ha la precedenza sull'interceptor di hub-auth.
+    response = await http.post(url, body, {
+      headers: { Authorization: `Bearer ${token}` },
+      validateStatus: () => true,
     })
   } catch (err) {
     throw new ApiError('Errore di rete. Verifica la connessione.', 'NETWORK_ERROR', null, err)
   }
 
-  const responseBody = await response.json().catch(() => null)
+  // Body non JSON (es. pagina di errore del proxy): axios lo restituisce come stringa → null
+  const responseBody = typeof response.data === 'object' ? response.data : null
 
   if (response.status === 401) hubAuth.handleUnauthorized(token)
 
-  if (!response.ok) {
+  if (response.status < 200 || response.status >= 300) {
     throw mapHttpErrorToApiError(response.status, responseBody)
   }
 

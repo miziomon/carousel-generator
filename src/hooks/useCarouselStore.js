@@ -1,4 +1,4 @@
-import { useReducer, useCallback } from 'react'
+import { create } from 'zustand'
 import { nanoid } from 'nanoid'
 import { defaultCarousel } from '../lib/defaultCarousel.js'
 import { newId } from '../lib/ids.js'
@@ -71,7 +71,7 @@ function mergePaletteLibrary(userPalettes) {
 
 // ── Stato iniziale ────────────────────────────────────────────────────────────
 
-function buildInitialState() {
+export function buildInitialState() {
   const saved = loadDraft()
   // Migra il draft prima di usarlo -- gestisce il formato vecchio (5 colori, no palette_id)
   const migrated = saved ? migrateCarousel(saved) : null
@@ -115,7 +115,7 @@ function buildInitialState() {
 
 // ── Reducer ───────────────────────────────────────────────────────────────────
 
-function reducer(state, action) {
+export function reducer(state, action) {
   switch (action.type) {
     case 'LOAD_CAROUSEL': {
       // Migra prima di usare -- i payload arrivano da import JSON e possono essere vecchio formato
@@ -771,86 +771,109 @@ function reducer(state, action) {
   }
 }
 
+// ─── Store (zustand) ──────────────────────────────────────────────────────────
+// Lo stato resta governato dal reducer di sopra (invariato): zustand è solo il
+// contenitore globale. L'hook pubblico espone la stessa API di prima.
+
+const useStore = create((set) => ({
+  state: buildInitialState(),
+  dispatch: (action) =>
+    set((s) => {
+      const next = reducer(s.state, action)
+      // Stato invariato (azione ignorata dal reducer): nessun re-render
+      return next === s.state ? s : { state: next }
+    }),
+}))
+
+/** Riporta lo store allo stato iniziale (draft/default). Usata dai test. */
+export function resetCarouselStore() {
+  useStore.setState({ state: buildInitialState() })
+}
+
+const dispatch = (action) => useStore.getState().dispatch(action)
+
+// ── Azioni (definite una sola volta a livello di modulo: identità stabile) ──
+
+// ── Azioni carosello (memoizzate per stabilità props) ─────────────────────
+const loadCarousel   = (c)   => dispatch({ type: 'LOAD_CAROUSEL',   payload: c })
+const updateTitle    = (t)   => dispatch({ type: 'UPDATE_TITLE',    payload: t })
+const updateTheme    = (t)   => dispatch({ type: 'UPDATE_THEME',    payload: t })
+const updateSlide    = (s)   => dispatch({ type: 'UPDATE_SLIDE',    payload: s })
+const reorderSlides  = (ids) => dispatch({ type: 'REORDER_SLIDES',  payload: ids })
+const addSlide       = (type, afterId = null) => dispatch({ type: 'ADD_SLIDE', payload: { type, afterId } })
+const duplicateSlide = (id)  => dispatch({ type: 'DUPLICATE_SLIDE', payload: { id } })
+const deleteSlide    = (id)  => dispatch({ type: 'DELETE_SLIDE',    payload: { id } })
+const setActiveTab   = (tab) => dispatch({ type: 'SET_ACTIVE_TAB',  payload: tab })
+const openEditModal  = (id)  => dispatch({ type: 'OPEN_EDIT_MODAL', payload: { id } })
+const closeEditModal = ()    => dispatch({ type: 'CLOSE_EDIT_MODAL' })
+const markSaved      = (ts)  => dispatch({ type: 'MARK_SAVED',      payload: ts })
+const undo           = ()    => dispatch({ type: 'UNDO' })
+const redo           = ()    => dispatch({ type: 'REDO' })
+
+// ── Azioni palette carosello (Fase 2) ─────────────────────────────────────
+const applyPalette        = (paletteId) => dispatch({ type: 'APPLY_PALETTE',        payload: { paletteId } })
+const resyncPalette       = ()          => dispatch({ type: 'RESYNC_PALETTE' })
+const updatePaletteInline = (key, value) => dispatch({ type: 'UPDATE_PALETTE_INLINE', payload: { key, value } })
+const openPaletteManager  = ()          => dispatch({ type: 'OPEN_PALETTE_MANAGER' })
+const closePaletteManager = ()          => dispatch({ type: 'CLOSE_PALETTE_MANAGER' })
+
+// ── Azione formato ────────────────────────────────────────────────────────
+const applyFormat          = (formatId)   => dispatch({ type: 'APPLY_FORMAT',          payload: { formatId } })
+
+// ── Azioni template (Fase 3) ──────────────────────────────────────────────
+const applyTemplate        = (templateId) => dispatch({ type: 'APPLY_TEMPLATE',        payload: { templateId } })
+const openTemplateManager  = ()            => dispatch({ type: 'OPEN_TEMPLATE_MANAGER' })
+const closeTemplateManager = ()            => dispatch({ type: 'CLOSE_TEMPLATE_MANAGER' })
+
+// ── Azioni libreria palette (Fase 3) ──────────────────────────────────────
+const createPalette    = (palette)            => dispatch({ type: 'CREATE_PALETTE',    payload: palette })
+const updatePalette    = (paletteId, patch)   => dispatch({ type: 'UPDATE_PALETTE',    payload: { paletteId, patch } })
+const duplicatePalette = (paletteId, newName) => dispatch({ type: 'DUPLICATE_PALETTE', payload: { paletteId, newName } })
+const deletePalette    = (paletteId)          => dispatch({ type: 'DELETE_PALETTE',    payload: { paletteId } })
+const importPalette    = (palette)            => dispatch({ type: 'IMPORT_PALETTE',    payload: { palette } })
+const openEditPalette       = (paletteId)          => dispatch({ type: 'OPEN_EDIT_PALETTE', payload: { paletteId } })
+const closeEditPalette      = ()                   => dispatch({ type: 'CLOSE_EDIT_PALETTE' })
+
+// ── Azioni font ───────────────────────────────────────────────────────────────
+const applyFont          = (slot, fontId)   => dispatch({ type: 'APPLY_FONT',           payload: { slot, fontId } })
+const applyFontPreset    = (presetId)       => dispatch({ type: 'APPLY_FONT_PRESET',    payload: { presetId } })
+const previewFontChange  = (slot, fontId)   => dispatch({ type: 'PREVIEW_FONT_CHANGE',  payload: { slot, fontId } })
+const clearFontPreview   = ()               => dispatch({ type: 'CLEAR_FONT_PREVIEW' })
+const applyFontSize      = (slot, size)     => dispatch({ type: 'APPLY_FONT_SIZE',      payload: { slot, size } })
+const setCustomCss       = (css)            => dispatch({ type: 'SET_CUSTOM_CSS',       payload: { css } })
+
+// ── Immagine globale theme ────────────────────────────────────────────────────
+// bgImage: oggetto BackgroundImage | null (forza nessuno) | undefined (rimuovi campo)
+const applyThemeBgImage      = (bgImage)          => dispatch({ type: 'APPLY_THEME_BG_IMAGE',    payload: bgImage })
+
+// ── Sticker globali theme ─────────────────────────────────────────────────────
+const addThemeSticker        = (sticker)          => dispatch({ type: 'ADD_THEME_STICKER',       payload: sticker })
+const updateThemeSticker     = (id, patch)        => dispatch({ type: 'UPDATE_THEME_STICKER',    payload: { id, patch } })
+const removeThemeSticker     = (id)               => dispatch({ type: 'REMOVE_THEME_STICKER',    payload: { id } })
+const reorderThemeSticker    = (id, direction)    => dispatch({ type: 'REORDER_THEME_STICKER',   payload: { id, direction } })
+
+// ── Sticker per-slide ─────────────────────────────────────────────────────────
+const addSlideSticker               = (slideId, sticker)    => dispatch({ type: 'ADD_SLIDE_STICKER',              payload: { slideId, sticker } })
+const updateSlideSticker            = (slideId, id, patch)  => dispatch({ type: 'UPDATE_SLIDE_STICKER',           payload: { slideId, id, patch } })
+const removeSlideSticker            = (slideId, id)         => dispatch({ type: 'REMOVE_SLIDE_STICKER',           payload: { slideId, id } })
+const reorderSlideSticker           = (slideId, id, dir)    => dispatch({ type: 'REORDER_SLIDE_STICKER',          payload: { slideId, id, direction: dir } })
+const resetSlideStickerOverride     = (slideId, id)         => dispatch({ type: 'RESET_SLIDE_STICKER_OVERRIDE',   payload: { slideId, id } })
+const restoreSlideSticker           = (slideId, id)         => dispatch({ type: 'RESTORE_SLIDE_STICKER',          payload: { slideId, id } })
+
+// ── Azione AI ────────────────────────────────────────────────────────────────
+const replaceCarouselFromAi = (generated, meta)   => dispatch({ type: 'REPLACE_CAROUSEL_FROM_AI', payload: { generated, meta } })
+
+// ── Azioni persistenza DB ─────────────────────────────────────────────────────
+const setIsSaving           = (saving)  => dispatch({ type: 'SET_IS_SAVING',         payload: saving })
+const setDocumentIdentity   = (payload) => dispatch({ type: 'SET_DOCUMENT_IDENTITY', payload })
+const loadFromDb            = (payload) => dispatch({ type: 'LOAD_FROM_DB',          payload })
+const clearDocumentIdentity = ()        => dispatch({ type: 'CLEAR_DOCUMENT_IDENTITY' })
+const updateDocumentTitle   = (title)   => dispatch({ type: 'UPDATE_DOCUMENT_TITLE', payload: { title } })
+
 // ─── Hook pubblico ────────────────────────────────────────────────────────────
 
 export function useCarouselStore() {
-  const [state, dispatch] = useReducer(reducer, undefined, buildInitialState)
-
-  // ── Azioni carosello (memoizzate per stabilità props) ─────────────────────
-  const loadCarousel   = useCallback((c)   => dispatch({ type: 'LOAD_CAROUSEL',   payload: c }),    [])
-  const updateTitle    = useCallback((t)   => dispatch({ type: 'UPDATE_TITLE',    payload: t }),    [])
-  const updateTheme    = useCallback((t)   => dispatch({ type: 'UPDATE_THEME',    payload: t }),    [])
-  const updateSlide    = useCallback((s)   => dispatch({ type: 'UPDATE_SLIDE',    payload: s }),    [])
-  const reorderSlides  = useCallback((ids) => dispatch({ type: 'REORDER_SLIDES',  payload: ids }),  [])
-  const addSlide       = useCallback((type, afterId = null) => dispatch({ type: 'ADD_SLIDE', payload: { type, afterId } }), [])
-  const duplicateSlide = useCallback((id)  => dispatch({ type: 'DUPLICATE_SLIDE', payload: { id } }), [])
-  const deleteSlide    = useCallback((id)  => dispatch({ type: 'DELETE_SLIDE',    payload: { id } }), [])
-  const setActiveTab   = useCallback((tab) => dispatch({ type: 'SET_ACTIVE_TAB',  payload: tab }),  [])
-  const openEditModal  = useCallback((id)  => dispatch({ type: 'OPEN_EDIT_MODAL', payload: { id } }), [])
-  const closeEditModal = useCallback(()    => dispatch({ type: 'CLOSE_EDIT_MODAL' }),                [])
-  const markSaved      = useCallback((ts)  => dispatch({ type: 'MARK_SAVED',      payload: ts }),   [])
-  const undo           = useCallback(()    => dispatch({ type: 'UNDO' }),                            [])
-  const redo           = useCallback(()    => dispatch({ type: 'REDO' }),                            [])
-
-  // ── Azioni palette carosello (Fase 2) ─────────────────────────────────────
-  const applyPalette        = useCallback((paletteId) => dispatch({ type: 'APPLY_PALETTE',        payload: { paletteId } }), [])
-  const resyncPalette       = useCallback(()          => dispatch({ type: 'RESYNC_PALETTE' }),                               [])
-  const updatePaletteInline = useCallback((key, value) => dispatch({ type: 'UPDATE_PALETTE_INLINE', payload: { key, value } }), [])
-  const openPaletteManager  = useCallback(()          => dispatch({ type: 'OPEN_PALETTE_MANAGER' }),                         [])
-  const closePaletteManager = useCallback(()          => dispatch({ type: 'CLOSE_PALETTE_MANAGER' }),                        [])
-
-  // ── Azione formato ────────────────────────────────────────────────────────
-  const applyFormat          = useCallback((formatId)   => dispatch({ type: 'APPLY_FORMAT',          payload: { formatId } }),   [])
-
-  // ── Azioni template (Fase 3) ──────────────────────────────────────────────
-  const applyTemplate        = useCallback((templateId) => dispatch({ type: 'APPLY_TEMPLATE',        payload: { templateId } }), [])
-  const openTemplateManager  = useCallback(()            => dispatch({ type: 'OPEN_TEMPLATE_MANAGER' }),                         [])
-  const closeTemplateManager = useCallback(()            => dispatch({ type: 'CLOSE_TEMPLATE_MANAGER' }),                        [])
-
-  // ── Azioni libreria palette (Fase 3) ──────────────────────────────────────
-  const createPalette    = useCallback((palette)            => dispatch({ type: 'CREATE_PALETTE',    payload: palette }),               [])
-  const updatePalette    = useCallback((paletteId, patch)   => dispatch({ type: 'UPDATE_PALETTE',    payload: { paletteId, patch } }),   [])
-  const duplicatePalette = useCallback((paletteId, newName) => dispatch({ type: 'DUPLICATE_PALETTE', payload: { paletteId, newName } }), [])
-  const deletePalette    = useCallback((paletteId)          => dispatch({ type: 'DELETE_PALETTE',    payload: { paletteId } }),          [])
-  const importPalette    = useCallback((palette)            => dispatch({ type: 'IMPORT_PALETTE',    payload: { palette } }),            [])
-  const openEditPalette       = useCallback((paletteId)          => dispatch({ type: 'OPEN_EDIT_PALETTE', payload: { paletteId } }),          [])
-  const closeEditPalette      = useCallback(()                   => dispatch({ type: 'CLOSE_EDIT_PALETTE' }),                                [])
-
-  // ── Azioni font ───────────────────────────────────────────────────────────────
-  const applyFont          = useCallback((slot, fontId)   => dispatch({ type: 'APPLY_FONT',           payload: { slot, fontId } }),   [])
-  const applyFontPreset    = useCallback((presetId)       => dispatch({ type: 'APPLY_FONT_PRESET',    payload: { presetId } }),        [])
-  const previewFontChange  = useCallback((slot, fontId)   => dispatch({ type: 'PREVIEW_FONT_CHANGE',  payload: { slot, fontId } }),    [])
-  const clearFontPreview   = useCallback(()               => dispatch({ type: 'CLEAR_FONT_PREVIEW' }),                                [])
-  const applyFontSize      = useCallback((slot, size)     => dispatch({ type: 'APPLY_FONT_SIZE',      payload: { slot, size } }),      [])
-  const setCustomCss       = useCallback((css)            => dispatch({ type: 'SET_CUSTOM_CSS',       payload: { css } }),             [])
-
-  // ── Immagine globale theme ────────────────────────────────────────────────────
-  // bgImage: oggetto BackgroundImage | null (forza nessuno) | undefined (rimuovi campo)
-  const applyThemeBgImage      = useCallback((bgImage)          => dispatch({ type: 'APPLY_THEME_BG_IMAGE',    payload: bgImage }),              [])
-
-  // ── Sticker globali theme ─────────────────────────────────────────────────────
-  const addThemeSticker        = useCallback((sticker)          => dispatch({ type: 'ADD_THEME_STICKER',       payload: sticker }),              [])
-  const updateThemeSticker     = useCallback((id, patch)        => dispatch({ type: 'UPDATE_THEME_STICKER',    payload: { id, patch } }),        [])
-  const removeThemeSticker     = useCallback((id)               => dispatch({ type: 'REMOVE_THEME_STICKER',    payload: { id } }),               [])
-  const reorderThemeSticker    = useCallback((id, direction)    => dispatch({ type: 'REORDER_THEME_STICKER',   payload: { id, direction } }),    [])
-
-  // ── Sticker per-slide ─────────────────────────────────────────────────────────
-  const addSlideSticker               = useCallback((slideId, sticker)    => dispatch({ type: 'ADD_SLIDE_STICKER',              payload: { slideId, sticker } }),    [])
-  const updateSlideSticker            = useCallback((slideId, id, patch)  => dispatch({ type: 'UPDATE_SLIDE_STICKER',           payload: { slideId, id, patch } }),  [])
-  const removeSlideSticker            = useCallback((slideId, id)         => dispatch({ type: 'REMOVE_SLIDE_STICKER',           payload: { slideId, id } }),         [])
-  const reorderSlideSticker           = useCallback((slideId, id, dir)    => dispatch({ type: 'REORDER_SLIDE_STICKER',          payload: { slideId, id, direction: dir } }), [])
-  const resetSlideStickerOverride     = useCallback((slideId, id)         => dispatch({ type: 'RESET_SLIDE_STICKER_OVERRIDE',   payload: { slideId, id } }),         [])
-  const restoreSlideSticker           = useCallback((slideId, id)         => dispatch({ type: 'RESTORE_SLIDE_STICKER',          payload: { slideId, id } }),         [])
-
-  // ── Azione AI ────────────────────────────────────────────────────────────────
-  const replaceCarouselFromAi = useCallback((generated, meta)   => dispatch({ type: 'REPLACE_CAROUSEL_FROM_AI', payload: { generated, meta } }), [])
-
-  // ── Azioni persistenza DB ─────────────────────────────────────────────────────
-  const setIsSaving           = useCallback((saving)  => dispatch({ type: 'SET_IS_SAVING',         payload: saving }),    [])
-  const setDocumentIdentity   = useCallback((payload) => dispatch({ type: 'SET_DOCUMENT_IDENTITY', payload }),            [])
-  const loadFromDb            = useCallback((payload) => dispatch({ type: 'LOAD_FROM_DB',          payload }),            [])
-  const clearDocumentIdentity = useCallback(()        => dispatch({ type: 'CLEAR_DOCUMENT_IDENTITY' }),                  [])
-  const updateDocumentTitle   = useCallback((title)   => dispatch({ type: 'UPDATE_DOCUMENT_TITLE', payload: { title } }), [])
+  const state = useStore((s) => s.state)
 
   return {
     // Stato

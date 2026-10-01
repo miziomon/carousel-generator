@@ -49,7 +49,7 @@ function LineRow({ value, index, align, isFocused, onFocus, onChange, onAlignCha
     return (
       <div className="flex gap-1.5 items-center group">
         <div className="opacity-30 cursor-grab select-none text-slate-500 text-xs">⠿</div>
-        <div className="flex-1 flex items-center gap-2 px-3 py-1 rounded border border-dashed border-slate-700 text-xs font-mono text-slate-500">
+        <div className="flex-1 flex items-center gap-2 px-3 py-1 rounded-sm border border-dashed border-slate-700 text-xs font-mono text-slate-500">
           <SeparatorHorizontal size={12} /> separatore
         </div>
         <button
@@ -75,7 +75,7 @@ function LineRow({ value, index, align, isFocused, onFocus, onChange, onAlignCha
             key={alignValue}
             onClick={() => onAlignChange(index, alignValue)}
             className={cn(
-              'p-1 rounded border transition-colors',
+              'p-1 rounded-sm border transition-colors',
               (align ?? 'left') === alignValue
                 ? 'border-emerald-500/60 text-emerald-400'
                 : 'border-slate-700 text-slate-500 hover:border-slate-500 hover:text-slate-300'
@@ -95,8 +95,8 @@ function LineRow({ value, index, align, isFocused, onFocus, onChange, onAlignCha
         onKeyDown={onKeyDown}
         rows={2}
         className={cn(
-          'flex-1 bg-slate-900 border rounded px-3 py-2 text-sm text-slate-100 font-mono resize-y min-h-[2.5rem]',
-          'focus:outline-none transition-colors leading-relaxed',
+          'flex-1 bg-slate-900 border rounded-sm px-3 py-2 text-sm text-slate-100 font-mono resize-y min-h-10',
+          'focus:outline-hidden transition-colors leading-relaxed',
           isFocused ? 'border-emerald-500/60' : 'border-slate-600 hover:border-slate-500'
         )}
         placeholder={value === '' ? '(riga vuota = spazio extra)' : undefined}
@@ -125,7 +125,7 @@ function InlineToolbar({ onInsert }) {
             e.preventDefault()
             onInsert(tag)
           }}
-          className="px-2 py-0.5 text-[10px] font-mono rounded border border-slate-600 text-slate-400 hover:border-emerald-500/60 hover:text-emerald-400 transition-colors"
+          className="px-2 py-0.5 text-[10px] font-mono rounded-sm border border-slate-600 text-slate-400 hover:border-emerald-500/60 hover:text-emerald-400 transition-colors"
           title={shortcut ?? `Inserisce [${tag}]...[/${tag}]`}
         >
           {label}
@@ -225,20 +225,20 @@ export function LinesEditor({ lines, aligns, onChange }) {
       <div className="flex gap-2 mt-1">
         <button
           onClick={handleAddLine}
-          className="flex items-center gap-1 text-xs font-mono text-slate-400 hover:text-emerald-400 transition-colors px-2 py-1 rounded border border-slate-700 hover:border-emerald-500/40"
+          className="flex items-center gap-1 text-xs font-mono text-slate-400 hover:text-emerald-400 transition-colors px-2 py-1 rounded-sm border border-slate-700 hover:border-emerald-500/40"
         >
           <Plus size={11} /> Aggiungi riga
         </button>
         <button
           onClick={handleAddEmpty}
-          className="flex items-center gap-1 text-xs font-mono text-slate-400 hover:text-slate-300 transition-colors px-2 py-1 rounded border border-slate-700 hover:border-slate-500"
+          className="flex items-center gap-1 text-xs font-mono text-slate-400 hover:text-slate-300 transition-colors px-2 py-1 rounded-sm border border-slate-700 hover:border-slate-500"
           title="Inserisce una riga vuota per creare spazio extra tra i paragrafi"
         >
           <Plus size={11} /> Riga vuota (spazio)
         </button>
         <button
           onClick={handleAddSeparator}
-          className="flex items-center gap-1 text-xs font-mono text-slate-400 hover:text-slate-300 transition-colors px-2 py-1 rounded border border-slate-700 hover:border-slate-500"
+          className="flex items-center gap-1 text-xs font-mono text-slate-400 hover:text-slate-300 transition-colors px-2 py-1 rounded-sm border border-slate-700 hover:border-slate-500"
           title="Inserisce un separatore alto metà della dimensione del testo (regolabile in Tipografia)"
         >
           <Plus size={11} /> Aggiungi separatore

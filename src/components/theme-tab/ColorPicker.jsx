@@ -35,7 +35,7 @@ export function ColorPicker({ label, value, onChange }) {
           onClick={() => !isRgba && setOpen((v) => !v)}
           title={isRgba ? 'Modifica il valore nell\'input a destra' : 'Apri color picker'}
           className={cn(
-            'w-7 h-7 rounded border border-slate-600 flex-shrink-0 transition-transform',
+            'w-7 h-7 rounded-sm border border-slate-600 shrink-0 transition-transform',
             !isRgba && 'hover:scale-110 cursor-pointer',
             isRgba && 'cursor-default opacity-80'
           )}
@@ -46,7 +46,7 @@ export function ColorPicker({ label, value, onChange }) {
           type="text"
           value={value ?? ''}
           onChange={(e) => onChange(e.target.value)}
-          className="flex-1 bg-slate-900 border border-slate-600 rounded px-2 py-1 text-xs text-slate-200 font-mono focus:outline-none focus:border-emerald-500/60 transition-colors"
+          className="flex-1 bg-slate-900 border border-slate-600 rounded-sm px-2 py-1 text-xs text-slate-200 font-mono focus:outline-hidden focus:border-emerald-500/60 transition-colors"
           spellCheck={false}
         />
       </div>

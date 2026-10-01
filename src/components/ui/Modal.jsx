@@ -47,7 +47,7 @@ export function Modal({ open, onClose, title, children, size = 'md', className }
             {onClose && (
               <button
                 onClick={onClose}
-                className="ml-auto p-1 rounded transition-colors"
+                className="ml-auto p-1 rounded-sm transition-colors"
                 style={{ color: 'rgba(var(--app-fg-rgb), 0.5)' }}
                 onMouseEnter={e => {
                   e.currentTarget.style.background = 'rgba(var(--app-fg-rgb), 0.08)'

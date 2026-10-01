@@ -13,7 +13,7 @@ npm run dev       # http://localhost:5173
 
 ```bash
 npm run build     # build produzione → dist/
-npm run preview   # serve il build di produzione
+npm run preview   # serve il build di produzione (qui il service worker PWA è attivo)
 npm test          # test suite (Vitest)
 npm run lint      # ESLint
 npm run format    # Prettier
@@ -21,7 +21,7 @@ npm run format    # Prettier
 
 ## Stack
 
-React 18 · Vite · Tailwind CSS · Zod · @dnd-kit · html-to-image · JSZip · CodeMirror
+React 19 · Vite 8 · Tailwind CSS 4 · Zustand · Axios · Zod · @dnd-kit · html-to-image · JSZip · CodeMirror
 
 ## Struttura JSON
 

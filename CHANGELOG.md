@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.34.0] — 2026-10-01
+
+### Added
+- **L'app ora è una PWA installabile** (`vite-plugin-pwa`, stesso approccio di Wandly e wp-fleet-manager): manifest, icone (192, 512, maskable, apple-touch, favicon SVG con il monogramma «S» neon su navy) e service worker. Il precache contiene solo l'app shell (~1,9 MB); i font di `public/fonts` (~11 MB) si cachano a runtime solo quando servono. Le chiamate al backend restano sempre live, mai in cache.
+- **Avviso "Nuova versione disponibile"** (`usePwaUpdate`, `UpdateToast`, `PwaUpdateNotice`): l'app controlla se è uscita una nuova versione ogni ora e quando la scheda torna in primo piano (al massimo ogni 5 minuti); l'utente sceglie quando ricaricare ("Aggiorna ora" / "Più tardi"), nessun reload automatico. Montato a livello radice, quindi visibile anche sulla schermata di login. Il draft non si perde: è già salvato dall'autosave.
+- **Test**: reducer del carosello (45 casi di caratterizzazione), API pubblica e stabilità dell'hook `useCarouselStore`, API carosello (`carousel-api.test.js`), integrazione di `lib/http.js` con hub-auth reale (`http.test.js`), controllo aggiornamenti PWA e `UpdateToast`. Helper condivisi `mockHttp.js` e `fakeHubAuth.js`.
+
+### Changed
+- **React 18 → 19**, **Vite 6 → 8**, **`@vitejs/plugin-react` 4 → 6**, **Vitest 3 → 5**, **framer-motion 11 → 12**. Il build passa da ~20 s a ~1 s (Rolldown).
+- **Tailwind CSS 3 → 4** (plugin `@tailwindcss/vite`; rimossi `tailwind.config.js`, `postcss.config.js`, `autoprefixer`). Classi rinominate dallo strumento ufficiale (`rounded` → `rounded-sm`, `shadow` → `shadow-sm`, `outline-none` → `outline-hidden`, `flex-shrink-0` → `shrink-0`) e due regole di compatibilità in `src/index.css` (colore dei bordi di default e `cursor: pointer` sui bottoni). Verificato confrontando gli stili calcolati di tutti gli elementi prima e dopo (vista principale e 4 tab della modale): nessuna differenza visiva, tranne 2 px di padding in meno nei `<option>` delle select.
+- **Stato del carosello su zustand**: `useCarouselStore` usa uno store globale invece di `useReducer`. Il reducer (tutte le azioni) è invariato ed esportato; l'API dell'hook è identica, quindi `App.jsx` e i componenti non cambiano. Le azioni ignorate dal reducer non provocano più re-render. Nuova `resetCarouselStore()` per i test.
+- **Chiamate HTTP su axios** (`src/lib/http.js`): `lib/carousel/api.js`, `lib/uploads/api.js`, `lib/ai/generateCarousel.js` e `lib/auth/agentSession.js` non usano più `fetch`. Gli interceptor sono quelli di `hubAuth.installAxiosInterceptors()` (Bearer letto a ogni richiesta, logout su 401); gli endpoint pubblici usano un'istanza senza credenziali. Comportamento invariato (errori con `message` e `status`, 204 → `null`, mappatura `ApiError`); in assenza di sessione non viene più inviato `Authorization: Bearer null`.
+- **`src/__tests__/setup.js`**: se manca un `localStorage` funzionante (Node 25+ ne espone uno sperimentale che oscura quello di jsdom) ne installa uno in memoria, così i test sono uguali su ogni versione di Node.
+
+### Docs
+- `CLAUDE.md` e `README.md` allineati: store zustand, `lib/http.js`, sezione PWA, Tailwind 4, nuovo hook `usePwaUpdate`.
+
 ## [1.33.0] — 2026-10-01
 
 ### Added

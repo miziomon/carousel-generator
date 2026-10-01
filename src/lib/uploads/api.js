@@ -1,35 +1,4 @@
-import { hubAuth } from '../../auth.js'
-
-const BASE = import.meta.env.VITE_API_BASE_URL
-
-async function authFetch(path, options = {}) {
-  const token = hubAuth.getToken()
-  const res = await fetch(`${BASE}${path}`, {
-    ...options,
-    headers: {
-      Authorization: `Bearer ${token}`,
-      ...options.headers,
-    },
-  })
-
-  if (res.status === 401) hubAuth.handleUnauthorized(token)
-
-  if (!res.ok) {
-    let message
-    try {
-      const body = await res.json()
-      message = body?.message ?? body?.error ?? `Errore ${res.status}`
-    } catch {
-      message = `Errore ${res.status}`
-    }
-    const err = new Error(message)
-    err.status = res.status
-    throw err
-  }
-
-  if (res.status === 204) return null
-  return res.json()
-}
+import { apiRequest } from '../http.js'
 
 /**
  * Carica un'immagine sul server (POST /uploads).
@@ -45,12 +14,8 @@ export async function uploadImage({ file, userId, title, isPublic = false }) {
   if (title) form.append('title', title)
   if (isPublic) form.append('is_public', 'true')
 
-  // Content-Type non impostato: il browser aggiunge automaticamente il boundary multipart
-  return authFetch('uploads', {
-    method: 'POST',
-    body: form,
-    headers: {}, // override per non sovrascrivere Content-Type con JSON
-  })
+  // Con FormData axios rimuove il Content-Type: il browser aggiunge il boundary multipart
+  return apiRequest({ method: 'POST', url: 'uploads', data: form })
 }
 
 /**
@@ -61,7 +26,7 @@ export async function uploadImage({ file, userId, title, isPublic = false }) {
  */
 export async function listUploads({ userId, type = 'image', sort = 'created_at', order = 'desc', limit = 100, offset = 0 } = {}) {
   const params = new URLSearchParams({ user_id: userId, type, sort, order, limit: String(limit), offset: String(offset) })
-  return authFetch(`uploads?${params.toString()}`)
+  return apiRequest({ url: `uploads?${params.toString()}` })
 }
 
 /**
@@ -72,9 +37,5 @@ export async function listUploads({ userId, type = 'image', sort = 'created_at',
  * @returns {Promise<object>}
  */
 export async function patchUpload(id, { userId, title, description }) {
-  return authFetch(`uploads/${id}`, {
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ user_id: userId, title, description }),
-  })
+  return apiRequest({ method: 'PATCH', url: `uploads/${id}`, data: { user_id: userId, title, description } })
 }

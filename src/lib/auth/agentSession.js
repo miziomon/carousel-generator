@@ -1,4 +1,4 @@
-const BASE = import.meta.env.VITE_API_BASE_URL
+import { publicHttp } from '../http.js'
 
 /**
  * Scambia un access-link token per una sessione agente.
@@ -7,27 +7,21 @@ const BASE = import.meta.env.VITE_API_BASE_URL
  * @returns {{ sessionToken: string, userId: string, expiresAt: Date }}
  */
 export async function exchangeAccessLink(accessToken) {
-  const res = await fetch(`${BASE}access-links/exchange`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ token: accessToken }),
+  // validateStatus sempre vero: gli stati di errore si mappano qui sotto in messaggi leggibili
+  const res = await publicHttp.post('access-links/exchange', { token: accessToken }, {
+    validateStatus: () => true,
   })
 
-  if (!res.ok) {
-    let message
-    try {
-      const body = await res.json()
-      message = body?.message || body?.error || null
-    } catch {
-      message = null
-    }
+  if (res.status < 200 || res.status >= 300) {
+    const body = typeof res.data === 'object' ? res.data : null
+    const message = body?.message || body?.error || null
     if (res.status === 401) throw new Error('Link non valido, scaduto o revocato.')
     if (res.status === 429) throw new Error('Troppi tentativi, riprova tra poco.')
     if (res.status === 503) throw new Error('Servizio non disponibile — contatta l\'amministratore.')
     throw new Error(message || `Errore durante l'autenticazione (${res.status}).`)
   }
 
-  const raw = await res.json()
+  const raw = res.data
   return {
     sessionToken: raw.session_token,
     userId: raw.user_id,

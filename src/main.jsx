@@ -5,11 +5,13 @@ import '@mavida/hub-auth/ui.css'
 import './index.css'
 import App from './App.jsx'
 import { hubAuth } from './auth.js'
+import { PwaUpdateNotice } from './components/update-toast/PwaUpdateNotice.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <HubAuthProvider client={hubAuth}>
       <App />
+      <PwaUpdateNotice />
     </HubAuthProvider>
   </StrictMode>
 )
