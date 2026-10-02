@@ -8,6 +8,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 npm run dev          # dev server (Vite, porta 5173)
 npm run build        # build produzione in dist/
 npm run preview      # serve il build di produzione (porta 4173)
+# Il deploy non si lancia a mano: ad ogni push su main la GitHub Action
+# (.github/workflows/deploy.yml) compila e pubblica via rsync.
 npm test             # vitest run (singola esecuzione)
 npm run test:watch   # vitest in modalità watch
 npm run lint         # ESLint su src/
@@ -109,6 +111,10 @@ Hook usati in `App.jsx` o nei componenti, non documentati altrove:
 | `usePaletteLibraryPersistence` | `src/hooks/usePaletteLibraryPersistence.js` | Salvataggio palette custom nel localStorage |
 | `useUiPreferences` | `src/hooks/useUiPreferences.js` | Stato sidebar (aperta/chiusa, sezioni espanse) |
 | `usePwaUpdate` | `src/hooks/usePwaUpdate.js` | Registra il service worker, controlla nuove versioni (ogni ora / al ritorno in primo piano) ed espone `needRefresh`/`reload`/`dismiss` |
+
+### Build e chunking (Vite 8 / Rolldown)
+
+La suddivisione in chunk è in `vite.config.js` → `build.rolldownOptions.output.codeSplitting.groups` (`manualChunks` è deprecato in Vite 8). I gruppi elencano **solo** ciò che serve all'avvio (`vendor-react`, `vendor-motion`, `vendor-dnd`, `vendor-zod`, `vendor-icons`, `vendor`); ciò che non è elencato resta nel chunk lazy che lo importa. Non aggiungere un gruppo catch-all su `node_modules`: vi finirebbero anche jsPDF/html2canvas (~600 kB), JSZip, html-to-image e react-markdown, che si caricano solo all'export o nella modale AI. Questi ultimi si importano sempre con `await import(...)`. Codice caricato all'avvio: ~865 kB (gzip ~245 kB). Per rimisurare: `npm run build` e confrontare i file referenziati da `dist/index.html` con i restanti `dist/assets/*.js`; un chunk eager che supera ~300 kB va controllato.
 
 ### Lazy loading
 

@@ -56,40 +56,32 @@ export default defineConfig({
     }),
   ],
   build: {
-    rollupOptions: {
+    // Vite 8 usa Rolldown: il chunking si configura con codeSplitting.groups
+    // (manualChunks è deprecato). Solo le librerie necessarie all'avvio entrano
+    // in chunk vendor dedicati; tutto il resto NON è elencato, quindi il bundler
+    // lo lascia nel chunk lazy che lo importa: jsPDF con le sue dipendenze
+    // (html2canvas, canvg, dompurify…) solo all'export PDF, JSZip all'export ZIP,
+    // html-to-image al primo export PNG, react-markdown con l'ecosistema
+    // unified/remark solo nella modale AI. Così nel bundle iniziale non entra
+    // codice che l'utente potrebbe non usare mai.
+    rolldownOptions: {
       output: {
-        manualChunks(id) {
-          if (!id.includes('node_modules')) return
-          // Librerie async-only: restano nel chunk lazy che le importa
-          if (id.includes('jszip') || id.includes('html-to-image') || id.includes('jspdf')) return
-          // react-markdown + ecosistema unified/remark: usato solo dall'AI Generator (lazy)
-          // — lasciato nel chunk lazy così non appare nel bundle iniziale
-          if (
-            id.includes('react-markdown') ||
-            id.includes('/unified/') ||
-            id.includes('/remark') ||
-            id.includes('/rehype') ||
-            id.includes('/micromark') ||
-            id.includes('/hast') ||
-            id.includes('/mdast') ||
-            id.includes('/vfile') ||
-            id.includes('/bail') ||
-            id.includes('/trough') ||
-            id.includes('/extend-')
-          ) return
-          // React core: chunk dedicato per separarlo dal resto dei vendor
-          if (
-            id.includes('/react/') ||
-            id.includes('/react-dom/') ||
-            id.includes('/scheduler/')
-          ) return 'vendor-react'
-          if (id.includes('framer-motion')) return 'vendor-motion'
-          if (id.includes('@dnd-kit')) return 'vendor-dnd'
-          if (id.includes('zod')) return 'vendor-zod'
-          // lucide-react in chunk dedicato: evita che gonfi vendor bloccando il tree-shaking
-          if (id.includes('lucide-react')) return 'vendor-icons'
-          // Resto dei vendor (clsx, nanoid, color2k, file-saver, react-colorful…)
-          return 'vendor'
+        codeSplitting: {
+          groups: [
+            // React core: cambia raramente, ottimo per il caching a lungo termine
+            { name: 'vendor-react', test: /node_modules[\\/](react|react-dom|scheduler)[\\/]/, priority: 5 },
+            { name: 'vendor-motion', test: /node_modules[\\/](framer-motion|motion-dom|motion-utils)[\\/]/, priority: 4 },
+            { name: 'vendor-dnd', test: /node_modules[\\/]@dnd-kit[\\/]/, priority: 3 },
+            { name: 'vendor-zod', test: /node_modules[\\/]zod[\\/]/, priority: 3 },
+            // lucide-react in chunk dedicato: non gonfia vendor e si aggiorna da solo
+            { name: 'vendor-icons', test: /node_modules[\\/]lucide-react[\\/]/, priority: 3 },
+            // Piccole librerie sempre usate all'avvio
+            {
+              name: 'vendor',
+              test: /node_modules[\\/](axios|zustand|@mavida[\\/]hub-auth|nanoid|clsx|color2k|react-colorful)[\\/]/,
+              priority: 1,
+            },
+          ],
         },
       },
     },

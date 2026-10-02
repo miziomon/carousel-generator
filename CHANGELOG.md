@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.34.1] — 2026-10-02
+
+### Changed
+- **Chunking del build ottimizzato per Vite 8 / Rolldown**: la configurazione passa da `manualChunks` (deprecato) a `build.rolldownOptions.output.codeSplitting.groups`. Nei chunk vendor dedicati entrano solo le librerie necessarie all'avvio (`vendor-react`, `vendor-motion`, `vendor-dnd`, `vendor-zod`, `vendor-icons` e un `vendor` con axios, zustand, hub-auth e le librerie piccole); tutto il resto resta nel chunk lazy che lo importa. Prima il chunk `vendor` era un contenitore da 664 kB che includeva anche jsPDF con html2canvas, canvg, dompurify, fast-png e core-js, scaricati anche da chi non esportava mai un PDF. Risultato sul codice caricato all'avvio: **1338 kB → 865 kB (−35%), gzip 382 kB → 245 kB**; l'avviso "chunk > 500 kB" del build è sparito. Gli export PDF, ZIP, PNG e la modale AI si caricano solo al primo uso (jsPDF 390 kB e html2canvas 195 kB in chunk separati).
+- Vite è già alla 8.3.2, l'ultima 8.x disponibile.
+
+### Removed
+- **Sistemi di deploy manuale, ora sostituiti dalla GitHub Action** (`.github/workflows/deploy.yml`, deploy automatico ad ogni push su `main`): `deploy.sh`, `scripts/run-deploy.js`, gli script npm `deploy` e `deploy:skip-build` e le variabili `DEPLOY_*` da `.env.example`. Le credenziali di deploy vivono nei GitHub Secrets.
+
 ## [1.34.0] — 2026-10-01
 
 ### Added
