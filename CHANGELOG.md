@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.34.2] — 2026-10-02
+
+### Changed
+- **GitHub Action di deploy aggiornata**: `actions/checkout` v4 → v7 e `actions/setup-node` v4 → v7 (girano nativamente su Node 24: scompare l'avviso di deprecazione di Node 20).
+- **`.env.example`**: `VITE_API_BASE_URL` ora indica l'host canonico di hub, `https://hub.mavida.com/api/v1/` (alias Caddy di `/wp-draft-generator/v1/`, stesso backend di `chat.mavida.com`). Verificato che il nuovo host risponda e accetti l'origine di slideorama.mavida.com (CORS). Il valore usato dal deploy è nel GitHub Secret `VITE_API_BASE_URL`.
+
 ## [1.34.1] — 2026-10-02
 
 ### Changed
