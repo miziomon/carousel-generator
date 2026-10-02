@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.35.2] - 2026-10-02
+
+### Changed
+- **Icona dell'app**: il monogramma «S» verde neon lascia il posto all'icona `GalleryHorizontal` di lucide (la stessa della dashboard di signup) in bianco su verde `#10B981`, in favicon e icone PWA, generate da `__docs/presentazione/_sorgenti/build_icons.js` (set unico di icone e colori dell'ecosistema, condiviso con signup, la colonna `icon` di hub e la presentazione).
+- `theme_color` del manifest e `<meta name="theme-color">` da `#0f172a` a `#10b981`; `background_color` resta scuro.
+
 ## [1.35.1] — 2026-10-02
 
 ### Changed

@@ -19,7 +19,7 @@ export default defineConfig({
         short_name: 'Slide-orama',
         description: 'Crea, modifica ed esporta caroselli per i social, anche con l\'aiuto dell\'AI.',
         lang: 'it',
-        theme_color: '#0f172a',
+        theme_color: '#10b981',
         background_color: '#0f172a',
         display: 'standalone',
         start_url: '/',
