@@ -25,4 +25,10 @@ export const hubAuth = createHubAuth({
   baseUrl: import.meta.env.VITE_API_BASE_URL,
   storageKey: 'carosello:hub_session',
   legacyKeys: ['carosello:user_session'],
+  // SSO tra le app (hub-auth 1.2.0): il login fatto su un'altra app apre anche
+  // questa senza OTP, e logout() esce da tutte. Richiede che baseUrl punti
+  // all'host canonico di hub (https://hub.mavida.com/api/v1/) e che questa
+  // origine sia in SSO_ALLOWED_ORIGINS sul server; altrimenti il login ripiega
+  // da solo sul flusso senza cookie.
+  sso: true,
 })

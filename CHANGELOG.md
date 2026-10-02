@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.35.0] — 2026-10-02
+
+### Changed
+- **SSO tra le app** (`@mavida/hub-auth` 1.2.0, `createHubAuth({ sso: true })` in `src/auth.js`): il login fatto su un'altra app apre anche questa senza OTP e il logout (`Header.jsx`) esce da tutte le app. Il magic link dell'email OTP è gestito dalla libreria (nuova notice `link_invalid` nella `LoginScreen`). Il flusso del link condiviso (`useMagicLinkLogin` → `hubAuth.adoptSession`) è invariato.
+- `VITE_API_BASE_URL` passa a `https://hub.mavida.com/api/v1/` (host canonico di hub, serve all'SSO). Il secret GitHub `VITE_API_BASE_URL` è stato aggiornato di conseguenza.
+- Richiede hub >= 0.192.0 con `https://slideorama.mavida.com` in `SSO_ALLOWED_ORIGINS`.
+
 ## [1.34.2] — 2026-10-02
 
 ### Changed
