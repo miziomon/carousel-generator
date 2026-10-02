@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.35.1] — 2026-10-02
+
+### Changed
+- **`createHubAuth({ tool: 'carousel-generator' })`**: l'app dichiara il proprio tool. Login, scambio SSO e `adoptSession` (link condiviso, che rifà `GET /me?tool=`) danno 403 `ToolNotEnabled` a chi non ha il tool nel piano o negli override; gli admin sono esenti. Richiede hub >= 0.192.5 (migration 137).
+
 ## [1.35.0] — 2026-10-02
 
 ### Changed
