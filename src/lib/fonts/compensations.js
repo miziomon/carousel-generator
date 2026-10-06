@@ -58,6 +58,14 @@ export const FONT_COMPENSATIONS = {
     text_transform: 'none',
     font_size_multiplier: 0.94,
   },
+  // Font ad alta leggibilità: spaziatura quasi neutra per non compromettere le forme distintive
+  'Atkinson Hyperlegible Next': {
+    letter_spacing: '-0.01em',
+    line_height_multiplier: 1.05,
+    weight: 800,
+    text_transform: 'none',
+    font_size_multiplier: 0.95,
+  },
   'Fraunces': {
     letter_spacing: '-0.02em',
     line_height_multiplier: 1.05,

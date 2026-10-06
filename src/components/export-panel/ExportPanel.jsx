@@ -1,9 +1,10 @@
 import { useState, useRef, useEffect } from 'react'
-import { Download, ChevronDown, Package, FileJson, FileText, AlertTriangle } from 'lucide-react'
+import { Download, ChevronDown, Package, FileJson, FileText, AlertTriangle, ClipboardCopy } from 'lucide-react'
 import { Button } from '../ui/Button.jsx'
 import { Modal } from '../ui/Modal.jsx'
 import { exportCarouselZip } from '../../lib/exportZip.js'
 import { exportCarouselAsPdf } from '../../lib/exportPdf.js'
+import { carouselToPlainText } from '../../lib/slideText.js'
 import { toast } from '../ui/Toast.jsx'
 import { ExportPdfLandscapeWarning } from './ExportPdfLandscapeWarning.jsx'
 import './export-panel.css'
@@ -132,6 +133,18 @@ export function ExportPanel({ carousel, onExportJson }) {
     }
   }
 
+  // LinkedIn non permette l'alt text sui documenti: il testo va in didascalia o primo commento
+  async function handleCopyAccessibleText() {
+    setMenuOpen(false)
+    try {
+      await navigator.clipboard.writeText(carouselToPlainText(carousel))
+      toast('Testo copiato: incollalo nella didascalia o nel primo commento del post', 'success')
+    } catch (err) {
+      console.error('Copia testo fallita:', err)
+      toast('Impossibile copiare il testo negli appunti', 'error')
+    }
+  }
+
   function handleExportJson() {
     setMenuOpen(false)
     onExportJson()
@@ -159,6 +172,14 @@ export function ExportPanel({ carousel, onExportJson }) {
               {isLandscape && (
                 <AlertTriangle size={12} className="export-panel__item-warning" title="Formato landscape sconsigliato per LinkedIn" />
               )}
+            </button>
+            <button
+              className="export-panel__item"
+              onClick={handleCopyAccessibleText}
+              title="LinkedIn non supporta l'alt text nei documenti: incolla il testo nella didascalia o nel primo commento"
+            >
+              <ClipboardCopy size={14} />
+              Copia testo accessibile
             </button>
           </div>
         )}

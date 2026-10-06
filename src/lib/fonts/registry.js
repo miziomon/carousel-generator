@@ -96,6 +96,17 @@ export const FONTS = [
     files: ['GoogleSans-VariableFont_GRAD,opsz,wght.ttf', 'GoogleSans-Italic-VariableFont_GRAD,opsz,wght.ttf'],
     notes: 'Assi variabili: wght, opsz, GRAD',
   },
+  {
+    id: 'Atkinson Hyperlegible Next',
+    category: 'sans',
+    label: 'Atkinson Hyperlegible Next',
+    css_family: '"Atkinson Hyperlegible Next", sans-serif',
+    weights: [200, 800],
+    italic: true,
+    is_variable: true,
+    files: ['AtkinsonHyperlegibleNext-VariableFont_wght.ttf', 'AtkinsonHyperlegibleNext-Italic-VariableFont_wght.ttf'],
+    notes: 'Progettato dal Braille Institute per la massima leggibilità (licenza OFL)',
+  },
 
   // SERIF
   {

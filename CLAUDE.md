@@ -83,6 +83,8 @@ Il render per l'export è centralizzato in `src/lib/renderSlideAsPng.jsx` (`rend
 
 `src/lib/exportPdf.js` chiama `renderSlideAsPng` con `pixelRatio: 1` (peso ridotto) e assembla un PDF multi-pagina con `jsPDF` ottimizzato per LinkedIn. L'`ExportPanel` mostra una barra di progresso con stima MB durante la generazione.
 
+**Accessibilità del PDF**: dopo `addImage`, ogni pagina riceve un livello di testo invisibile (`renderingMode: 'invisible'`) col testo della slide da `slideToPlainText` (`src/lib/slideText.js`, che toglie i tag inline riusando `parseInlineTags` e salta i separatori), più segnalibri per slide, `/Lang` e `DisplayDocTitle`. La lingua è `'it'` perché `setLanguage` di jsPDF accetta solo i codici della sua tabella (`it-IT` viene ignorato in silenzio). Il testo passa da `toPdfSafeText`, che scarta i caratteri fuori da WinAnsi (font standard). Non è un PDF taggato/PDF-UA. LinkedIn non supporta l'alt text sui document post: la voce «Copia testo accessibile» di `ExportPanel` copia `carouselToPlainText` per la didascalia o il primo commento.
+
 ### Auto-save
 
 `src/hooks/useAutoSave.js` — debounce 800ms, chiave localStorage `carosello.draft.v1`. Il draft viene salvato rimuovendo gli `id` runtime delle **slide** (top-level `slide.id`). Gli id degli sticker globali (`theme.global_stickers[].id`) vengono **preservati** nel draft perché servono come chiavi stabili per `sticker_overrides` e `sticker_order` per-slide. Gli id degli sticker locali per-slide (`slide.stickers[].id`, prefisso `local-xxx`) sono anchessi stabili e vengono preservati. Al caricamento, `buildInitialState()` tenta prima il draft, poi cade su `defaultCarousel`; `injectGlobalStickerIds()` assicura che eventuali sticker senza id ricevano un nanoid.

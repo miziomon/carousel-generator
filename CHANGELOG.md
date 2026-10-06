@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.36.0] - 2026-10-06
+
+### Added
+- **Font Atkinson Hyperlegible Next** (Braille Institute, licenza OFL, variabile 200-800 con corsivo): file in `public/fonts`, `@font-face` in `src/index.css`, voce in `src/lib/fonts/registry.js` e compensazioni dedicate in `compensations.js`.
+- **PDF LinkedIn più accessibile** (`src/lib/exportPdf.js`): ogni pagina porta un livello di testo reale ma invisibile (`renderingMode: 'invisible'`) con il testo della slide in ordine di lettura, lingua del documento (`/Lang it`), `DisplayDocTitle` e un segnalibro per slide. Non è un PDF taggato (jsPDF non genera la struttura), quindi non è PDF/UA.
+- **Copia testo accessibile** nel menu Esporta: copia negli appunti il testo di tutte le slide, da incollare nella didascalia o nel primo commento (LinkedIn non supporta l'alt text nei documenti). Estrattore in `src/lib/slideText.js` con test.
+
 ## [1.35.2] - 2026-10-02
 
 ### Changed
