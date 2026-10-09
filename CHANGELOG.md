@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.41.0] - 2026-10-09
+
+### Changed
+- **hub-auth 1.7.0**: l'informativa privacy nella modale di registrazione si mostra in Markdown (titoli, elenchi, tabelle, link) quando hub la invia in quel formato (hub >= 0.219.0, testo modificabile dalla tab Privacy di admin-dashboard); con un hub più vecchio resta il testo semplice. Nessuna modifica al codice dell'app, solo la libreria.
+
 ## [1.40.0] - 2026-10-09
 
 ### Changed
