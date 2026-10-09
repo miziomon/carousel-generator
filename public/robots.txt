@@ -1,5 +1,5 @@
 # Slide-orama - https://slideorama.mavida.com/
-# Le pagine dell'applicazione sono pubbliche solo nella schermata di accesso.
+# Solo la schermata di accesso e la pagina /about/ sono pubbliche: il resto dell'app richiede il login.
 User-agent: *
 Allow: /
 

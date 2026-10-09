@@ -2,9 +2,9 @@
 
 > Caroselli per Instagram e LinkedIn coerenti con il tuo brand, senza software di grafica. Slide-orama è il laboratorio di Mavida per creare caroselli social professionali senza essere un grafico, con anteprima dal vivo e bozza scritta dall'intelligenza artificiale.
 
-Un carosello è la sequenza di immagini che si sfoglia su Instagram o LinkedIn. Slide-orama ti permette di comporlo slide dopo slide con un'anteprima sempre visibile, scegliendo tra copertine, slide di contenuto, citazioni e inviti all'azione.
+Un carosello è la sequenza di immagini che si sfoglia scorrendo con il dito su Instagram o LinkedIn: è uno dei formati che coinvolge di più, ma anche uno dei più laboriosi da preparare. Slide-orama ti permette di comporlo slide dopo slide con un’anteprima sempre visibile, scegliendo tra copertine, slide di contenuto, citazioni e inviti all’azione.
 
-Template, palette di colori e caratteri tipografici mantengono uno stile coerente, e il sistema controlla che il testo resti leggibile sullo sfondo scelto. Puoi partire da una prima bozza scritta dall'AI e rifinirla; alla fine esporti immagini ad alta risoluzione o un PDF, il formato richiesto da LinkedIn.
+Template, palette di colori e caratteri tipografici ti aiutano a mantenere uno stile coerente; il sistema controlla perfino che il testo resti leggibile sul colore di sfondo scelto. Se preferisci partire da una base, puoi chiedere all’intelligenza artificiale una prima bozza del carosello, da ritoccare poi a piacere. Al termine esporti immagini ad alta risoluzione oppure un PDF, il formato richiesto da LinkedIn.
 
 ## Che cosa fa
 
@@ -16,17 +16,26 @@ Template, palette di colori e caratteri tipografici mantengono uno stile coerent
 
 ## Per chi è
 
-Social media manager, creator, agenzie e piccole imprese che curano da sole i propri profili.
+Slide-orama è pensato per te se sei un social media manager, un creator, un’agenzia o una piccola impresa che cura da sola i propri profili.
 
 ## Come si accede
 
 Slide-orama è un'applicazione web in italiano, raggiungibile da browser su https://slideorama.mavida.com/. L'accesso avviene con l'indirizzo email: si riceve un codice monouso, senza password. Dove la registrazione è aperta, si trova nella stessa pagina di accesso. I contenuti dell'app sono privati e visibili solo dopo il login.
 
-## Link
+## Pagine
 
-- [Pagina di accesso di Slide-orama](https://slideorama.mavida.com/): punto di ingresso dell'applicazione
-- [Mavida](https://www.mavida.com): sito dell'azienda che sviluppa e pubblica l'app
+- [Come funziona Slide-orama](https://slideorama.mavida.com/about/): descrizione estesa, esempio d'uso e domande frequenti
+- [Accesso a Slide-orama](https://slideorama.mavida.com/): punto di ingresso dell'applicazione
+- [Informativa sulla privacy](https://chat.mavida.com/wp-draft-generator/v1/privacy): testo completo, anche in Markdown (https://chat.mavida.com/wp-draft-generator/v1/privacy.md)
+
+## Le altre app dell'ecosistema Mavida
+
+- [Wandly](https://wandly.mavida.com/about/): Dall'idea all'articolo pubblicato su WordPress, in una conversazione.
+- [Social Planner](https://social.mavida.com/about/): Il calendario editoriale di tutti i tuoi clienti, in un solo posto.
+- [WooSync](https://datagrid.mavida.com/about/): Il pannello per gestire il tuo negozio WooCommerce come se fosse un foglio Excel.
+- [VoiceNote](https://voicenotes.mavida.com/about/): Parli, e le tue idee si organizzano da sole.
+- [Fleet](https://fleet.mavida.com/about/): Tutti i siti WordPress dei tuoi clienti sotto controllo, da un unico cruscotto.
 
 ## Autore
 
-Slide-orama è sviluppata e pubblicata da Mavida (https://www.mavida.com) e fa parte di un ecosistema di strumenti per chi lavora con il web, che condividono un solo accesso: Wandly (articoli WordPress con l'AI), Slide-orama (caroselli social), Social Planner (calendario editoriale), WooSync (gestione di negozi WooCommerce), VoiceNote (note vocali) e Fleet (manutenzione di siti WordPress).
+Slide-orama è sviluppata e pubblicata da Mavida (https://www.mavida.com), che realizza un ecosistema di strumenti per chi lavora con il web, con un solo accesso condiviso.

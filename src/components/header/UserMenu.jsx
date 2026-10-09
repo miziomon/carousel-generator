@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { ChevronDown, BookOpen, Settings, LogOut } from 'lucide-react'
+import { EcosystemMenu } from '@mavida/hub-auth/ui'
 import { fetchCarouselUsage } from '../../lib/carousel/api.js'
 import '../carousel-library/carousel-library.css'
 
@@ -108,6 +109,8 @@ export function UserMenu({ user, onOpenLibrary, onOpenPreferences, onLogout }) {
             <Settings size={13} />
             Preferenze
           </button>
+          <div className="user-menu__sep" />
+          <EcosystemMenu variant="inline" label="Altre app Mavida" className="user-menu__ecosystem" />
           <div className="user-menu__sep" />
           <button
             type="button"

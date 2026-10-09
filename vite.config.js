@@ -38,6 +38,9 @@ export default defineConfig({
         globPatterns: ['**/*.{js,css,html,svg,png}'],
         // SPA: ogni navigazione ricade sull'app shell
         navigateFallback: 'index.html',
+        // Pagine e file statici pubblici (SEO/GEO): da browser con il service worker attivo
+        // vanno serviti come file veri, non come app shell
+        navigateFallbackDenylist: [/^\/(about\/|llms\.txt|robots\.txt|sitemap\.xml)/],
         runtimeCaching: [
           {
             // Font dell'editor: immutabili, serviti dalla cache dopo il primo uso

@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.43.0] - 2026-10-09
+
+Richiede hub-auth 1.9.0 (già nelle dipendenze) e, per il link all'informativa nella pagina `/about/`, hub >= 0.221.0.
+
+### Added
+- **Pagina pubblica `/about/`** (`public/about/index.html`, statica, senza JavaScript): descrizione estesa, il problema, che cosa si può fare, "un giorno con Slide-orama", per chi è, collegamenti con le altre app e FAQ con markup `FAQPage`; link all'informativa privacy pubblica di hub e alle altre app. Testi dalla presentazione dell'ecosistema.
+- **Immagine nel pannello del login** (`asideImage`, `public/login-hero.jpg`) e blocco **"Le altre app Mavida"** sotto il form (`ecosystem`).
+- **"Altre app Mavida"** nel menu utente (sotto l'email): elenco con i link alle altre cinque app (`EcosystemMenu variant="inline"`).
+- **Immagine social di marca** (`og-image.jpg` 1200x630: logo, nome, tagline, sei puntini e screenshot).
+
+### Changed
+- **hub-auth 1.9.0**: `asideImage`, `ecosystem`, `EcosystemMenu`, landmark `<main>`/`<footer>` nel login, sanificazione dell'informativa più stretta.
+- `index.html`: link a `/about/` e alle altre app nel testo statico; `sitemap.xml` con `/` e `/about/`; `llms.txt` con la sezione "Pagine" e le altre app.
+- Service worker: `navigateFallbackDenylist` per `/about/`, `llms.txt`, `robots.txt` e `sitemap.xml`.
+
 ## [1.42.0] - 2026-10-09
 
 Richiede hub >= 0.220.0 per `GET /me/usage`: con un hub più vecchio il blocco "Caroselli questo mese" nel menu utente non compare.

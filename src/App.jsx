@@ -67,6 +67,13 @@ export default function App() {
           title="Slide-orama"
           subtitle="Accedi per creare e modificare caroselli"
           logo={<img src="/favicon.svg" alt="" width={48} height={48} />}
+          asideImage={{
+            src: '/login-hero.jpg',
+            alt: "Slide-orama: l'editor di caroselli con anteprima dal vivo",
+            width: 1200,
+            height: 750,
+          }}
+          ecosystem
         />
         <ToastContainer />
       </>

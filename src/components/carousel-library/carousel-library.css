@@ -569,6 +569,19 @@
   white-space: nowrap;
 }
 
+/* Le altre app Mavida (EcosystemMenu inline di hub-auth) dentro il dropdown */
+.user-menu__ecosystem .hub-auth-eco__button,
+.user-menu__ecosystem .hub-auth-eco__link {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  padding: 8px 12px;
+  color: rgba(var(--app-fg-rgb), 0.7);
+}
+
+.user-menu__ecosystem .hub-auth-eco__link {
+  padding-left: 20px;
+}
+
 /* Utilizzo mensile dei caroselli (barra di avanzamento nel dropdown) */
 .user-menu__usage {
   padding: 4px 12px 6px;
