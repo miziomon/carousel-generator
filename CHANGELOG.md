@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.44.0] - 2026-10-09
+
+### Added
+- **Pulsante "Approfondisci"** nel pannello del login, sotto lo screenshot, verso la pagina `/about/` (con le FAQ): `asideLink` di hub-auth 1.10.0. Prima il link a `/about/` esisteva solo nel testo statico di `index.html`, che React sostituisce all'avvio.
+
+### Changed
+- **hub-auth 1.10.0**.
+
 ## [1.43.0] - 2026-10-09
 
 Richiede hub-auth 1.9.0 (già nelle dipendenze) e, per il link all'informativa nella pagina `/about/`, hub >= 0.221.0.

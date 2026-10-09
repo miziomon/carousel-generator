@@ -73,6 +73,7 @@ export default function App() {
             width: 1200,
             height: 750,
           }}
+          asideLink={{ href: '/about/', label: 'Approfondisci' }}
           ecosystem
         />
         <ToastContainer />
