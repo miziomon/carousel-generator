@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.39.0] - 2026-10-09
+
+### Changed
+- **hub-auth 1.5.0**: nel form di registrazione il testo dell'informativa privacy non è più sotto il form ma in una modale, che si apre dal link "informativa sulla privacy" nella frase del consenso o dal pulsante "Visualizza il testo completo dell'informativa". Nessuna modifica al codice dell'app, solo la libreria.
+
 ## [1.38.0] - 2026-10-09
 
 ### Changed
