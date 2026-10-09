@@ -1,0 +1,32 @@
+# Slide-orama
+
+> Caroselli per Instagram e LinkedIn coerenti con il tuo brand, senza software di grafica. Slide-orama è il laboratorio di Mavida per creare caroselli social professionali senza essere un grafico, con anteprima dal vivo e bozza scritta dall'intelligenza artificiale.
+
+Un carosello è la sequenza di immagini che si sfoglia su Instagram o LinkedIn. Slide-orama ti permette di comporlo slide dopo slide con un'anteprima sempre visibile, scegliendo tra copertine, slide di contenuto, citazioni e inviti all'azione.
+
+Template, palette di colori e caratteri tipografici mantengono uno stile coerente, e il sistema controlla che il testo resti leggibile sullo sfondo scelto. Puoi partire da una prima bozza scritta dall'AI e rifinirla; alla fine esporti immagini ad alta risoluzione o un PDF, il formato richiesto da LinkedIn.
+
+## Che cosa fa
+
+- Anteprima dal vivo, con annulla e ripeti sempre disponibili
+- Template, palette e caratteri selezionati per restare coerenti con il brand
+- Prima bozza del carosello generata dall'AI
+- Esportazione in PNG ad alta risoluzione (quadrato, verticale, orizzontale) e in PDF
+- Libreria personale di caroselli e immagini caricate
+
+## Per chi è
+
+Social media manager, creator, agenzie e piccole imprese che curano da sole i propri profili.
+
+## Come si accede
+
+Slide-orama è un'applicazione web in italiano, raggiungibile da browser su https://slideorama.mavida.com/. L'accesso avviene con l'indirizzo email: si riceve un codice monouso, senza password. Dove la registrazione è aperta, si trova nella stessa pagina di accesso. I contenuti dell'app sono privati e visibili solo dopo il login.
+
+## Link
+
+- [Pagina di accesso di Slide-orama](https://slideorama.mavida.com/): punto di ingresso dell'applicazione
+- [Mavida](https://www.mavida.com): sito dell'azienda che sviluppa e pubblica l'app
+
+## Autore
+
+Slide-orama è sviluppata e pubblicata da Mavida (https://www.mavida.com) e fa parte di un ecosistema di strumenti per chi lavora con il web, che condividono un solo accesso: Wandly (articoli WordPress con l'AI), Slide-orama (caroselli social), Social Planner (calendario editoriale), WooSync (gestione di negozi WooCommerce), VoiceNote (note vocali) e Fleet (manutenzione di siti WordPress).

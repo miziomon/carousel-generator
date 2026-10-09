@@ -1,5 +1,11 @@
 import { apiRequest } from '../http.js'
 
+// ── Limite e uso mensile dei caroselli (GET /me/usage) ────────────────────────
+// Risponde { period, plan, exempt, items: [{ key, label, limit, used }] }; limit -1 = illimitato.
+export async function fetchCarouselUsage() {
+  return apiRequest({ url: 'me/usage', params: { keys: 'carousels_per_month' } })
+}
+
 // ── Crea nuovo carosello ──────────────────────────────────────────────────────
 export async function createCarousel({ user_id, title, content_json, thumbnail }) {
   return apiRequest({ method: 'POST', url: 'carousel', data: { user_id, title, content_json, thumbnail } })

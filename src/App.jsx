@@ -40,9 +40,10 @@ export default function App() {
   const appTheme = useAppTheme()
   const { isExchanging, linkError } = useMagicLinkLogin()
 
+  // Titolo con la versione solo da loggati: il login mantiene il titolo SEO di index.html
   useEffect(() => {
-    document.title = `SLIDE-ORAMA — v${pkg.version}`
-  }, [])
+    if (auth.isLoggedIn) document.title = `SLIDE-ORAMA — v${pkg.version}`
+  }, [auth.isLoggedIn])
 
   useEffect(() => {
     if (linkError) toast(linkError, 'error')
@@ -52,7 +53,7 @@ export default function App() {
     return (
       <div className="auth">
         <div className="auth__card auth__card--loading">
-          <span className="auth__logo">Carousel Generator</span>
+          <span className="auth__logo">Slide-orama</span>
           <p className="auth__tagline">Accesso in corso…</p>
         </div>
       </div>
@@ -63,7 +64,7 @@ export default function App() {
     return (
       <>
         <LoginScreen
-          title="Carousel Generator"
+          title="Slide-orama"
           subtitle="Accedi per creare e modificare caroselli"
           logo={<img src="/favicon.svg" alt="" width={48} height={48} />}
         />

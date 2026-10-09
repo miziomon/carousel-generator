@@ -1,0 +1,6 @@
+# Slide-orama - https://slideorama.mavida.com/
+# Le pagine dell'applicazione sono pubbliche solo nella schermata di accesso.
+User-agent: *
+Allow: /
+
+Sitemap: https://slideorama.mavida.com/sitemap.xml

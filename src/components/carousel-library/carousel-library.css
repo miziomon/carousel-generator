@@ -569,6 +569,43 @@
   white-space: nowrap;
 }
 
+/* Utilizzo mensile dei caroselli (barra di avanzamento nel dropdown) */
+.user-menu__usage {
+  padding: 4px 12px 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: rgba(var(--app-fg-rgb), 0.55);
+}
+
+.user-menu__usage-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 6px;
+}
+
+.user-menu__usage-count {
+  color: rgba(var(--app-fg-rgb), 0.85);
+  font-variant-numeric: tabular-nums;
+}
+
+.user-menu__usage-bar {
+  height: 5px;
+  border-radius: 3px;
+  background: rgba(var(--app-fg-rgb), 0.12);
+  overflow: hidden;
+}
+
+.user-menu__usage-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+.user-menu__usage-fill--ok      { background: rgb(var(--app-accent-rgb)); }
+.user-menu__usage-fill--warning { background: #f59e0b; }
+.user-menu__usage-fill--danger  { background: #ef4444; }
+
 /* ── SyncIndicator ─────────────────────────────────────────────────────────── */
 
 .sync-indicator {

@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.42.0] - 2026-10-09
+
+Richiede hub >= 0.220.0 per `GET /me/usage`: con un hub più vecchio il blocco "Caroselli questo mese" nel menu utente non compare.
+
+### Added
+- **Utilizzo mensile nel menu utente**: cliccando sull'email in alto a destra, sotto l'indirizzo compare "Caroselli questo mese" con numero e barra (`carousels_per_month`, gialla dal 70%, rossa dal 90%; "illimitati" senza barra, anche per gli admin). Riletto a ogni apertura del menu da `GET /me/usage`.
+- **SEO/GEO della pagina di login**: titolo e descrizione in italiano, canonical, `meta author` Mavida, Open Graph e Twitter con immagine 1200x630, dati strutturati JSON-LD, testo statico dentro `#root`; `public/llms.txt`, `robots.txt`, `sitemap.xml`, `og-image.jpg`.
+
+### Changed
+- Il titolo della scheda con la versione si imposta solo dopo il login; la pagina di accesso mantiene il titolo SEO.
+- Il login e la schermata di verifica mostrano "Slide-orama" al posto di "Carousel Generator".
+
 ## [1.41.0] - 2026-10-09
 
 ### Changed
