@@ -267,7 +267,7 @@ export function SlideStickerPanel({ draft, theme, set, userId }) {
 
           {hiddenSectionOpen && (
             <div className="slide-sticker-panel__hidden-list">
-              {hiddenGlobals.map((sticker, index) => (
+              {hiddenGlobals.map((sticker) => (
                 <div key={sticker.id} className="slide-sticker-panel__hidden-row">
                   <span className="slide-sticker-panel__hidden-thumb-wrap">
                     {sticker.data

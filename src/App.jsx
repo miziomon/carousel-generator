@@ -65,6 +65,7 @@ export default function App() {
         <LoginScreen
           title="Carousel Generator"
           subtitle="Accedi per creare e modificare caroselli"
+          logo={<img src="/favicon.svg" alt="" width={48} height={48} />}
         />
         <ToastContainer />
       </>
@@ -151,7 +152,6 @@ function AuthenticatedApp({ auth, appTheme }) {
         // Deduplica: se la slide ha lo stesso data del tema globale, rimuove data per evitare duplicazione base64.
         // Il renderer la recupera automaticamente da theme.background_image al momento del render.
         if (rest.background_image?.data && globalBgData && rest.background_image.data === globalBgData) {
-          // eslint-disable-next-line no-unused-vars
           const { data: _data, ...bgWithoutData } = rest.background_image
           return { ...rest, background_image: bgWithoutData }
         }

@@ -85,6 +85,10 @@ jobs:
       - name: Installazione dipendenze
         run: npm ci
 
+      # Il lint blocca il deploy: un errore di lint non arriva mai in produzione.
+      - name: Lint
+        run: npm run lint
+
       - name: Build di produzione
         env:
           # VITE_* inlinate nel bundle a compile-time (vedi nota in testa).
@@ -140,7 +144,7 @@ jobs:
             --arg url "$RUN_URL" \
             --arg subject "$SUBJECT" \
             '{
-              from: "Carousel Generator <api@mavida.com>",
+              from: "[Mavida] Claud.ia <api@mavida.com>",
               to: "maurizio@mavida.com",
               subject: $subject,
               html: ("<p>" + $headline + "</p><ul>"

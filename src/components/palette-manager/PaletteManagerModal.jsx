@@ -22,7 +22,6 @@ export function PaletteManagerModal({
   applyPalette,
   createPalette,
   updatePalette,
-  duplicatePalette,
   deletePalette,
   importPalette,
 }) {

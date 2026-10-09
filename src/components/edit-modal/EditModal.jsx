@@ -181,6 +181,8 @@ export function EditModal({ slide, theme, total, carousel, onSave, onCancel, use
 
   useEffect(() => {
     setDraft({ ...slide })
+    // Si riallinea solo al cambio di slide (id), non a ogni modifica dell'oggetto
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slide?.id])
 
   // Cmd/Ctrl+Enter = Salva

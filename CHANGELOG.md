@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.38.0] - 2026-10-09
+
+### Changed
+- **hub-auth 1.4.1**: schermata di login a due metà con larghezza massima di 1200px (su monitor molto larghi pannello e login restano vicini), icona dell'app e descrizione più estesa del tool nel pannello (da hub) e, se la registrazione è abilitata, informativa privacy sotto il form.
+- Il login passa il `logo` (`/favicon.svg`) a `LoginScreen`, così l'icona compare nel pannello laterale.
+- La CI esegue `npm run lint` prima della build: un errore di lint blocca il deploy.
+- **Lint pulito**: ESLint non analizza più `dist/` e `public/` (erano la quasi totalità dei 1.400 errori); corrette le segnalazioni reali (variabili inutilizzate, apostrofo non escapato, un `eslint-disable` inutile e la dipendenza voluta dell'effetto in `EditModal`).
+
+### Fixed
+- **Email di esito deploy**: mittente `[Mavida] Claud.ia` come le altre app (prima "Carousel Generator").
+
 ## [1.37.0] - 2026-10-09
 
 ### Changed

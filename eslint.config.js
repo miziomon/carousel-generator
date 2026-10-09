@@ -4,6 +4,8 @@ import reactPlugin from 'eslint-plugin-react'
 import reactHooks from 'eslint-plugin-react-hooks'
 
 export default [
+  // dist/ è l'output della build (minificato): non va lintato
+  { ignores: ['dist/**', 'public/**', 'node_modules/**'] },
   js.configs.recommended,
   {
     files: ['src/**/*.{js,jsx}'],

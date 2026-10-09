@@ -57,7 +57,7 @@ export function ColorPicker({ label, value, onChange }) {
         </div>
       )}
       {isRgba && (
-        <p className="text-[10px] text-slate-500 font-mono">Valore rgba: modifica direttamente nell'input</p>
+        <p className="text-[10px] text-slate-500 font-mono">Valore rgba: modifica direttamente nell&apos;input</p>
       )}
     </div>
   )
