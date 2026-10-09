@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.37.0] - 2026-10-09
+
+### Changed
+- **hub-auth 1.3.1**: schermata di login a due metà quando il tool ha una descrizione o un avviso su hub (pannello a sinistra, login a destra; sotto i 900px il login passa sopra) e registrazione self-service se abilitata per il tool dalla scheda Tools di admin.mavida.com (nome, email, privacy; esito deciso dalla scheda Registrazioni). Nessuna modifica al codice dell'app, solo la libreria. Richiede hub ≥ 0.216.0.
+
 ## [1.36.0] - 2026-10-06
 
 ### Added
