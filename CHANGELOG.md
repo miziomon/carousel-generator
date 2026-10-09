@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.40.0] - 2026-10-09
+
+### Changed
+- **hub-auth 1.6.0**: nel passo del codice il testo diventa neutro ("Se l'indirizzo è registrato, riceverai un codice via email", perché hub non rivela se l'indirizzo esiste) e, quando la registrazione è abilitata, compare il link "Non hai un account? Registrati", con l'email già scritta nel form. Nessuna modifica al codice dell'app, solo la libreria.
+
 ## [1.39.0] - 2026-10-09
 
 ### Changed
